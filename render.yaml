@@ -1,0 +1,43 @@
+services:
+  # ── Backend API (Node / Express + SQLite) ─────────────────────────────────
+  - type: web
+    name: al-sultan-api
+    env: node
+    rootDir: server
+    buildCommand: npm install
+    startCommand: npm start
+    plan: free
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: DATABASE_PATH
+        value: ./data/alsultan.db
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 8h
+      - key: ADMIN_USERNAME
+        value: admin
+      - key: ADMIN_PASSWORD
+        sync: false          # Render will prompt you to enter this
+      - key: CORS_ORIGIN
+        value: https://al-sultan.onrender.com
+      - key: RATE_LIMIT_WINDOW_MS
+        value: 900000
+      - key: RATE_LIMIT_MAX
+        value: 100
+
+  # ── Frontend (React / Vite static site) ───────────────────────────────────
+  - type: static
+    name: al-sultan
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_BASE_URL
+        value: https://al-sultan-api.onrender.com/api
