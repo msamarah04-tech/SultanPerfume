@@ -30,8 +30,9 @@ services:
         value: 100
 
   # ── Frontend (React / Vite static site) ───────────────────────────────────
-  - type: static
+  - type: web
     name: al-sultan
+    env: static
     buildCommand: npm install && npm run build
     staticPublishPath: dist
     routes:
