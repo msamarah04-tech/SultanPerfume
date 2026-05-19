@@ -1,0 +1,108 @@
+[
+  {
+    "id": "p001",
+    "name": "Oud Royale",
+    "description": "A deep, smoky oud blended with rose and amber. Timeless and powerful.",
+    "category": "unisex",
+    "sizes": [
+      { "size": "50ml", "price": 320 },
+      { "size": "100ml", "price": 540 }
+    ],
+    "stock": 25,
+    "topNotes": "Bergamot, Saffron",
+    "heartNotes": "Rose, Oud",
+    "baseNotes": "Amber, Musk",
+    "images": ["/images/products/sample-1.jpg"],
+    "featured": true,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p002",
+    "name": "Midnight Rose",
+    "description": "An intoxicating blend of dark roses, patchouli, and blackcurrant.",
+    "category": "women",
+    "sizes": [
+      { "size": "50ml", "price": 280 },
+      { "size": "100ml", "price": 480 }
+    ],
+    "stock": 15,
+    "topNotes": "Blackcurrant, Pink Pepper",
+    "heartNotes": "Damascus Rose, Peony",
+    "baseNotes": "Patchouli, Vanilla",
+    "images": ["/images/products/sample-2.jpg"],
+    "featured": true,
+    "active": true,
+    "createdAt": "2026-01-02T00:00:00Z"
+  },
+  {
+    "id": "p003",
+    "name": "Amber Noir",
+    "description": "A sophisticated masculine scent with warm amber, leather, and spices.",
+    "category": "men",
+    "sizes": [
+      { "size": "100ml", "price": 450 }
+    ],
+    "stock": 30,
+    "topNotes": "Cardamom, Mandarin",
+    "heartNotes": "Leather, Nutmeg",
+    "baseNotes": "Amber, Sandalwood",
+    "images": ["/images/products/sample-3.jpg"],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-03T00:00:00Z"
+  },
+  {
+    "id": "p004",
+    "name": "Vanilla Cashmere",
+    "description": "A comforting, creamy vanilla enriched with white florals and musk.",
+    "category": "women",
+    "sizes": [
+      { "size": "50ml", "price": 250 },
+      { "size": "100ml", "price": 420 }
+    ],
+    "stock": 4,
+    "topNotes": "Almond, Peach",
+    "heartNotes": "Jasmine, Tuberose",
+    "baseNotes": "Madagascar Vanilla, Musk",
+    "images": ["/images/products/sample-4.jpg"],
+    "featured": true,
+    "active": true,
+    "createdAt": "2026-01-04T00:00:00Z"
+  },
+  {
+    "id": "p005",
+    "name": "Desert Wood",
+    "description": "Dry woods, vetiver, and incense evoking a journey through the dunes.",
+    "category": "men",
+    "sizes": [
+      { "size": "100ml", "price": 380 }
+    ],
+    "stock": 10,
+    "topNotes": "Grapefruit, Black Pepper",
+    "heartNotes": "Incense, Cedarwood",
+    "baseNotes": "Vetiver, Tonka Bean",
+    "images": ["/images/products/sample-5.jpg"],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-05T00:00:00Z"
+  },
+  {
+    "id": "p006",
+    "name": "Jasmine Blanc",
+    "description": "A fresh, luminous floral centered around pure white jasmine and citrus.",
+    "category": "unisex",
+    "sizes": [
+      { "size": "50ml", "price": 290 },
+      { "size": "100ml", "price": 490 }
+    ],
+    "stock": 20,
+    "topNotes": "Lemon, Neroli",
+    "heartNotes": "Sambac Jasmine, Orange Blossom",
+    "baseNotes": "White Musk, Cedar",
+    "images": ["/images/products/sample-6.jpg"],
+    "featured": true,
+    "active": true,
+    "createdAt": "2026-01-06T00:00:00Z"
+  }
+]

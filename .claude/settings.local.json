@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "defaultMode": "acceptEdits",
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(npx *)",
+      "Bash(find *)",
+      "Bash(curl *)",
+      "Bash(ffmpeg *)",
+      "Bash(ffprobe *)"
+    ],
+    "additionalDirectories": [
+      "/Users/workspace/Desktop/Projects /My projects/Sultan Perfumes/perfume-store"
+    ]
+  }
+}

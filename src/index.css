@@ -1,0 +1,81 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* ── Prevent horizontal overflow on all devices ── */
+  html {
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    /* Prevent font size inflation on orientation change */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    @apply font-sans bg-ivory text-jet antialiased selection:bg-gold/90 selection:text-white;
+    /* Minimum width so nothing collapses below 320 px */
+    min-width: 320px;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif font-normal tracking-normal;
+  }
+
+  /* Responsive media defaults — img/video only; SVGs get display:block from Preflight
+     but must NOT get height:auto (breaks Lucide icon sizing) */
+  img, video {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Custom Slim Luxury Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-jet;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gold/50 hover:bg-gold rounded-full transition-colors duration-300;
+  }
+}
+
+@layer utilities {
+  /* ── Hide scrollbar while keeping scroll functionality ── */
+  .scrollbar-hide,
+  .scrollbar-none {
+    -ms-overflow-style: none;  /* IE / Edge */
+    scrollbar-width: none;     /* Firefox */
+  }
+  .scrollbar-hide::-webkit-scrollbar,
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;             /* Chrome / Safari / Opera */
+  }
+
+  /* Premium Glassmorphism */
+  .glass-premium {
+    @apply bg-ivory/80 backdrop-blur-xl border border-gold/10 shadow-[0_8px_32px_0_rgba(212,175,55,0.03)];
+  }
+  
+  .glass-dark {
+    @apply bg-jet/80 backdrop-blur-xl border border-gold/15 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)];
+  }
+
+  /* Luxury Gold Gradients & Texts */
+  .text-gold-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-gold-light via-gold to-gold-dark;
+  }
+  
+  .border-gold-glow {
+    @apply border border-gold/30 hover:border-gold hover:shadow-[0_0_20px_rgba(212,175,55,0.15)] transition-all duration-500;
+  }
+
+  /* Micro shimmer effects */
+  .gold-shimmer {
+    background: linear-gradient(90deg, transparent, rgba(232, 199, 126, 0.2), transparent);
+    background-size: 200% 100%;
+  }
+}

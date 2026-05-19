@@ -1,0 +1,46 @@
+{
+  "name": "perfume-store",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "server": "npm --prefix server run dev",
+    "server:reset": "npm --prefix server run reset-db",
+    "dev:all": "concurrently \"npm run dev\" \"npm run server\"",
+    "generate-assets": "node scripts/generate-assets.js",
+    "generate:animations:textures": "node scripts/generate-animations.js batch1",
+    "generate:animations:sequences": "node scripts/generate-animations.js batch2",
+    "generate:animations:heroes": "node scripts/generate-animations.js batch3",
+    "generate:animations:uistates": "node scripts/generate-animations.js batch4"
+  },
+  "dependencies": {
+    "@google/genai": "^2.3.0",
+    "dotenv": "^17.4.2",
+    "framer-motion": "^12.38.0",
+    "lucide-react": "^1.16.0",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "react-router-dom": "^7.15.1",
+    "sharp": "^0.34.5"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "autoprefixer": "^10.5.0",
+    "concurrently": "^9.2.1",
+    "eslint": "^10.3.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.2",
+    "globals": "^17.6.0",
+    "postcss": "^8.5.14",
+    "tailwindcss": "^3.4.19",
+    "tailwindcss-rtl": "^0.9.0",
+    "vite": "^8.0.12"
+  }
+}

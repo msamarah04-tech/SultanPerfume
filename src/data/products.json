@@ -1,0 +1,2618 @@
+[
+  {
+    "id": "p001",
+    "name": "Ana Abiyedh - Lattafa",
+    "nameAr": "",
+    "brand": "Lattafa",
+    "description": "عطر Ana Abiyedh - Lattafa. (الوصف يُضاف لاحقاً)",
+    "category": "unisex",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p001.png"
+    ],
+    "featured": true,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p002",
+    "name": "Tobacco Vanille - Tom Ford",
+    "nameAr": "",
+    "brand": "Tom Ford",
+    "description": "عطر Tobacco Vanille - Tom Ford. (الوصف يُضاف لاحقاً)",
+    "category": "unisex",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p002.png"
+    ],
+    "featured": true,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p003",
+    "name": "Lost Cherry - Tom Ford",
+    "nameAr": "",
+    "brand": "Tom Ford",
+    "description": "عطر Lost Cherry - Tom Ford. (الوصف يُضاف لاحقاً)",
+    "category": "unisex",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p003.png"
+    ],
+    "featured": true,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p004",
+    "name": "Baccarat Rouge 540 - Maison Francis Kurkdjian",
+    "nameAr": "",
+    "brand": "Maison Francis Kurkdjian",
+    "description": "عطر Baccarat Rouge 540 - Maison Francis Kurkdjian. (الوصف يُضاف لاحقاً)",
+    "category": "unisex",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p004.png"
+    ],
+    "featured": true,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p005",
+    "name": "Khamrah - Lattafa",
+    "nameAr": "",
+    "brand": "Lattafa",
+    "description": "عطر Khamrah - Lattafa. (الوصف يُضاف لاحقاً)",
+    "category": "unisex",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p005.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p006",
+    "name": "Shaghaf Oud - Swiss Arabian",
+    "nameAr": "",
+    "brand": "Swiss Arabian",
+    "description": "عطر Shaghaf Oud - Swiss Arabian. (الوصف يُضاف لاحقاً)",
+    "category": "unisex",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p006.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p007",
+    "name": "Wisal Dhahab - Ajmal",
+    "nameAr": "",
+    "brand": "Ajmal",
+    "description": "عطر Wisal Dhahab - Ajmal. (الوصف يُضاف لاحقاً)",
+    "category": "unisex",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p007.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p008",
+    "name": "Oud Ispahan - Dior",
+    "nameAr": "",
+    "brand": "Dior",
+    "description": "عطر Oud Ispahan - Dior. (الوصف يُضاف لاحقاً)",
+    "category": "unisex",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p008.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p009",
+    "name": "Imperial Valley - Gissah",
+    "nameAr": "",
+    "brand": "Gissah",
+    "description": "عطر Imperial Valley - Gissah. (الوصف يُضاف لاحقاً)",
+    "category": "unisex",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p009.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p010",
+    "name": "Jawad Al Layl - Khalis",
+    "nameAr": "",
+    "brand": "Khalis",
+    "description": "عطر Jawad Al Layl - Khalis. (الوصف يُضاف لاحقاً)",
+    "category": "unisex",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p010.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p011",
+    "name": "Black Afgano - Nasomatto",
+    "nameAr": "",
+    "brand": "Nasomatto",
+    "description": "عطر Black Afgano - Nasomatto. (الوصف يُضاف لاحقاً)",
+    "category": "unisex",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p011.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p012",
+    "name": "Tuscan Leather - Tom Ford",
+    "nameAr": "",
+    "brand": "Tom Ford",
+    "description": "عطر Tuscan Leather - Tom Ford. (الوصف يُضاف لاحقاً)",
+    "category": "unisex",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p012.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p013",
+    "name": "Silver Mountain Water - Creed",
+    "nameAr": "",
+    "brand": "Creed",
+    "description": "عطر Silver Mountain Water - Creed. (الوصف يُضاف لاحقاً)",
+    "category": "unisex",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/unisex-13.jpg"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p014",
+    "name": "Ombre Leather 2018 - Tom Ford",
+    "nameAr": "",
+    "brand": "Tom Ford",
+    "description": "عطر Ombre Leather 2018 - Tom Ford. (الوصف يُضاف لاحقاً)",
+    "category": "unisex",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p014.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p015",
+    "name": "Ombre Nomade - Louis Vuitton",
+    "nameAr": "",
+    "brand": "Louis Vuitton",
+    "description": "عطر Ombre Nomade - Louis Vuitton. (الوصف يُضاف لاحقاً)",
+    "category": "unisex",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p015.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p016",
+    "name": "Fucking Fabulous - Tom Ford",
+    "nameAr": "",
+    "brand": "Tom Ford",
+    "description": "عطر Fucking Fabulous - Tom Ford. (الوصف يُضاف لاحقاً)",
+    "category": "unisex",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p016.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p017",
+    "name": "Black Orchid Parfum - Tom Ford",
+    "nameAr": "",
+    "brand": "Tom Ford",
+    "description": "عطر Black Orchid Parfum - Tom Ford. (الوصف يُضاف لاحقاً)",
+    "category": "unisex",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p017.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p018",
+    "name": "Red Tobacco - Mancera",
+    "nameAr": "",
+    "brand": "Mancera",
+    "description": "عطر Red Tobacco - Mancera. (الوصف يُضاف لاحقاً)",
+    "category": "unisex",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/unisex-18.jpg"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p019",
+    "name": "Paradoxe - Prada",
+    "nameAr": "",
+    "brand": "Prada",
+    "description": "عطر Paradoxe - Prada. (الوصف يُضاف لاحقاً)",
+    "category": "women",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p019.png"
+    ],
+    "featured": true,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p020",
+    "name": "Flora Gorgeous Gardenia - Gucci",
+    "nameAr": "",
+    "brand": "Gucci",
+    "description": "عطر Flora Gorgeous Gardenia - Gucci. (الوصف يُضاف لاحقاً)",
+    "category": "women",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p020.png"
+    ],
+    "featured": true,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p021",
+    "name": "L'Interdit Rouge - Givenchy",
+    "nameAr": "",
+    "brand": "Givenchy",
+    "description": "عطر L'Interdit Rouge - Givenchy. (الوصف يُضاف لاحقاً)",
+    "category": "women",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p021.png"
+    ],
+    "featured": true,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p022",
+    "name": "Hypnotic Poison - Dior",
+    "nameAr": "",
+    "brand": "Dior",
+    "description": "عطر Hypnotic Poison - Dior. (الوصف يُضاف لاحقاً)",
+    "category": "women",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p022.png"
+    ],
+    "featured": true,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p023",
+    "name": "Cafe Rose 2023 - Tom Ford",
+    "nameAr": "",
+    "brand": "Tom Ford",
+    "description": "عطر Cafe Rose 2023 - Tom Ford. (الوصف يُضاف لاحقاً)",
+    "category": "women",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p023.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p024",
+    "name": "Eternity - Calvin Klein",
+    "nameAr": "",
+    "brand": "Calvin Klein",
+    "description": "عطر Eternity - Calvin Klein. (الوصف يُضاف لاحقاً)",
+    "category": "women",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/women-06.jpg"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p025",
+    "name": "Tresor Midnight Rose - Lancome",
+    "nameAr": "",
+    "brand": "Lancome",
+    "description": "عطر Tresor Midnight Rose - Lancome. (الوصف يُضاف لاحقاً)",
+    "category": "women",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p025.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p026",
+    "name": "Fantasy - Britney Spears",
+    "nameAr": "",
+    "brand": "Britney Spears",
+    "description": "عطر Fantasy - Britney Spears. (الوصف يُضاف لاحقاً)",
+    "category": "women",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p026.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p027",
+    "name": "Body - Burberry",
+    "nameAr": "",
+    "brand": "Burberry",
+    "description": "عطر Body - Burberry. (الوصف يُضاف لاحقاً)",
+    "category": "women",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p027.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p028",
+    "name": "Olympea - Rabanne",
+    "nameAr": "",
+    "brand": "Rabanne",
+    "description": "عطر Olympea - Rabanne. (الوصف يُضاف لاحقاً)",
+    "category": "women",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p028.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p029",
+    "name": "J'adore - Dior",
+    "nameAr": "",
+    "brand": "Dior",
+    "description": "عطر J'adore - Dior. (الوصف يُضاف لاحقاً)",
+    "category": "women",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p029.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p030",
+    "name": "Allure Sensuelle - Chanel",
+    "nameAr": "",
+    "brand": "Chanel",
+    "description": "عطر Allure Sensuelle - Chanel. (الوصف يُضاف لاحقاً)",
+    "category": "women",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p030.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p031",
+    "name": "Delina - Parfums de Marly",
+    "nameAr": "",
+    "brand": "Parfums de Marly",
+    "description": "عطر Delina - Parfums de Marly. (الوصف يُضاف لاحقاً)",
+    "category": "women",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p031.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p032",
+    "name": "Yara - Lattafa",
+    "nameAr": "",
+    "brand": "Lattafa",
+    "description": "عطر Yara - Lattafa. (الوصف يُضاف لاحقاً)",
+    "category": "women",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p032.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p033",
+    "name": "Q - Dolce & Gabbana",
+    "nameAr": "",
+    "brand": "Dolce & Gabbana",
+    "description": "عطر Q - Dolce & Gabbana. (الوصف يُضاف لاحقاً)",
+    "category": "women",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p033.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p034",
+    "name": "D&G Anthology L'Imperatrice 3 - Dolce & Gabbana",
+    "nameAr": "",
+    "brand": "Dolce & Gabbana",
+    "description": "عطر D&G Anthology L'Imperatrice 3 - Dolce & Gabbana. (الوصف يُضاف لاحقاً)",
+    "category": "women",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p034.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p035",
+    "name": "Washwasha - Lattafa",
+    "nameAr": "",
+    "brand": "Lattafa",
+    "description": "عطر Washwasha - Lattafa. (الوصف يُضاف لاحقاً)",
+    "category": "women",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p035.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p036",
+    "name": "Scandal - Jean Paul Gaultier",
+    "nameAr": "",
+    "brand": "Jean Paul Gaultier",
+    "description": "عطر Scandal - Jean Paul Gaultier. (الوصف يُضاف لاحقاً)",
+    "category": "women",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p036.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p037",
+    "name": "Chanel No 5 Parfum - Chanel",
+    "nameAr": "",
+    "brand": "Chanel",
+    "description": "عطر Chanel No 5 Parfum - Chanel. (الوصف يُضاف لاحقاً)",
+    "category": "women",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p037.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p038",
+    "name": "Libre - Yves Saint Laurent",
+    "nameAr": "",
+    "brand": "Yves Saint Laurent",
+    "description": "عطر Libre - Yves Saint Laurent. (الوصف يُضاف لاحقاً)",
+    "category": "women",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p038.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p039",
+    "name": "Lady Million - Rabanne",
+    "nameAr": "",
+    "brand": "Rabanne",
+    "description": "عطر Lady Million - Rabanne. (الوصف يُضاف لاحقاً)",
+    "category": "women",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p039.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p040",
+    "name": "Black Opium - Yves Saint Laurent",
+    "nameAr": "",
+    "brand": "Yves Saint Laurent",
+    "description": "عطر Black Opium - Yves Saint Laurent. (الوصف يُضاف لاحقاً)",
+    "category": "women",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p040.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p041",
+    "name": "Magnetism - Escada",
+    "nameAr": "",
+    "brand": "Escada",
+    "description": "عطر Magnetism - Escada. (الوصف يُضاف لاحقاً)",
+    "category": "women",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/women-23.jpg"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p042",
+    "name": "Roberto Cavalli Eau de Parfum - Roberto Cavalli",
+    "nameAr": "",
+    "brand": "Roberto Cavalli",
+    "description": "عطر Roberto Cavalli Eau de Parfum - Roberto Cavalli. (الوصف يُضاف لاحقاً)",
+    "category": "women",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p042.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p043",
+    "name": "The One - Dolce & Gabbana",
+    "nameAr": "",
+    "brand": "Dolce & Gabbana",
+    "description": "عطر The One - Dolce & Gabbana. (الوصف يُضاف لاحقاً)",
+    "category": "women",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p043.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p044",
+    "name": "Euphoria - Calvin Klein",
+    "nameAr": "",
+    "brand": "Calvin Klein",
+    "description": "عطر Euphoria - Calvin Klein. (الوصف يُضاف لاحقاً)",
+    "category": "women",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/women-26.jpg"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p045",
+    "name": "Crystal Noir - Versace",
+    "nameAr": "",
+    "brand": "Versace",
+    "description": "عطر Crystal Noir - Versace. (الوصف يُضاف لاحقاً)",
+    "category": "women",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p045.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p046",
+    "name": "Bright Crystal - Versace",
+    "nameAr": "",
+    "brand": "Versace",
+    "description": "عطر Bright Crystal - Versace. (الوصف يُضاف لاحقاً)",
+    "category": "women",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p046.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p047",
+    "name": "Gucci Bloom - Gucci",
+    "nameAr": "",
+    "brand": "Gucci",
+    "description": "عطر Gucci Bloom - Gucci. (الوصف يُضاف لاحقاً)",
+    "category": "women",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p047.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p048",
+    "name": "Miss Dior Blooming Bouquet 2023 - Dior",
+    "nameAr": "",
+    "brand": "Dior",
+    "description": "عطر Miss Dior Blooming Bouquet 2023 - Dior. (الوصف يُضاف لاحقاً)",
+    "category": "women",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p048.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p049",
+    "name": "Bombshell - Victoria's Secret",
+    "nameAr": "",
+    "brand": "Victoria's Secret",
+    "description": "عطر Bombshell - Victoria's Secret. (الوصف يُضاف لاحقاً)",
+    "category": "women",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p049.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p050",
+    "name": "212 Sexy - Carolina Herrera",
+    "nameAr": "",
+    "brand": "Carolina Herrera",
+    "description": "عطر 212 Sexy - Carolina Herrera. (الوصف يُضاف لاحقاً)",
+    "category": "women",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p050.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p051",
+    "name": "Good Girl - Carolina Herrera",
+    "nameAr": "",
+    "brand": "Carolina Herrera",
+    "description": "عطر Good Girl - Carolina Herrera. (الوصف يُضاف لاحقاً)",
+    "category": "women",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p051.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p052",
+    "name": "Le Parfum - Elie Saab",
+    "nameAr": "",
+    "brand": "Elie Saab",
+    "description": "عطر Le Parfum - Elie Saab. (الوصف يُضاف لاحقاً)",
+    "category": "women",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p052.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p053",
+    "name": "Coco Mademoiselle - Chanel",
+    "nameAr": "",
+    "brand": "Chanel",
+    "description": "عطر Coco Mademoiselle - Chanel. (الوصف يُضاف لاحقاً)",
+    "category": "women",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p053.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p054",
+    "name": "Coco Moi - Chantal Thomas",
+    "nameAr": "",
+    "brand": "Chantal Thomas",
+    "description": "عطر Coco Moi - Chantal Thomas. (الوصف يُضاف لاحقاً)",
+    "category": "women",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p054.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p055",
+    "name": "Samsara Eau de Parfum - Guerlain",
+    "nameAr": "",
+    "brand": "Guerlain",
+    "description": "عطر Samsara Eau de Parfum - Guerlain. (الوصف يُضاف لاحقاً)",
+    "category": "women",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p055.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p056",
+    "name": "Tygar - Bvlgari",
+    "nameAr": "",
+    "brand": "Bvlgari",
+    "description": "عطر Tygar - Bvlgari. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p056.png"
+    ],
+    "featured": true,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p057",
+    "name": "Gentleman Eau de Parfum - Givenchy",
+    "nameAr": "",
+    "brand": "Givenchy",
+    "description": "عطر Gentleman Eau de Parfum - Givenchy. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p057.png"
+    ],
+    "featured": true,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p058",
+    "name": "Hero - Burberry",
+    "nameAr": "",
+    "brand": "Burberry",
+    "description": "عطر Hero - Burberry. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p058.png"
+    ],
+    "featured": true,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p059",
+    "name": "Spicebomb Extreme - Viktor & Rolf",
+    "nameAr": "",
+    "brand": "Viktor & Rolf",
+    "description": "عطر Spicebomb Extreme - Viktor & Rolf. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p059.png"
+    ],
+    "featured": true,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p060",
+    "name": "Versace Pour Homme - Versace",
+    "nameAr": "",
+    "brand": "Versace",
+    "description": "عطر Versace Pour Homme - Versace. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p060.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p061",
+    "name": "Eternity For Men - Calvin Klein",
+    "nameAr": "",
+    "brand": "Calvin Klein",
+    "description": "عطر Eternity For Men - Calvin Klein. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p061.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p062",
+    "name": "L'Eau d'Issey Pour Homme - Issey Miyake",
+    "nameAr": "",
+    "brand": "Issey Miyake",
+    "description": "عطر L'Eau d'Issey Pour Homme - Issey Miyake. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p062.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p063",
+    "name": "Emporio Armani Stronger With You Oud - Giorgio Armani",
+    "nameAr": "",
+    "brand": "Giorgio Armani",
+    "description": "عطر Emporio Armani Stronger With You Oud - Giorgio Armani. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p063.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p064",
+    "name": "Egoiste Platinum - Chanel",
+    "nameAr": "",
+    "brand": "Chanel",
+    "description": "عطر Egoiste Platinum - Chanel. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p064.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p065",
+    "name": "Black XS - Rabanne",
+    "nameAr": "",
+    "brand": "Rabanne",
+    "description": "عطر Black XS - Rabanne. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p065.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p066",
+    "name": "Sculpture Homme - Nikos",
+    "nameAr": "",
+    "brand": "Nikos",
+    "description": "عطر Sculpture Homme - Nikos. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p066.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p067",
+    "name": "Polo Blue Eau de Parfum - Ralph Lauren",
+    "nameAr": "",
+    "brand": "Ralph Lauren",
+    "description": "عطر Polo Blue Eau de Parfum - Ralph Lauren. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p067.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p068",
+    "name": "Al Wisam Day - Rasasi",
+    "nameAr": "",
+    "brand": "Rasasi",
+    "description": "عطر Al Wisam Day - Rasasi. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p068.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p069",
+    "name": "Fahrenheit - Dior",
+    "nameAr": "",
+    "brand": "Dior",
+    "description": "عطر Fahrenheit - Dior. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p069.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p070",
+    "name": "Legend - Montblanc",
+    "nameAr": "",
+    "brand": "Montblanc",
+    "description": "عطر Legend - Montblanc. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p070.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p071",
+    "name": "Acqua di Gio - Giorgio Armani",
+    "nameAr": "",
+    "brand": "Giorgio Armani",
+    "description": "عطر Acqua di Gio - Giorgio Armani. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p071.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p072",
+    "name": "Acqua di Gio Profumo - Giorgio Armani",
+    "nameAr": "",
+    "brand": "Giorgio Armani",
+    "description": "عطر Acqua di Gio Profumo - Giorgio Armani. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p072.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p073",
+    "name": "Brown Orchid - Fragrance World",
+    "nameAr": "",
+    "brand": "Fragrance World",
+    "description": "عطر Brown Orchid - Fragrance World. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p073.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p074",
+    "name": "Icon - Alfred Dunhill",
+    "nameAr": "",
+    "brand": "Alfred Dunhill",
+    "description": "عطر Icon - Alfred Dunhill. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p074.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p075",
+    "name": "Desire for a Man - Alfred Dunhill",
+    "nameAr": "",
+    "brand": "Alfred Dunhill",
+    "description": "عطر Desire for a Man - Alfred Dunhill. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p075.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p076",
+    "name": "Euphoria Men - Calvin Klein",
+    "nameAr": "",
+    "brand": "Calvin Klein",
+    "description": "عطر Euphoria Men - Calvin Klein. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p076.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p077",
+    "name": "Light Blue pour Homme - Dolce & Gabbana",
+    "nameAr": "",
+    "brand": "Dolce & Gabbana",
+    "description": "عطر Light Blue pour Homme - Dolce & Gabbana. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p077.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p078",
+    "name": "Daarej pour Homme - Rasasi",
+    "nameAr": "",
+    "brand": "Rasasi",
+    "description": "عطر Daarej pour Homme - Rasasi. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p078.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p079",
+    "name": "Silver Scent - Jacques Bogart",
+    "nameAr": "",
+    "brand": "Jacques Bogart",
+    "description": "عطر Silver Scent - Jacques Bogart. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p079.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p080",
+    "name": "Le Male Elixir - Jean Paul Gaultier",
+    "nameAr": "",
+    "brand": "Jean Paul Gaultier",
+    "description": "عطر Le Male Elixir - Jean Paul Gaultier. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p080.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p081",
+    "name": "Scandal Pour Homme Absolu - Jean Paul Gaultier",
+    "nameAr": "",
+    "brand": "Jean Paul Gaultier",
+    "description": "عطر Scandal Pour Homme Absolu - Jean Paul Gaultier. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p081.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p082",
+    "name": "Scandal Pour Homme - Jean Paul Gaultier",
+    "nameAr": "",
+    "brand": "Jean Paul Gaultier",
+    "description": "عطر Scandal Pour Homme - Jean Paul Gaultier. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p082.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p083",
+    "name": "Pacific - Althaher",
+    "nameAr": "",
+    "brand": "Althaher",
+    "description": "عطر Pacific - Althaher. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p083.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p084",
+    "name": "Phantom - Rabanne",
+    "nameAr": "",
+    "brand": "Rabanne",
+    "description": "عطر Phantom - Rabanne. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p084.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p085",
+    "name": "212 Sexy Men - Carolina Herrera",
+    "nameAr": "",
+    "brand": "Carolina Herrera",
+    "description": "عطر 212 Sexy Men - Carolina Herrera. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p085.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p086",
+    "name": "Cool Water - Davidoff",
+    "nameAr": "",
+    "brand": "Davidoff",
+    "description": "عطر Cool Water - Davidoff. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p086.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p087",
+    "name": "Declaration - Cartier",
+    "nameAr": "",
+    "brand": "Cartier",
+    "description": "عطر Declaration - Cartier. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p087.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p088",
+    "name": "Million 1 - Rabanne",
+    "nameAr": "",
+    "brand": "Rabanne",
+    "description": "عطر Million 1 - Rabanne. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p088.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p089",
+    "name": "Sauvage Elixir - Dior",
+    "nameAr": "",
+    "brand": "Dior",
+    "description": "عطر Sauvage Elixir - Dior. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p089.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p090",
+    "name": "Emporio Armani Stronger With You - Giorgio Armani",
+    "nameAr": "",
+    "brand": "Giorgio Armani",
+    "description": "عطر Emporio Armani Stronger With You - Giorgio Armani. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p090.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p091",
+    "name": "Desire Blue - Alfred Dunhill",
+    "nameAr": "",
+    "brand": "Alfred Dunhill",
+    "description": "عطر Desire Blue - Alfred Dunhill. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p091.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p092",
+    "name": "Armani Code Parfum - Giorgio Armani",
+    "nameAr": "",
+    "brand": "Giorgio Armani",
+    "description": "عطر Armani Code Parfum - Giorgio Armani. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p092.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p093",
+    "name": "Eau de Lacoste L.12.12 White - Lacoste",
+    "nameAr": "",
+    "brand": "Lacoste",
+    "description": "عطر Eau de Lacoste L.12.12 White - Lacoste. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p093.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p094",
+    "name": "Hugo - Hugo Boss",
+    "nameAr": "",
+    "brand": "Hugo Boss",
+    "description": "عطر Hugo - Hugo Boss. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p094.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p095",
+    "name": "The One for Men Eau de Parfum - Dolce & Gabbana",
+    "nameAr": "",
+    "brand": "Dolce & Gabbana",
+    "description": "عطر The One for Men Eau de Parfum - Dolce & Gabbana. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p095.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p096",
+    "name": "K - Dolce & Gabbana",
+    "nameAr": "",
+    "brand": "Dolce & Gabbana",
+    "description": "عطر K - Dolce & Gabbana. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p096.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p097",
+    "name": "Dior Homme Parfum 2025 - Dior",
+    "nameAr": "",
+    "brand": "Dior",
+    "description": "عطر Dior Homme Parfum 2025 - Dior. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p097.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p098",
+    "name": "Allure Homme Sport - Chanel",
+    "nameAr": "",
+    "brand": "Chanel",
+    "description": "عطر Allure Homme Sport - Chanel. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p098.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p099",
+    "name": "Y - Yves Saint Laurent",
+    "nameAr": "",
+    "brand": "Yves Saint Laurent",
+    "description": "عطر Y - Yves Saint Laurent. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p099.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p100",
+    "name": "Bleu de Chanel - Chanel",
+    "nameAr": "",
+    "brand": "Chanel",
+    "description": "عطر Bleu de Chanel - Chanel. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p100.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p101",
+    "name": "Invictus Victory Elixir - Rabanne",
+    "nameAr": "",
+    "brand": "Rabanne",
+    "description": "عطر Invictus Victory Elixir - Rabanne. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p101.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p102",
+    "name": "Eros - Versace",
+    "nameAr": "",
+    "brand": "Versace",
+    "description": "عطر Eros - Versace. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p102.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p103",
+    "name": "Invictus - Rabanne",
+    "nameAr": "",
+    "brand": "Rabanne",
+    "description": "عطر Invictus - Rabanne. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p103.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p104",
+    "name": "Aventus - Creed",
+    "nameAr": "",
+    "brand": "Creed",
+    "description": "عطر Aventus - Creed. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p104.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p105",
+    "name": "Sauvage - Dior",
+    "nameAr": "",
+    "brand": "Dior",
+    "description": "عطر Sauvage - Dior. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p105.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p106",
+    "name": "212 VIP Men - Carolina Herrera",
+    "nameAr": "",
+    "brand": "Carolina Herrera",
+    "description": "عطر 212 VIP Men - Carolina Herrera. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p106.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p107",
+    "name": "Dunhill Fresh - Alfred Dunhill",
+    "nameAr": "",
+    "brand": "Alfred Dunhill",
+    "description": "عطر Dunhill Fresh - Alfred Dunhill. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/men-055.jpg"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p108",
+    "name": "Million Lucky 1 - Rabanne",
+    "nameAr": "",
+    "brand": "Rabanne",
+    "description": "عطر Million Lucky 1 - Rabanne. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p108.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "p109",
+    "name": "Imagination - Louis Vuitton",
+    "nameAr": "",
+    "brand": "Louis Vuitton",
+    "description": "عطر Imagination - Louis Vuitton. (الوصف يُضاف لاحقاً)",
+    "category": "men",
+    "sizes": [
+      {
+        "size": "100ml",
+        "price": 0
+      }
+    ],
+    "stock": 10,
+    "topNotes": "",
+    "heartNotes": "",
+    "baseNotes": "",
+    "images": [
+      "/images/products/p109.png"
+    ],
+    "featured": false,
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00Z"
+  }
+]
