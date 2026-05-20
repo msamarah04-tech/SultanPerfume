@@ -161,16 +161,16 @@ const Cart = () => {
                       <div className="flex items-center border border-gray-200 bg-white">
                         <button
                           onClick={() => updateQuantity(item.id, item.size, item.quantity + 1)}
-                          className="p-2 text-gray-400 hover:text-jet transition-colors"
+                          className="p-3.5 text-gray-400 hover:text-jet transition-colors min-h-[44px] min-w-[44px] inline-flex items-center justify-center"
                         >
-                          <Plus className="w-3 h-3" />
+                          <Plus className="w-4 h-4" />
                         </button>
                         <span className="w-8 text-center font-sans text-sm">{item.quantity}</span>
                         <button
                           onClick={() => updateQuantity(item.id, item.size, item.quantity - 1)}
-                          className="p-2 text-gray-400 hover:text-jet transition-colors"
+                          className="p-3.5 text-gray-400 hover:text-jet transition-colors min-h-[44px] min-w-[44px] inline-flex items-center justify-center"
                         >
-                          <Minus className="w-3 h-3" />
+                          <Minus className="w-4 h-4" />
                         </button>
                       </div>
                     </div>
@@ -181,7 +181,7 @@ const Cart = () => {
                       <p className="hidden md:block font-serif text-lg text-jet">{formatPrice(item.lineTotal)}</p>
                       <button
                         onClick={() => removeFromCart(item.id, item.size)}
-                        className="p-2 text-gray-300 hover:text-red-500 transition-colors md:ms-4"
+                        className="p-3 text-gray-300 hover:text-red-500 transition-colors md:ms-4"
                         title="إزالة"
                       >
                         <Trash2 className="w-5 h-5" />

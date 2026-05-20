@@ -48,19 +48,19 @@ const Footer = () => {
                 <bdi dir="ltr">{CONFIG.contactPhone}</bdi>
               </a>
             </div>
-            <div className="flex gap-4 mt-6">
+            <div className="flex gap-2 mt-6">
               {CONFIG.socials.instagram && (
-                <a href={CONFIG.socials.instagram} target="_blank" rel="noreferrer" className="text-gray-400 hover:text-gold transition-colors">
+                <a href={CONFIG.socials.instagram} target="_blank" rel="noreferrer" className="p-2 -m-2 text-gray-400 hover:text-gold transition-colors inline-flex items-center justify-center min-h-[44px] min-w-[44px]">
                   <Camera className="w-5 h-5" />
                 </a>
               )}
               {CONFIG.socials.tiktok && (
-                <a href={CONFIG.socials.tiktok} target="_blank" rel="noreferrer" className="text-gray-400 hover:text-gold transition-colors text-xs font-sans">
+                <a href={CONFIG.socials.tiktok} target="_blank" rel="noreferrer" className="p-2 -m-2 text-gray-400 hover:text-gold transition-colors text-xs font-sans inline-flex items-center justify-center min-h-[44px] min-w-[44px]">
                   TikTok
                 </a>
               )}
               {CONFIG.socials.snapchat && (
-                <a href={CONFIG.socials.snapchat} target="_blank" rel="noreferrer" className="text-gray-400 hover:text-gold transition-colors text-xs font-sans">
+                <a href={CONFIG.socials.snapchat} target="_blank" rel="noreferrer" className="p-2 -m-2 text-gray-400 hover:text-gold transition-colors text-xs font-sans inline-flex items-center justify-center min-h-[44px] min-w-[44px]">
                   Snap
                 </a>
               )}

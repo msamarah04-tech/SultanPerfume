@@ -58,7 +58,7 @@ const Navbar = () => {
   return (
     <>
       <div
-        className="fixed top-0 inset-x-0 z-[900] flex flex-col"
+        className="fixed top-0 inset-x-0 z-[900] flex flex-col pt-safe-area-top"
       >
        
 
@@ -73,14 +73,14 @@ const Navbar = () => {
           <div className="container mx-auto px-4 md:px-8 flex items-center justify-between relative">
 
             {/* Mobile Menu Toggle & Search */}
-            <div className="flex items-center gap-3 md:hidden flex-1">
+            <div className="flex items-center gap-1 md:hidden flex-1">
               <button
                 onClick={() => setIsMobileMenuOpen(true)}
-                className="p-2 -ms-2 rounded-none hover:bg-gold/5 transition-colors focus:outline-none"
+                className="p-3 -ms-3 rounded-none hover:bg-gold/5 transition-colors focus:outline-none"
               >
                 <Menu className="w-6 h-6" />
               </button>
-              <button className="p-2 rounded-none hover:bg-gold/5 transition-colors">
+              <button className="p-3 rounded-none hover:bg-gold/5 transition-colors">
                 <Search className="w-5 h-5" />
               </button>
             </div>
@@ -175,9 +175,9 @@ const Navbar = () => {
                 <span className={currentLang === 'en' ? 'text-gold font-sans' : 'text-charcoal/50 font-sans'}>EN</span>
               </button>
 
-              <Link 
-                to="/cart" 
-                className="relative p-2 group rounded-full hover:bg-jet/10 transition-colors focus:outline-none focus:ring-2 focus:ring-gold/50"
+              <Link
+                to="/cart"
+                className="relative p-3 group rounded-full hover:bg-jet/10 transition-colors focus:outline-none focus:ring-2 focus:ring-gold/50"
                 aria-label="View cart"
               >
                 <ShoppingBag className="w-5 h-5 group-hover:text-gold transition-colors" />

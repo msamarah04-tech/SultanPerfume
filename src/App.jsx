@@ -41,7 +41,7 @@ const Layout = () => (
     <ScrollProgressBar />
     <CursorSpotlight />
     <Navbar />
-    <main className="flex-grow flex flex-col pt-[72px]">
+    <main className="flex-grow flex flex-col main-content-pt">
       <Outlet />
     </main>
     <Footer />

@@ -432,7 +432,7 @@ const Checkout = () => {
                       value={promoCodeInput}
                       onChange={(e) => setPromoCodeInput(e.target.value.toUpperCase())}
                       disabled={appliedCoupon !== null}
-                      className="flex-grow font-sans text-xs bg-white border border-gray-200 px-3 py-2.5 focus:border-gold focus:outline-none uppercase text-jet disabled:bg-gray-50 disabled:text-gray-400"
+                      className="flex-grow font-sans text-base md:text-xs bg-white border border-gray-200 px-3 py-2.5 focus:border-gold focus:outline-none uppercase text-jet disabled:bg-gray-50 disabled:text-gray-400"
                     />
                     {appliedCoupon ? (
                       <button
@@ -442,14 +442,14 @@ const Checkout = () => {
                           setPromoCodeInput('');
                           showToast('تمت إزالة كود الخصم', 'info');
                         }}
-                        className="bg-red-500 hover:bg-red-600 text-white font-sans text-xs font-semibold px-4 py-2.5 transition-colors"
+                        className="bg-red-500 hover:bg-red-600 text-white font-sans text-xs font-semibold px-4 py-3 transition-colors"
                       >
                         إلغاء
                       </button>
                     ) : (
                       <button
                         onClick={handleApplyPromo}
-                        className="bg-jet hover:bg-gold text-white font-sans text-xs font-semibold px-4 py-2.5 transition-colors shrink-0"
+                        className="bg-jet hover:bg-gold text-white font-sans text-xs font-semibold px-4 py-3 transition-colors shrink-0"
                       >
                         تطبيق
                       </button>
@@ -541,7 +541,7 @@ const Checkout = () => {
                           value={formData.city}
                           onChange={handleChange}
                           onBlur={handleBlur}
-                          className={`w-full appearance-none bg-white font-sans text-sm p-3 pr-10 outline-none transition-colors cursor-pointer text-jet border ${errors.city ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-gold'} ${!formData.city ? 'text-gray-400' : ''}`}
+                          className={`w-full appearance-none bg-white font-sans text-base md:text-sm py-3 ps-3 pe-10 outline-none transition-colors cursor-pointer text-jet border ${errors.city ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-gold'} ${!formData.city ? 'text-gray-400' : ''}`}
                         >
                           <option value="">اختر المدينة أو المنطقة...</option>
                           <optgroup label="── عمّان ──">
@@ -555,7 +555,7 @@ const Checkout = () => {
                             ))}
                           </optgroup>
                         </select>
-                        <ChevronDown className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                        <ChevronDown className="absolute end-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                       </div>
                       {errors.city && <span className="text-red-500 text-xs mt-0.5">{errors.city}</span>}
                     </div>

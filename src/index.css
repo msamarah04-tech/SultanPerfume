@@ -43,6 +43,19 @@
   }
 }
 
+/* Safe-area inset utilities — used by Navbar and wherever fixed/sticky elements sit at the viewport edge */
+.pt-safe-area-top {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+/* Compensates for the fixed navbar height (72px) + dynamic safe-area top on notched iPhones */
+.main-content-pt {
+  padding-top: calc(72px + env(safe-area-inset-top, 0px));
+}
+/* Adds home-indicator clearance to the very bottom of the viewport */
+.pb-safe-area-bottom {
+  padding-bottom: max(0.5rem, env(safe-area-inset-bottom, 0px));
+}
+
 @layer utilities {
   /* ── Hide scrollbar while keeping scroll functionality ── */
   .scrollbar-hide,

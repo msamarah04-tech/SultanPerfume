@@ -272,7 +272,7 @@ const OfferSelection = () => {
                 placeholder="ابحث عن العطور الصيفية المفضلة..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full font-sans text-xs bg-white border border-gray-200 px-10 py-3 focus:border-gold focus:outline-none transition-colors text-jet placeholder-gray-400"
+                className="w-full font-sans text-base md:text-xs bg-white border border-gray-200 px-10 py-3 focus:border-gold focus:outline-none transition-colors text-jet placeholder-gray-400"
               />
               <Search className="w-4 h-4 text-gray-400 absolute start-3.5 top-3.5" />
             </div>

@@ -12,7 +12,7 @@ const Input = React.forwardRef(({
 }, ref) => {
   const inputId = id || label?.toLowerCase().replace(/\s+/g, '-');
 
-  const baseStyles = `w-full bg-white border font-sans text-sm p-3 transition-colors outline-none
+  const baseStyles = `w-full bg-white border font-sans text-base md:text-sm p-3 transition-colors outline-none
     ${error ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-gold'}
     ${className}`;
 

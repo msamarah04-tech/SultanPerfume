@@ -57,7 +57,7 @@ const MobileMenu = ({ isOpen, onClose, links }) => {
               <button
                 onClick={onClose}
                 aria-label="إغلاق القائمة"
-                className="p-2 text-jet hover:text-gold transition-colors"
+                className="p-3 text-jet hover:text-gold transition-colors"
               >
                 <X className="w-6 h-6" />
               </button>

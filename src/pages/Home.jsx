@@ -191,8 +191,8 @@ const Home = () => {
       <PageTransition>
 
         {/* Hero Section — outer div provides the scroll runway; sticky section stays pinned */}
-        <div ref={heroRef} className={`-mt-[72px] ${showPoster ? 'h-[100svh]' : 'h-[300vh]'}`}>
-          <section className="sticky top-0 h-screen min-h-[480px] w-full overflow-hidden flex items-stretch bg-jet">
+        <div ref={heroRef} className={`-mt-[72px] ${showPoster ? 'h-[100dvh]' : 'h-[300vh]'}`}>
+          <section className="sticky top-0 h-[100dvh] min-h-[480px] w-full overflow-hidden flex items-stretch bg-jet">
 
             {/* ── PANEL INDEX (far left, desktop only) ── */}
             <div className="absolute left-6 top-1/2 -translate-y-1/2 z-30 hidden md:flex flex-col items-center" style={{ direction: 'ltr' }}>

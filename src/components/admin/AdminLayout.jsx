@@ -77,8 +77,7 @@ const AdminLayout = () => {
           <button
             onClick={() => setIsMobileNavOpen(o => !o)}
             aria-label={isMobileNavOpen ? 'Close menu' : 'Open menu'}
-            className="p-2 text-gray-300 hover:text-white transition-colors"
-            style={{ minHeight: 'unset', minWidth: 'unset' }}
+            className="p-3 text-gray-300 hover:text-white transition-colors"
           >
             {isMobileNavOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
@@ -125,10 +124,9 @@ const AdminLayout = () => {
                 key={item.path}
                 to={item.path}
                 onClick={() => setIsMobileNavOpen(false)}
-                className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded text-center shrink-0 transition-colors ${
+                className={`flex flex-col items-center gap-0.5 px-3 py-3.5 rounded text-center shrink-0 transition-colors ${
                   isActive ? 'text-gold bg-white/10' : 'text-gray-400 hover:text-white'
                 }`}
-                style={{ minHeight: 'unset', minWidth: 'unset' }}
               >
                 <item.icon className="w-4 h-4" />
                 <span className="font-sans text-[9px] uppercase tracking-wide">{item.label}</span>

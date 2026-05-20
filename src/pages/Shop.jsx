@@ -121,7 +121,7 @@ const Shop = () => {
                 <select
                   value={selectedBrand}
                   onChange={(e) => setSelectedBrand(e.target.value)}
-                  className="w-full bg-white border border-gold/15 hover:border-gold/35 px-4 py-3.5 font-sans text-xs font-semibold outline-none focus:border-gold transition-all duration-300 rounded-none shadow-sm cursor-pointer"
+                  className="w-full bg-white border border-gold/15 hover:border-gold/35 px-4 py-3.5 font-sans text-base md:text-xs font-semibold outline-none focus:border-gold transition-all duration-300 rounded-none shadow-sm cursor-pointer"
                 >
                   <option value="all">كل الماركات</option>
                   {uniqueBrands.map(b => (
@@ -136,7 +136,7 @@ const Shop = () => {
                 <select
                   value={sort}
                   onChange={(e) => setSort(e.target.value)}
-                  className="w-full bg-white border border-gold/15 hover:border-gold/35 px-4 py-3.5 font-sans text-xs font-semibold outline-none focus:border-gold transition-all duration-300 rounded-none shadow-sm cursor-pointer"
+                  className="w-full bg-white border border-gold/15 hover:border-gold/35 px-4 py-3.5 font-sans text-base md:text-xs font-semibold outline-none focus:border-gold transition-all duration-300 rounded-none shadow-sm cursor-pointer"
                 >
                   <option value="featured">مميز</option>
                   <option value="newest">الأحدث</option>
