@@ -467,7 +467,7 @@ const Home = () => {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-20%" }}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12"
+            className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 md:gap-8 lg:gap-12"
           >
             {featuredProducts.map(product => (
               <motion.div key={product.id} variants={getFadeUp(prefersReducedMotion)}>
