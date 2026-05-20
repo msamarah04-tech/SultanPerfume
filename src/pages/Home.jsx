@@ -233,8 +233,10 @@ const Home = () => {
                       ref={videoRef}
                       muted
                       playsInline
-                      preload="auto"
+                      preload="metadata"
                       poster="/hero-poster.jpg"
+                      disablePictureInPicture
+                      aria-hidden="true"
                       onLoadedMetadata={(e) => { e.target.currentTime = 0.3; }}
                       onError={() => setVideoError(true)}
                       className="absolute inset-0 w-full h-full object-cover object-center brightness-[2.1] contrast-[1.0]"

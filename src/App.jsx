@@ -33,6 +33,7 @@ import Feedback from './pages/admin/Feedback';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import NotFound from './pages/NotFound';
+import ScrollToTop from './components/layout/ScrollToTop';
 
 // Layouts
 const Layout = () => (
@@ -93,6 +94,7 @@ function App() {
       <AuthProvider>
         <CartProvider>
           <BrowserRouter>
+            <ScrollToTop />
             <AnimatedRoutes />
           </BrowserRouter>
         </CartProvider>
