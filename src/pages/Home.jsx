@@ -286,8 +286,8 @@ const Home = () => {
               />
             </AnimatePresence>
 
-            {/* Floating collection card */}
-            <div className="absolute bottom-5 inset-x-0 flex justify-center z-10 pointer-events-none">
+            {/* Floating collection card — hidden on mobile to avoid overlap with progress dots */}
+            <div className="absolute bottom-5 inset-x-0 hidden md:flex justify-center z-10 pointer-events-none">
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -336,7 +336,7 @@ const Home = () => {
                       {/* Pill badge */}
                       <div className="inline-flex items-center gap-2.5 mb-8 bg-white/[0.06] border border-white/[0.12] backdrop-blur-sm px-4 py-2 rounded-full">
                         <span className="w-1.5 h-1.5 rounded-full bg-gold shadow-[0_0_6px_rgba(212,175,55,0.8)]" />
-                        <span className="font-sans text-[9px] font-bold text-gold/90 tracking-[0.45em] uppercase">{panel.tagline}</span>
+                        <span className="font-sans text-[9px] font-bold text-gold/90 tracking-[0.1em] md:tracking-[0.45em] uppercase">{panel.tagline}</span>
                       </div>
 
                       {/* Headline */}
@@ -416,7 +416,7 @@ const Home = () => {
         </motion.div>
 
         {/* Scroll progress dots + scroll indicator */}
-        <div className="absolute bottom-8 inset-x-0 z-30 flex flex-col items-center gap-3 pointer-events-none">
+        <div className="absolute bottom-16 md:bottom-8 inset-x-0 z-30 flex flex-col items-center gap-3 pointer-events-none">
           <div className="flex items-center gap-3">
             {heroPanels.map((_, i) => (
               <div
