@@ -372,8 +372,8 @@ const Checkout = () => {
 
           <div className="flex flex-col lg:flex-row gap-12">
 
-            {/* Summary Sidebar — shows FIRST on mobile so the CTA is above the fold */}
-            <div className="w-full lg:w-80 shrink-0 order-first lg:order-last">
+            {/* Summary Sidebar */}
+            <div className="w-full lg:w-80 shrink-0 order-last lg:order-last">
               <div className="bg-white p-6 md:p-8 border border-gray-100 lg:sticky lg:top-24">
                 <h2 className="font-serif text-xl text-jet mb-6">ملخّص الطلب</h2>
 
@@ -502,7 +502,7 @@ const Checkout = () => {
             </div>
 
             {/* Form */}
-            <div className="flex-grow order-last lg:order-first">
+            <div className="flex-grow order-first lg:order-first">
               <form onSubmit={handleSubmit} className="space-y-8 bg-white p-6 md:p-8 border border-gray-100 shadow-sm">
 
                 <div>

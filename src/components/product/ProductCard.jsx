@@ -1,9 +1,9 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { formatPrice } from '../../lib/format';
 import { useReducedMotion } from '../../lib/motion';
-import { ShoppingBag } from 'lucide-react';
+import { ShoppingBag, Sparkles } from 'lucide-react';
 
 const CATEGORY_AR = {
   men:    'رجالي',
@@ -17,9 +17,12 @@ const CATEGORY_STYLE = {
   unisex: 'text-amber-700 bg-amber-50  border-amber-200',
 };
 
-const ProductCard = ({ product, variant = 'grid' }) => {
+const ProductCard = ({ product, variant = 'grid', offerId = 'summer-5-for-25' }) => {
   const prefersReducedMotion = useReducedMotion();
+  const navigate = useNavigate();
   const [activeImg, setActiveImg] = useState(0);
+
+  const goToOffer = () => navigate(`/offer/${offerId}`, { state: { preSelectedProduct: product } });
 
   const startingPrice = Math.min(...product.sizes.map(s => s.price));
   const images = product.images?.length
@@ -73,8 +76,8 @@ const ProductCard = ({ product, variant = 'grid' }) => {
                 {CATEGORY_AR[product.category] || product.category}
               </span>
             </div>
-            <div className="flex items-center justify-between gap-2 mt-3 pt-2 border-t border-gray-50">
-              <div className="flex items-baseline gap-1.5">
+            <div className="mt-3 pt-2 border-t border-gray-50 flex flex-col gap-1.5">
+              <div className="flex items-baseline gap-1.5 mb-1">
                 <span className="font-serif text-xl sm:text-2xl text-jet font-bold leading-none">
                   {formatPrice(startingPrice)}
                 </span>
@@ -82,11 +85,18 @@ const ProductCard = ({ product, variant = 'grid' }) => {
               </div>
               <Link
                 to={`/product/${product.id}`}
-                className="shrink-0 bg-jet hover:bg-gold text-white hover:text-black font-sans text-[10px] font-extrabold uppercase tracking-[0.12em] px-3 py-2.5 flex items-center gap-1.5 transition-all duration-300"
+                className="w-full bg-jet hover:bg-gold text-white hover:text-black font-sans text-[10px] font-extrabold uppercase tracking-[0.12em] px-3 py-2.5 flex items-center justify-center gap-1.5 transition-all duration-300"
               >
                 <ShoppingBag className="w-3.5 h-3.5" />
-                اختر
+                شراء العطر
               </Link>
+              <button
+                onClick={goToOffer}
+                className="w-full bg-gold/8 hover:bg-gold border border-gold/25 hover:border-gold text-gold hover:text-white font-sans text-[10px] font-extrabold uppercase tracking-[0.12em] px-3 py-2.5 flex items-center justify-center gap-1.5 transition-all duration-300"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                أضف للعرض
+              </button>
             </div>
           </div>
         </div>
@@ -178,14 +188,21 @@ const ProductCard = ({ product, variant = 'grid' }) => {
             <span className="font-sans text-[10px] text-gray-400">تبدأ من</span>
           </div>
 
-          {/* CTA button */}
+          {/* CTA buttons */}
           <Link
             to={`/product/${product.id}`}
-            className="w-full bg-jet hover:bg-gold text-white hover:text-black font-sans text-[11px] font-extrabold uppercase tracking-[0.15em] py-3.5 flex items-center justify-center gap-2.5 transition-all duration-300 group/btn"
+            className="w-full bg-jet hover:bg-gold text-white hover:text-black font-sans text-[11px] font-extrabold uppercase tracking-[0.15em] py-3.5 flex items-center justify-center gap-2 transition-all duration-300 group/btn"
           >
-            <ShoppingBag className="w-4 h-4 transition-transform duration-300 group-hover/btn:scale-110" />
-            اختر حجمك
+            <ShoppingBag className="w-3.5 h-3.5 transition-transform duration-300 group-hover/btn:scale-110" />
+            شراء العطر
           </Link>
+          <button
+            onClick={goToOffer}
+            className="w-full bg-gold/[0.08] hover:bg-gold border border-gold/25 hover:border-gold text-gold hover:text-white font-sans text-[11px] font-extrabold uppercase tracking-[0.12em] py-3 flex items-center justify-center gap-2 transition-all duration-300"
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            أضف للعرض
+          </button>
 
         </div>
       </div>
