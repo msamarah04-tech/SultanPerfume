@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, Fragment } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, AnimatePresence, useScroll, useSpring, useTransform, useMotionValueEvent } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useSpring, useTransform } from 'framer-motion';
 import { EASE, DURATION, useReducedMotion, getStaggerContainer, getFadeUp, isRTL } from '../lib/motion';
 import ProductCard from '../components/product/ProductCard';
 import PageTransition from '../components/layout/PageTransition';
@@ -59,18 +59,6 @@ const PANEL_VARIANTS = {
   exit: { y: -20, opacity: 0, filter: 'blur(4px)', transition: { duration: 0.3 } },
 };
 
-// Detects mobile viewport; used to disable the scroll runway and simplify the hero.
-function useIsMobile() {
-  const [isMobile, setIsMobile] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia('(max-width: 768px)');
-    const update = () => setIsMobile(mq.matches);
-    update();
-    mq.addEventListener('change', update);
-    return () => mq.removeEventListener('change', update);
-  }, []);
-  return isMobile;
-}
 
 const Home = () => {
   const [featuredProducts, setFeaturedProducts] = useState([]);
@@ -90,36 +78,47 @@ const Home = () => {
   const [showTestimonialsSection, setShowTestimonialsSection] = useState(true);
   const [homeSections, setHomeSections] = useState(['hero', 'featured', 'bundle_offer', 'testimonials']);
 
-  const isMobile = useIsMobile();
   const heroPanelRef = useRef(0);
 
   const activeBundleOffer = activeBundleOffers[currentOfferIndex] || activeBundleOffers[0] || DEFAULT_OFFERS[0];
   const showPoster = prefersReducedMotion || videoError;
 
-  // Scroll runway only exists on desktop — h-[300vh] outer div + sticky inner section.
-  // offset 'start start'→'end end' gives exactly 200vh of travel while the section is pinned.
-  const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end end'] });
+  // Scroll runway = h-[300vh] outer div + sticky inner section = 200vh of travel on all screen sizes.
+  const scrollRange = useRef(
+    typeof window !== 'undefined' ? window.innerHeight * 2 : 1600
+  ).current;
 
-  // Single shared spring — all transforms derive from this, not from raw progress.
-  // mass param prevents over-shoot on fast flicks; restDelta stops micro-updates near end.
-  const smooth = useSpring(scrollYProgress, { stiffness: 80, damping: 20, mass: 0.4, restDelta: 0.001 });
+  const { scrollY } = useScroll();
+  const smooth = useSpring(scrollY, { stiffness: 80, damping: 20, mass: 0.4, restDelta: 0.001 });
 
-  // Scroll indicator fades from raw progress (responds immediately, before spring eases in)
-  const scrollIndicatorOpacity = useTransform(scrollYProgress, [0, 0.12], [1, 0]);
+  const scrollIndicatorOpacity = useTransform(scrollY, [0, scrollRange * 0.12], [1, 0], { clamp: true });
+  const textY = useTransform(smooth, [0, scrollRange], [0, -40], { clamp: true });
 
-  // Text parallax: foreground text drifts up as user scrolls — gives depth without touching the video.
-  // Only on desktop; on mobile textY stays 0 via inline conditional.
-  const textY = useTransform(smooth, [0, 1], [0, -40]);
+  // Panel switching — all screen sizes.
+  useEffect(() => {
+    if (showPoster) return;
+    const onScroll = () => {
+      const progress = Math.min(1, window.scrollY / scrollRange);
+      const next = Math.min(2, Math.floor(progress * 3));
+      if (heroPanelRef.current !== next) {
+        heroPanelRef.current = next;
+        setHeroPanel(next);
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [showPoster, scrollRange]);
 
-  // Panel switching — debounced via ref so setHeroPanel fires only at the two boundary crossings
-  // (0→1 and 1→2), never on every scroll micro-update (Fix F).
-  useMotionValueEvent(scrollYProgress, 'change', (v) => {
-    const next = Math.min(2, Math.floor(v * 3));
-    if (heroPanelRef.current !== next) {
-      heroPanelRef.current = next;
-      setHeroPanel(next);
-    }
-  });
+  // Video scrubbing via spring — all screen sizes.
+  useEffect(() => {
+    if (showPoster) return;
+    const unsub = smooth.on('change', (px) => {
+      const video = videoRef.current;
+      if (!video || video.readyState < 2) return;
+      video.currentTime = Math.min(1, px / scrollRange) * video.duration;
+    });
+    return unsub;
+  }, [showPoster, smooth, scrollRange]);
 
   useEffect(() => {
     offersApi.list()
@@ -200,7 +199,7 @@ const Home = () => {
   const sectionHero = (
     <div
       ref={heroRef}
-      className={`-mt-[72px] ${showPoster || isMobile ? 'h-[100dvh]' : 'h-[300vh]'} relative bg-jet`}
+      className={`-mt-[72px] ${showPoster ? 'h-[100dvh]' : 'h-[300vh]'} relative bg-jet`}
     >
       <section className="sticky top-0 h-[100dvh] min-h-[480px] w-full flex items-stretch relative overflow-hidden">
 
@@ -252,11 +251,9 @@ const Home = () => {
               >
                 <video
                   ref={videoRef}
-                  autoPlay
-                  loop
                   muted
                   playsInline
-                  preload="metadata"
+                  preload="auto"
                   poster="/hero-poster.jpg"
                   disablePictureInPicture
                   aria-hidden="true"
@@ -306,7 +303,7 @@ const Home = () => {
 
         {/* Text panel — switches at scroll thirds; y parallax applied only on desktop (Fix A+H) */}
         <motion.div
-          style={{ y: isMobile ? 0 : textY }}
+          style={{ y: textY }}
           className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center pt-16 pb-8 md:relative md:inset-auto md:w-[44%] md:flex-none md:items-start md:justify-center md:text-start md:pl-14 lg:pl-20 xl:pl-28 md:pr-10 md:pt-0 md:pb-0 will-change-transform"
         >
 
