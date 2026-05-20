@@ -1,5 +1,6 @@
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useReducedMotion, getStaggerContainer, getFadeUp } from '../lib/motion';
 import { useCart } from '../context/CartContext';
 import { formatPrice } from '../lib/format';
@@ -7,7 +8,7 @@ import { CONFIG } from '../config';
 import PageTransition from '../components/layout/PageTransition';
 import EmptyState from '../components/ui/EmptyState';
 import Button from '../components/ui/Button';
-import { ShoppingBag, Minus, Plus, Trash2, Sparkles } from 'lucide-react';
+import { ShoppingBag, Minus, Plus, Trash2, Sparkles, X } from 'lucide-react';
 
 function parseBundleNames(sizeStr) {
   if (!sizeStr) return null;
@@ -51,6 +52,8 @@ function BundlePerfumeList({ item }) {
 const Cart = () => {
   const { cart, updateQuantity, removeFromCart, subtotal } = useCart();
   const prefersReducedMotion = useReducedMotion();
+  const navigate = useNavigate();
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const isFreeDelivery = CONFIG.freeDeliveryThreshold > 0 && subtotal >= CONFIG.freeDeliveryThreshold;
   const deliveryFee = isFreeDelivery ? 0 : CONFIG.deliveryFee;
@@ -81,8 +84,8 @@ const Cart = () => {
 
           <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
 
-            {/* Order Summary — shows FIRST on mobile so the CTA is above the fold */}
-            <div className="w-full lg:w-80 shrink-0 order-first lg:order-last">
+            {/* Order Summary */}
+            <div className="w-full lg:w-80 shrink-0 order-last lg:order-last">
               <div className="bg-white p-6 md:p-8 border border-gray-100 lg:sticky lg:top-24">
                 <h2 className="font-serif text-2xl text-jet mb-6">ملخّص الطلب</h2>
 
@@ -104,9 +107,7 @@ const Cart = () => {
                   <span className="font-serif text-2xl text-gold">{formatPrice(total)}</span>
                 </div>
 
-                <Link to="/checkout">
-                  <Button variant="primary" fullWidth>متابعة الطلب</Button>
-                </Link>
+                <Button variant="primary" fullWidth onClick={() => setShowConfirm(true)}>متابعة الطلب</Button>
 
                 <div className="flex items-center justify-center gap-1.5 mt-4 bg-gold/5 border border-gold/10 py-2">
                   <span className="text-[10px] font-sans text-gold font-bold">✨ التوصيل مجاني بالكامل لكافة الطلبات!</span>
@@ -115,7 +116,7 @@ const Cart = () => {
             </div>
 
             {/* Cart Items */}
-            <div className="flex-grow order-last lg:order-first">
+            <div className="flex-grow order-first lg:order-first">
               <div className="hidden md:grid grid-cols-12 gap-4 pb-4 border-b border-gray-200 font-sans text-[10px] text-gray-500">
                 <div className="col-span-6">المنتج</div>
                 <div className="col-span-3 text-center">الكمية</div>
@@ -197,6 +198,59 @@ const Cart = () => {
           </div>
         </div>
       </div>
+      {/* Confirmation Modal */}
+      <AnimatePresence>
+        {showConfirm && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowConfirm(false)}
+              className="fixed inset-0 bg-jet/60 backdrop-blur-sm z-[1100]"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 16 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 16 }}
+              transition={{ duration: 0.25, ease: [0.25, 1, 0.5, 1] }}
+              className="fixed inset-x-4 top-1/2 -translate-y-1/2 z-[1200] sm:inset-auto sm:left-1/2 sm:-translate-x-1/2 sm:w-full sm:max-w-md bg-ivory border border-gold/20 shadow-2xl p-8"
+            >
+              <button
+                onClick={() => setShowConfirm(false)}
+                className="absolute top-4 start-4 p-2 text-gray-400 hover:text-jet transition-colors"
+                aria-label="إغلاق"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              <div className="text-center mb-6">
+                <div className="w-12 h-12 rounded-full bg-gold/10 border border-gold/20 flex items-center justify-center mx-auto mb-4">
+                  <ShoppingBag className="w-5 h-5 text-gold" />
+                </div>
+                <h2 className="font-serif text-2xl text-jet mb-2">تأكيد الطلب</h2>
+                <p className="font-sans text-sm text-gray-500 leading-relaxed">
+                  هل أنت متأكد من المتابعة إلى صفحة الدفع؟
+                </p>
+              </div>
+
+              <div className="bg-white border border-gray-100 px-5 py-4 mb-6 flex justify-between items-center">
+                <span className="font-sans text-sm text-gray-500">الإجمالي</span>
+                <span className="font-serif text-xl text-gold font-bold">{formatPrice(total)}</span>
+              </div>
+
+              <div className="flex flex-col gap-3">
+                <Button variant="primary" fullWidth onClick={() => { setShowConfirm(false); navigate('/checkout'); }}>
+                  نعم، متابعة الطلب
+                </Button>
+                <Button variant="outline" fullWidth onClick={() => setShowConfirm(false)}>
+                  لا، العودة للسلة
+                </Button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </PageTransition>
   );
 };
