@@ -81,7 +81,7 @@ router.post('/', validate(createOrderSchema), (req, res, next) => {
       subtotal,
       deliveryFee,
       total,
-      status: 'confirmed',
+      status: 'new',
     });
 
     res.status(201).json({ ok: true, data: order });

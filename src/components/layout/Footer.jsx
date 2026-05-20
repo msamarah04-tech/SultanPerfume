@@ -75,6 +75,9 @@ const Footer = () => {
             <Link to="/admin/login" className="hover:text-white transition-colors">لوحة الإدارة</Link>
           </div>
         </div>
+        <p className="mt-4 text-center font-sans text-[11px] text-gray-600">
+          في حال لم يتم استلام الطلب، يتم دفع أجور التوصيل.
+        </p>
       </div>
     </footer>
   );

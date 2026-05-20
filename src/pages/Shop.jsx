@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useReducedMotion, getStaggerContainer, getFadeUp } from '../lib/motion';
 import PageTransition from '../components/layout/PageTransition';
@@ -7,7 +7,7 @@ import ProductCard from '../components/product/ProductCard';
 import EmptyState from '../components/ui/EmptyState';
 import productsData from '../data/products.json';
 import { getProducts } from '../lib/storage';
-import { SlidersHorizontal } from 'lucide-react';
+import { offersApi } from '../lib/api';
 
 const PAGE_SIZE = 12;
 
@@ -22,18 +22,20 @@ const Shop = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
   const [allProductsRaw, setAllProductsRaw] = useState(productsData);
-  const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
   const prefersReducedMotion = useReducedMotion();
 
   const [category, setCategory] = useState(searchParams.get('category') || 'all');
   const [selectedBrand, setSelectedBrand] = useState(searchParams.get('brand') || 'all');
   const [sort, setSort] = useState(searchParams.get('sort') || 'featured');
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const [bundleOffers, setBundleOffers] = useState([]);
 
   // Derived from API-loaded products, updated when the API responds
   const uniqueBrands = Array.from(
     new Set(allProductsRaw.filter(p => p.active && p.brand).map(p => p.brand))
   ).sort();
+
+  const featuredProducts = allProductsRaw.filter(p => p.active && p.featured).slice(0, 4);
 
   useEffect(() => {
     const catParam = searchParams.get('category');
@@ -75,11 +77,21 @@ const Shop = () => {
 
   }, [category, selectedBrand, sort, setSearchParams]);
 
+  useEffect(() => {
+    offersApi.list()
+      .then(items => {
+        const bundles = items
+          .filter(o => o.type === 'bundle')
+          .map(o => ({ ...o, image: o.imageUrl || '/offer.png' }));
+        setBundleOffers(bundles);
+      })
+      .catch(() => {});
+  }, []);
+
   const clearFilters = () => {
     setCategory('all');
     setSelectedBrand('all');
     setSort('featured');
-    setIsMobileFiltersOpen(false);
   };
 
   return (
@@ -91,6 +103,54 @@ const Shop = () => {
             <h1 className="font-serif text-4xl md:text-5xl text-jet mb-4">المتجر</h1>
             <div className="w-16 h-px bg-gold"></div>
           </div>
+
+          {/* Featured Perfumes */}
+          {featuredProducts.length > 0 && (
+            <section className="mb-14">
+              <div className="flex items-end justify-between mb-6">
+                <div>
+                  <h2 className="font-serif text-2xl md:text-3xl text-jet mb-2">العطور المميزة</h2>
+                  <div className="w-10 h-px bg-gold"></div>
+                </div>
+                <Link to="/shop" className="font-sans text-xs text-gold hover:text-jet transition-colors font-semibold tracking-wide">
+                  عرض الكل
+                </Link>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-x-3 sm:gap-x-6 md:gap-x-8 gap-y-8">
+                {featuredProducts.map(product => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Special Offers */}
+          {bundleOffers.length > 0 && (
+            <section className="mb-14">
+              <div className="mb-6">
+                <h2 className="font-serif text-2xl md:text-3xl text-jet mb-2">العروض الخاصة</h2>
+                <div className="w-10 h-px bg-gold"></div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {bundleOffers.map(offer => (
+                  <Link
+                    key={offer.id}
+                    to={`/offer/${offer.id}`}
+                    className="group flex items-center justify-between gap-6 bg-jet text-white p-6 hover:bg-gold transition-colors duration-300"
+                  >
+                    <div>
+                      <p className="font-sans text-[10px] text-gold group-hover:text-jet/60 mb-2 font-bold tracking-[0.2em] uppercase">عرض خاص</p>
+                      <h3 className="font-serif text-xl mb-2">{offer.titleAr}</h3>
+                      <p className="font-sans text-xs text-gray-300 group-hover:text-jet/70">
+                        اختر {offer.perfumeCount} عطور بـ {offer.price} دينار مع توصيل مجاني
+                      </p>
+                    </div>
+                    <span className="font-serif text-3xl text-gold group-hover:text-jet shrink-0 transition-transform duration-300 group-hover:-translate-x-1">←</span>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )}
 
           {/* Top Filter Bar */}
           <div className="bg-ivory/95 backdrop-blur-md border border-gold/10 p-5 md:p-6 mb-12 shadow-[0_4px_30px_rgba(212,175,55,0.02)] flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 z-30 relative">
@@ -174,7 +234,7 @@ const Shop = () => {
                   variants={getStaggerContainer()}
                   initial="hidden"
                   animate="visible"
-                  className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-16"
+                  className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-3 sm:gap-x-6 md:gap-x-8 gap-y-8 sm:gap-y-10 md:gap-y-16"
                 >
                   {products.slice(0, visibleCount).map(product => (
                     <motion.div key={product.id} variants={getFadeUp(prefersReducedMotion)}>

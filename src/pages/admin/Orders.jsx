@@ -13,27 +13,27 @@ function parseBundleItemNames(sizeStr) {
 }
 
 const STATUS_BG_LIGHT = {
-  new:       'bg-yellow-50 border-yellow-200',
+  new:       'bg-amber-50 border-amber-200',
   contacted: 'bg-blue-50 border-blue-200',
   confirmed: 'bg-indigo-50 border-indigo-200',
-  completed: 'bg-green-50 border-green-200',
+  fulfilled: 'bg-green-50 border-green-200',
   cancelled: 'bg-red-50 border-red-200',
 };
 const STATUS_DOT = {
-  new:       'bg-yellow-400',
+  new:       'bg-amber-400',
   contacted: 'bg-blue-400',
   confirmed: 'bg-indigo-400',
-  completed: 'bg-green-400',
+  fulfilled: 'bg-green-400',
   cancelled: 'bg-red-400',
 };
 
-const STATUS_OPTIONS = ['new', 'contacted', 'confirmed', 'completed', 'cancelled'];
+const STATUS_OPTIONS = ['new', 'contacted', 'confirmed', 'fulfilled', 'cancelled'];
 
 const STATUS_STYLE = {
-  new:       'bg-yellow-100 text-yellow-800',
+  new:       'bg-amber-100 text-amber-800',
   contacted: 'bg-blue-100 text-blue-800',
   confirmed: 'bg-indigo-100 text-indigo-800',
-  completed: 'bg-green-100 text-green-800',
+  fulfilled: 'bg-green-100 text-green-800',
   cancelled: 'bg-red-100 text-red-800',
 };
 
@@ -187,7 +187,6 @@ const Orders = () => {
     finally { setter(false); }
   };
 
-  const confirmedOrders = orders.filter(o => o.status === 'confirmed' || o.status === 'completed');
   const hasDateFilter   = dateFrom || dateTo;
   const activeQuick     = QUICK_FILTERS.find(f => f.from === dateFrom && f.to === dateTo);
   const selectedList    = [...selectedIds];
@@ -225,9 +224,9 @@ const Orders = () => {
               <Button
                 variant="outline" size="sm"
                 onClick={() => handleExportExcel(null)}
-                disabled={isExportingExcel || confirmedOrders.length === 0}
+                disabled={isExportingExcel || orders.length === 0}
                 className="flex items-center gap-2"
-                title={confirmedOrders.length === 0 ? 'No confirmed or completed orders to export' : ''}
+                title={orders.length === 0 ? 'No orders to export' : ''}
               >
                 <FileSpreadsheet className="w-4 h-4" />
                 {isExportingExcel ? 'Exporting…' : 'Export to Excel'}
@@ -352,7 +351,7 @@ const Orders = () => {
                     return (
                       <tr
                         key={order.id}
-                        className={`transition-colors ${isChecked ? 'bg-yellow-50/60' : 'hover:bg-gray-50/50'}`}
+                        className={`transition-colors ${isChecked ? 'bg-yellow-50/60' : order.status === 'new' ? 'bg-amber-50/40 hover:bg-amber-50/70' : 'hover:bg-gray-50/50'}`}
                       >
                         <td className="pl-6 pr-3 py-4">
                           <Checkbox

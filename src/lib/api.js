@@ -104,6 +104,7 @@ export const adminApi = {
   // Feedback
   feedback: {
     list: () => apiGet('/admin/feedback', { admin: true }),
+    create: (data) => apiPost('/admin/feedback', data, { admin: true }),
     patch: (id, data) => apiPatch(`/admin/feedback/${id}`, data, { admin: true }),
     delete: (id) => apiDelete(`/admin/feedback/${id}`, { admin: true }),
   },

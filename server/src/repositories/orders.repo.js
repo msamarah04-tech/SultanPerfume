@@ -46,7 +46,7 @@ export const ordersRepo = {
     return orderRowToApi(row, items);
   },
 
-  create({ id, customer, itemRows, subtotal, deliveryFee, total, status = 'confirmed' }) {
+  create({ id, customer, itemRows, subtotal, deliveryFee, total, status = 'new' }) {
     const db = getDb();
     const now = new Date().toISOString();
 
@@ -77,11 +77,9 @@ export const ordersRepo = {
     const sets = [];
     const params = [];
 
-    // 'completed' is the API term; DB stores it as 'fulfilled'
     if (fields.status) {
-      const dbStatus = fields.status === 'completed' ? 'fulfilled' : fields.status;
       sets.push('status = ?');
-      params.push(dbStatus);
+      params.push(fields.status);
     }
     if (fields.whatsappSent !== undefined) {
       sets.push('whatsapp_sent = ?');
@@ -135,7 +133,6 @@ export const ordersRepo = {
       conditions.push(`id IN (${placeholders})`);
       params.push(...ids);
     } else {
-      conditions.push(`status IN ('confirmed', 'fulfilled')`);
       if (dateFrom) { conditions.push('created_at >= ?'); params.push(dateFrom); }
       if (dateTo)   { conditions.push('created_at <= ?'); params.push(dateTo); }
     }

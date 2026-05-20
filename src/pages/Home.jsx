@@ -533,19 +533,19 @@ const Home = () => {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
                     <div className="flex items-center gap-3">
                       <span className="w-6 h-6 rounded-full bg-gold/10 text-gold flex items-center justify-center shrink-0">✓</span>
-                      <span className="font-sans text-xs text-charcoal font-semibold">توصيل سريع ومجاني للمنزل</span>
+                      <span className="font-sans text-xs text-charcoal font-semibold">اختر 5 عطور من مجموعتنا الفاخرة</span>
                     </div>
                     <div className="flex items-center gap-3">
                       <span className="w-6 h-6 rounded-full bg-gold/10 text-gold flex items-center justify-center shrink-0">✓</span>
-                      <span className="font-sans text-xs text-charcoal font-semibold">حرية اختيار وتوليف العطور</span>
+                      <span className="font-sans text-xs text-charcoal font-semibold">تشمل الباقة علب وأكياس هدايا أنيقة</span>
                     </div>
                     <div className="flex items-center gap-3">
                       <span className="w-6 h-6 rounded-full bg-gold/10 text-gold flex items-center justify-center shrink-0">✓</span>
-                      <span className="font-sans text-xs text-charcoal font-semibold">ثبات وفوحان يدوم طويلاً</span>
+                      <span className="font-sans text-xs text-charcoal font-semibold">التوصيل مجاني لجميع المناطق</span>
                     </div>
                     <div className="flex items-center gap-3">
                       <span className="w-6 h-6 rounded-full bg-gold/10 text-gold flex items-center justify-center shrink-0">✓</span>
-                      <span className="font-sans text-xs text-charcoal font-semibold">ضمان الرضا أو استرجاع المال</span>
+                      <span className="font-sans text-xs text-charcoal font-semibold">الكمية محدودة - لا تفوّت الفرصة!</span>
                     </div>
                   </div>
 

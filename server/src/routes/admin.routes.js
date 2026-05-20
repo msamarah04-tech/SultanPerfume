@@ -9,7 +9,7 @@ import { validate } from '../middleware/validate.js';
 import { createProductSchema, updateProductSchema, patchProductSchema } from '../schemas/product.schema.js';
 import { patchOrderSchema } from '../schemas/order.schema.js';
 import { createOfferSchema, updateOfferSchema } from '../schemas/offer.schema.js';
-import { patchFeedbackSchema } from '../schemas/feedback.schema.js';
+import { createFeedbackSchema, patchFeedbackSchema } from '../schemas/feedback.schema.js';
 import { updateSettingsSchema } from '../schemas/settings.schema.js';
 import { generateProductId } from '../lib/ids.js';
 import { piasterToJod } from '../lib/pricing.js';
@@ -153,12 +153,12 @@ router.get('/orders/export/excel', async (req, res, next) => {
 
     const workbook = new ExcelJS.Workbook();
     workbook.creator = 'Al Sultan Perfumes';
-    const sheet = workbook.addWorksheet('Confirmed Orders');
+    const sheet = workbook.addWorksheet('Orders');
 
     // Column definitions
     sheet.columns = [
       { key: 'orderId',    header: 'Order ID',           width: 22 },
-      { key: 'date',       header: 'Date Confirmed',      width: 16 },
+      { key: 'date',       header: 'Date',                width: 16 },
       { key: 'name',       header: 'Customer Name',       width: 26 },
       { key: 'phone',      header: 'Phone',               width: 18 },
       { key: 'address',    header: 'Address',             width: 36 },
@@ -167,6 +167,7 @@ router.get('/orders/export/excel', async (req, res, next) => {
       { key: 'subtotal',   header: 'Subtotal (JOD)',      width: 16 },
       { key: 'delivery',   header: 'Delivery Fee (JOD)',  width: 18 },
       { key: 'total',      header: 'Total (JOD)',         width: 16 },
+      { key: 'status',     header: 'Status',              width: 14 },
       { key: 'notes',      header: 'Notes',               width: 30 },
     ];
 
@@ -206,6 +207,7 @@ router.get('/orders/export/excel', async (req, res, next) => {
         delivery:  deliveryJod,
         // Total: formula + pre-computed result so file opens without needing recalc
         total:     { formula: `H${rowNum}+I${rowNum}`, result: totalJod },
+        status:    order.status,
         notes:     order.customer_notes || '',
       });
 
@@ -256,11 +258,11 @@ router.get('/orders/export/excel', async (req, res, next) => {
 
     // Freeze first row, auto-filter on header
     sheet.views = [{ state: 'frozen', xSplit: 0, ySplit: 1, activeCell: 'A2' }];
-    sheet.autoFilter = { from: { row: 1, column: 1 }, to: { row: 1, column: 11 } };
+    sheet.autoFilter = { from: { row: 1, column: 1 }, to: { row: 1, column: 12 } };
 
     const today = new Date().toISOString().slice(0, 10);
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    res.setHeader('Content-Disposition', `attachment; filename="al-sultan-confirmed-orders-${today}.xlsx"`);
+    res.setHeader('Content-Disposition', `attachment; filename="al-sultan-orders-${today}.xlsx"`);
 
     await workbook.xlsx.write(res);
     res.end();
@@ -333,6 +335,13 @@ router.delete('/offers/:id', (req, res, next) => {
 router.get('/feedback', (req, res, next) => {
   try {
     res.json({ ok: true, data: feedbackRepo.list({ approvedOnly: false }) });
+  } catch (err) { next(err); }
+});
+
+router.post('/feedback', validate(createFeedbackSchema), (req, res, next) => {
+  try {
+    const item = feedbackRepo.create({ ...req.body, approved: req.body.approved !== false });
+    res.status(201).json({ ok: true, data: item });
   } catch (err) { next(err); }
 });
 

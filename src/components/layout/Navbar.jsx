@@ -41,8 +41,8 @@ const Navbar = () => {
 
   // Upgraded Nav Links with Dropdown Support
   const navLinks = [
-    { 
-      label: 'المتجر', 
+    {
+      label: 'المتجر',
       path: '/shop',
       subLinks: [
         { label: 'وصل حديثاً', path: '/shop' },
@@ -53,6 +53,15 @@ const Navbar = () => {
     { label: 'المجموعات', path: '/shop' },
     { label: 'عن العلامة', path: '/about' },
     { label: 'تواصل معنا', path: '/contact' }
+  ];
+
+  const mobileLinks = [
+    { label: 'الصفحة الرئيسية', path: '/' },
+    { label: 'العروض', path: '/offer/summer-5-for-25' },
+    { label: 'عطور السلطان', path: '/shop' },
+    { label: 'العطور الرجالية', path: '/shop?category=men' },
+    { label: 'العطور النسائية', path: '/shop?category=women' },
+    { label: 'السلة', path: '/cart' },
   ];
 
   return (
@@ -210,7 +219,7 @@ const Navbar = () => {
       <MobileMenu
         isOpen={isMobileMenuOpen}
         onClose={() => setIsMobileMenuOpen(false)}
-        links={navLinks}
+        links={mobileLinks}
       />
     </>
   );

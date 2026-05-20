@@ -75,7 +75,7 @@ export function orderRowToApi(row, items = []) {
     subtotal: piasterToJod(row.subtotal),
     deliveryFee: piasterToJod(row.delivery_fee),
     total: piasterToJod(row.total),
-    status: row.status === 'fulfilled' ? 'completed' : row.status,
+    status: row.status,
     whatsappSent: row.whatsapp_sent === 1,
     createdAt: row.created_at,
     updatedAt: row.updated_at,

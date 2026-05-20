@@ -65,7 +65,7 @@ const OrderConfirmed = () => {
           </h1>
 
           <p className="font-sans text-gray-500 mb-8 max-w-md mx-auto leading-loose">
-            تمّ استلام طلبك رقم <strong className="text-jet">{order.id}</strong> وتأكيده.{' '}
+            تمّ استلام طلبك رقم <strong className="text-jet">{order.id}</strong> بنجاح.{' '}
             سنتواصل معك على <span dir="ltr" className="text-jet">{order.customer.phone}</span> لتنسيق التوصيل.
           </p>
 

@@ -45,7 +45,7 @@ const ProductCard = ({ product }) => {
               src={images[activeImg]}
               alt={product.name}
               loading="lazy"
-              className="w-full h-full object-contain p-5 transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:scale-[1.06]"
+              className="w-full h-full object-contain p-3 sm:p-5 transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:scale-[1.06]"
             />
 
             {/* Stock badges */}
@@ -82,12 +82,12 @@ const ProductCard = ({ product }) => {
         </Link>
 
         {/* ── Info zone ───────────────────────────────────── */}
-        <div className="px-4 pt-4 pb-4 flex flex-col gap-3 flex-1">
+        <div className="px-2.5 sm:px-4 pt-3 sm:pt-4 pb-3 sm:pb-4 flex flex-col gap-2 sm:gap-3 flex-1">
 
           {/* Name */}
           <div>
             <Link to={`/product/${product.id}`}>
-              <h3 className="font-serif text-jet text-[19px] leading-snug hover:text-gold transition-colors duration-300">
+              <h3 className="font-serif text-jet text-sm sm:text-[19px] leading-tight sm:leading-snug hover:text-gold transition-colors duration-300">
                 {product.name}
               </h3>
             </Link>
@@ -105,7 +105,7 @@ const ProductCard = ({ product }) => {
 
           {/* Price */}
           <div className="flex items-baseline gap-2 mt-auto pt-1 border-t border-gray-50">
-            <span className="font-serif text-[26px] text-jet font-bold leading-none">
+            <span className="font-serif text-xl sm:text-[26px] text-jet font-bold leading-none">
               {formatPrice(startingPrice)}
             </span>
             <span className="font-sans text-[10px] text-gray-400">تبدأ من</span>

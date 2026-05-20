@@ -21,6 +21,6 @@ export const createOrderSchema = z.object({
 });
 
 export const patchOrderSchema = z.object({
-  status: z.enum(['new', 'contacted', 'confirmed', 'completed', 'cancelled']).optional(),
+  status: z.enum(['new', 'contacted', 'confirmed', 'fulfilled', 'cancelled']).optional(),
   whatsappSent: z.boolean().optional(),
 });

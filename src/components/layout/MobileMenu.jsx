@@ -10,7 +10,7 @@ const MobileMenu = ({ isOpen, onClose, links }) => {
 
   useEffect(() => {
     onClose();
-  }, [location.pathname, onClose]);
+  }, [location.pathname, location.search, onClose]);
 
   useEffect(() => {
     if (isOpen) {

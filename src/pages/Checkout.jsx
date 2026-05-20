@@ -169,7 +169,7 @@ function OrderSuccessPopup({ order, onContinue, onViewOrder }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.82 }}
           >
-            <h2 className="font-serif text-3xl text-jet mb-1.5">تمّ تأكيد طلبك!</h2>
+            <h2 className="font-serif text-3xl text-jet mb-1.5">تم استلام طلبك!</h2>
             <p className="font-sans text-sm text-gray-500">
               شكراً لك،{' '}
               <strong className="text-jet">{order.customer.name.split(' ')[0]}</strong>
@@ -625,6 +625,9 @@ const Checkout = () => {
                       <h4 className="font-sans font-medium text-jet mb-2">الدفع عند الاستلام</h4>
                       <p className="font-sans text-sm text-gray-500 leading-loose">
                         يتم دفع المبلغ نقداً عند استلام الطلب.
+                      </p>
+                      <p className="font-sans text-xs text-gray-400 mt-2 leading-loose">
+                        في حال لم يتم استلام الطلب، يتم دفع أجور التوصيل.
                       </p>
                     </div>
                   </div>
