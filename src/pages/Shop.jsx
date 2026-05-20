@@ -8,6 +8,7 @@ import EmptyState from '../components/ui/EmptyState';
 import productsData from '../data/products.json';
 import { getProducts } from '../lib/storage';
 import { offersApi } from '../lib/api';
+import { LayoutGrid, List } from 'lucide-react';
 
 const PAGE_SIZE = 12;
 
@@ -29,6 +30,12 @@ const Shop = () => {
   const [sort, setSort] = useState(searchParams.get('sort') || 'featured');
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [bundleOffers, setBundleOffers] = useState([]);
+  const [viewMode, setViewMode] = useState(() => localStorage.getItem('shopViewMode') || 'grid');
+
+  const setView = (mode) => {
+    setViewMode(mode);
+    localStorage.setItem('shopViewMode', mode);
+  };
 
   // Derived from API-loaded products, updated when the API responds
   const uniqueBrands = Array.from(
@@ -214,6 +221,24 @@ const Shop = () => {
                   مسح الفلاتر
                 </button>
               )}
+
+              {/* View Mode Toggle */}
+              <div className="flex border border-gold/15 overflow-hidden shrink-0">
+                <button
+                  onClick={() => setView('grid')}
+                  title="عرض شبكي"
+                  className={`p-2.5 transition-colors duration-200 ${viewMode === 'grid' ? 'bg-gold text-white' : 'bg-white text-charcoal/50 hover:text-gold'}`}
+                >
+                  <LayoutGrid className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setView('list')}
+                  title="عرض قائمة"
+                  className={`p-2.5 transition-colors duration-200 ${viewMode === 'list' ? 'bg-gold text-white' : 'bg-white text-charcoal/50 hover:text-gold'}`}
+                >
+                  <List className="w-4 h-4" />
+                </button>
+              </div>
             </div>
 
           </div>
@@ -234,11 +259,14 @@ const Shop = () => {
                   variants={getStaggerContainer()}
                   initial="hidden"
                   animate="visible"
-                  className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-3 sm:gap-x-6 md:gap-x-8 gap-y-8 sm:gap-y-10 md:gap-y-16"
+                  className={viewMode === 'list'
+                    ? "flex flex-col gap-3"
+                    : "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-3 sm:gap-x-6 md:gap-x-8 gap-y-8 sm:gap-y-10 md:gap-y-16"
+                  }
                 >
                   {products.slice(0, visibleCount).map(product => (
                     <motion.div key={product.id} variants={getFadeUp(prefersReducedMotion)}>
-                      <ProductCard product={product} />
+                      <ProductCard product={product} variant={viewMode} />
                     </motion.div>
                   ))}
                 </motion.div>

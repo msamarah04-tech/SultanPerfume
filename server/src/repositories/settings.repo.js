@@ -6,7 +6,7 @@ export const settingsRepo = {
   PUBLIC_KEYS: new Set([
     'deliveryFee', 'freeDeliveryThreshold', 'whatsappNumber', 'currency',
     'currencySymbol', 'numeralSystem', 'tagline', 'contactEmail', 'contactPhone',
-    'contactAddress', 'socials',
+    'contactAddress', 'socials', 'homeSections',
   ]),
 
   getAll() {

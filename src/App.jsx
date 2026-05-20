@@ -29,6 +29,7 @@ import Orders from './pages/admin/Orders';
 import Settings from './pages/admin/Settings';
 import AdminOffers from './pages/admin/Offers';
 import Feedback from './pages/admin/Feedback';
+import HomepageLayout from './pages/admin/HomepageLayout';
 
 import About from './pages/About';
 import Contact from './pages/Contact';
@@ -80,6 +81,7 @@ const AnimatedRoutes = () => {
             <Route path="orders" element={<Orders />} />
             <Route path="offers" element={<AdminOffers />} />
             <Route path="feedback" element={<Feedback />} />
+            <Route path="homepage" element={<HomepageLayout />} />
             <Route path="settings" element={<Settings />} />
           </Route>
         </Route>

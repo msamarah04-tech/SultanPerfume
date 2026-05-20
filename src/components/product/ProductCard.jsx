@@ -17,7 +17,7 @@ const CATEGORY_STYLE = {
   unisex: 'text-amber-700 bg-amber-50  border-amber-200',
 };
 
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product, variant = 'grid' }) => {
   const prefersReducedMotion = useReducedMotion();
   const [activeImg, setActiveImg] = useState(0);
 
@@ -26,6 +26,73 @@ const ProductCard = ({ product }) => {
     ? product.images
     : ['https://images.unsplash.com/photo-1594035910387-fea47794261f?q=80&w=400&auto=format&fit=crop'];
   const catStyle = CATEGORY_STYLE[product.category] || CATEGORY_STYLE.unisex;
+
+  if (variant === 'list') {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
+        className="w-full group"
+      >
+        <div className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-row overflow-hidden">
+          {/* Image */}
+          <Link to={`/product/${product.id}`} className="shrink-0 w-28 sm:w-36 bg-[#0e0e0e] relative">
+            <div className="h-full aspect-[3/4]">
+              <img
+                src={images[activeImg]}
+                alt={product.name}
+                loading="lazy"
+                className="w-full h-full object-contain p-2 sm:p-3"
+              />
+            </div>
+            {product.stock <= 5 && product.stock > 0 && (
+              <div className="absolute top-2 start-2 bg-gold text-black font-sans text-[8px] font-extrabold px-1.5 py-0.5 tracking-wider z-10">
+                كمية محدودة
+              </div>
+            )}
+            {product.stock === 0 && (
+              <div className="absolute top-2 start-2 bg-white text-jet font-sans text-[8px] font-bold px-1.5 py-0.5 z-10">
+                نفذت الكمية
+              </div>
+            )}
+          </Link>
+
+          {/* Info */}
+          <div className="flex-1 flex flex-col justify-between p-3 sm:p-4 min-w-0">
+            <div>
+              <Link to={`/product/${product.id}`}>
+                <h3 className="font-serif text-jet text-base sm:text-lg leading-tight hover:text-gold transition-colors duration-300 mb-0.5 line-clamp-2">
+                  {product.name}
+                </h3>
+              </Link>
+              {product.brand && (
+                <p className="font-sans text-[10px] text-gray-400 uppercase tracking-[0.18em] mb-2">{product.brand}</p>
+              )}
+              <span className={`inline-block font-sans text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 border ${catStyle}`}>
+                {CATEGORY_AR[product.category] || product.category}
+              </span>
+            </div>
+            <div className="flex items-center justify-between gap-2 mt-3 pt-2 border-t border-gray-50">
+              <div className="flex items-baseline gap-1.5">
+                <span className="font-serif text-xl sm:text-2xl text-jet font-bold leading-none">
+                  {formatPrice(startingPrice)}
+                </span>
+                <span className="font-sans text-[10px] text-gray-400">تبدأ من</span>
+              </div>
+              <Link
+                to={`/product/${product.id}`}
+                className="shrink-0 bg-jet hover:bg-gold text-white hover:text-black font-sans text-[10px] font-extrabold uppercase tracking-[0.12em] px-3 py-2.5 flex items-center gap-1.5 transition-all duration-300"
+              >
+                <ShoppingBag className="w-3.5 h-3.5" />
+                اختر
+              </Link>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    );
+  }
 
   return (
     <motion.div

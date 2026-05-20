@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { CONFIG } from '../../config';
-import { LayoutDashboard, Package, ShoppingCart, Settings, LogOut, Tag, MessageSquare, Menu, X } from 'lucide-react';
+import { LayoutDashboard, Package, ShoppingCart, Settings, LogOut, Tag, MessageSquare, Menu, X, Home } from 'lucide-react';
 
 const AdminLayout = () => {
   const location = useLocation();
@@ -21,6 +21,7 @@ const AdminLayout = () => {
     { label: 'Orders', path: '/admin/orders', icon: ShoppingCart },
     { label: 'Offers', path: '/admin/offers', icon: Tag },
     { label: 'Feedback', path: '/admin/feedback', icon: MessageSquare },
+    { label: 'Homepage', path: '/admin/homepage', icon: Home },
     { label: 'Settings', path: '/admin/settings', icon: Settings },
   ];
 

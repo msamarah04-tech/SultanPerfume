@@ -16,6 +16,7 @@ export const updateSettingsSchema = z.object({
     tiktok: z.string().optional(),
     snapchat: z.string().optional(),
   }).optional(),
+  homeSections: z.array(z.string()).optional(),
 }).strict();
 
 export const loginSchema = z.object({
