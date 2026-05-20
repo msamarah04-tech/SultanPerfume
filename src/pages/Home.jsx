@@ -9,7 +9,6 @@ import { CONFIG } from '../config';
 import productsData from '../data/products.json';
 import { getProducts } from '../lib/storage';
 import { offersApi, feedbackApi, settingsApi } from '../lib/api';
-import { useToast } from '../context/ToastContext';
 import { Sparkles } from 'lucide-react';
 
 const TESTIMONIALS = [
@@ -57,7 +56,6 @@ const DEFAULT_OFFERS = [{
 const Home = () => {
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [bestSellers, setBestSellers] = useState([]);
-  const { showToast } = useToast();
   const prefersReducedMotion = useReducedMotion();
   const heroRef = useRef(null);
   const videoRef = useRef(null);
@@ -167,12 +165,6 @@ const Home = () => {
       })
       .catch(() => setTestimonials(TESTIMONIALS));
   }, []);
-
-  const handleNewsletterSubmit = (e) => {
-    e.preventDefault();
-    showToast('تم الاشتراك بنجاح');
-    e.target.reset();
-  };
 
   const storyX = prefersReducedMotion ? 0 : (isRTL() ? 32 : -32);
 
@@ -829,40 +821,6 @@ const Home = () => {
           return section ? <Fragment key={key}>{section}</Fragment> : null;
         })}
 
-        {/* Newsletter Strip — always at bottom */}
-        <section className="relative bg-jet py-28 border-t border-gold/10 overflow-hidden">
-          {/* Glowing backdrops */}
-          <div className="absolute bottom-0 start-1/2 -translate-x-1/2 w-[500px] h-[150px] bg-gold/5 rounded-full blur-[120px] pointer-events-none" />
-
-          <motion.div
-            initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-10%" }}
-            transition={{ duration: DURATION.standard, ease: EASE.standard }}
-            className="relative z-10 container mx-auto px-4 max-w-2xl text-center"
-          >
-            <span className="font-sans text-xs font-semibold text-gold tracking-widest uppercase mb-4 block">
-              كن جزءاً من حكايتنا
-            </span>
-            <h2 className="font-serif text-3xl md:text-4xl text-white mb-4">اشترك في نشرتنا</h2>
-            <p className="font-sans text-sm md:text-base text-white/60 mb-10 leading-loose max-w-md mx-auto">
-              اشترك للحصول على وصول حصري ومسبق لأحدث الإصدارات العطرية والعروض الخاصة المخصصة لك.
-            </p>
-            <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-4 p-1 bg-white/[0.03] border border-white/10 max-w-xl mx-auto shadow-2xl">
-              <input
-                type="email"
-                placeholder="بريدك الإلكتروني"
-                required
-                dir="ltr"
-                className="flex-grow bg-transparent text-white px-6 py-4 font-sans text-sm outline-none placeholder:text-white/30 text-start"
-              />
-              <Button type="submit" variant="primary" className="py-4 px-8 overflow-hidden relative group shrink-0">
-                <span className="relative z-10">اشتراك</span>
-                <span className="absolute inset-0 -translate-x-full group-hover:animate-shimmer bg-gradient-to-r from-transparent via-white/20 to-transparent"></span>
-              </Button>
-            </form>
-          </motion.div>
-        </section>
       </PageTransition>
     </>
   );

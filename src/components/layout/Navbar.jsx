@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from 'framer-motion';
 import { ShoppingBag, Menu, Search, ChevronDown } from 'lucide-react';
@@ -10,6 +10,7 @@ import { useToast } from '../../context/ToastContext';
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const closeMobileMenu = useCallback(() => setIsMobileMenuOpen(false), []);
   const [isScrolled, setIsScrolled] = useState(false);
   const [hoveredMenu, setHoveredMenu] = useState(null);
   const [currentLang, setCurrentLang] = useState('ar');
@@ -218,7 +219,7 @@ const Navbar = () => {
 
       <MobileMenu
         isOpen={isMobileMenuOpen}
-        onClose={() => setIsMobileMenuOpen(false)}
+        onClose={closeMobileMenu}
         links={mobileLinks}
       />
     </>
