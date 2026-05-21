@@ -13,7 +13,7 @@ services:
       - key: PORT
         value: 10000
       - key: DATABASE_PATH
-        value: /var/data/alsultan.db
+        value: ./data/alsultan.db
       - key: JWT_SECRET
         generateValue: true
       - key: JWT_EXPIRES_IN
@@ -28,10 +28,6 @@ services:
         value: 900000
       - key: RATE_LIMIT_MAX
         value: 100
-    disk:
-      name: alsultan-data
-      mountPath: /var/data
-      sizeGB: 1
 
   # ── Frontend (React / Vite static site) ───────────────────────────────────
   - type: web
