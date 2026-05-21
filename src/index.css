@@ -30,16 +30,10 @@
     height: auto;
   }
 
-  /* Custom Slim Luxury Scrollbar */
+  /* Scrollbar reset — overridden below with branded styles */
   ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-  ::-webkit-scrollbar-track {
-    @apply bg-jet;
-  }
-  ::-webkit-scrollbar-thumb {
-    @apply bg-gold/50 hover:bg-gold rounded-full transition-colors duration-300;
+    width: 8px;
+    height: 8px;
   }
 }
 
@@ -93,9 +87,30 @@
   }
 }
 
-@keyframes heroFloat {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-6px); }
+/* Branded thin scrollbar — gold on ivory */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #D4AF37 transparent;
+}
+html::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+html::-webkit-scrollbar-track {
+  background: transparent;
+}
+html::-webkit-scrollbar-thumb {
+  background-color: rgba(212, 175, 55, 0.55);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  transition: background-color 0.2s;
+}
+html::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(212, 175, 55, 0.85);
+}
+@media (max-width: 768px) {
+  html::-webkit-scrollbar { width: 0; height: 0; }
 }
 
 @keyframes heroSpin {
@@ -104,19 +119,18 @@
 }
 
 @keyframes heroDrift {
-  0%   { transform: translateY(0) translateX(0); opacity: 0; }
-  10%  { opacity: 0.5; }
-  90%  { opacity: 0.5; }
-  100% { transform: translateY(-100vh) translateX(20px); opacity: 0; }
+  0%   { transform: translateY(0); opacity: 0; }
+  10%  { opacity: 0.55; }
+  90%  { opacity: 0.55; }
+  100% { transform: translateY(-100vh); opacity: 0; }
 }
 
 @keyframes heroBounce {
-  0%, 100% { transform: translateY(0);   opacity: 0.9; }
-  50%      { transform: translateY(6px); opacity: 0.4; }
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(6px); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  [style*="heroFloat"],
   [style*="heroSpin"],
   [style*="heroDrift"],
   [style*="heroBounce"] {
