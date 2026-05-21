@@ -17,10 +17,19 @@ export function getDb() {
 
   mkdirSync(path.dirname(dbPath), { recursive: true });
 
-  _db = new Database(dbPath);
+  _db = new Database(dbPath, { timeout: 30000 });
 
+  // WAL allows concurrent readers while a writer is active
   _db.pragma('journal_mode = WAL');
+  // Safe crash recovery with WAL; ~2-3x faster than FULL
+  _db.pragma('synchronous = NORMAL');
+  // Retry for 10 s before throwing SQLITE_BUSY instead of failing immediately
+  _db.pragma('busy_timeout = 10000');
   _db.pragma('foreign_keys = ON');
+  // 64 MB in-process page cache
+  _db.pragma('cache_size = -64000');
+  // Store temp tables and indices in RAM
+  _db.pragma('temp_store = MEMORY');
   // Auto-checkpoint when WAL reaches 200 pages (~800 KB) instead of the default 1000
   _db.pragma('wal_autocheckpoint = 200');
 
