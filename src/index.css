@@ -6,8 +6,9 @@
   /* ── Prevent horizontal overflow on all devices ── */
   html {
     overflow-x: hidden;
-    scroll-behavior: smooth;
-    /* Prevent font size inflation on orientation change */
+    /* scroll-behavior is intentionally omitted — Lenis handles smoothing on
+       desktop; iOS native touch scroll must NOT be overridden here or it
+       becomes sluggish. */
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
   }

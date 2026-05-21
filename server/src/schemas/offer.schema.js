@@ -4,6 +4,8 @@ export const createOfferSchema = z.object({
   title: z.string().min(1),
   description: z.string().default(''),
   type: z.string().default('bundle'),
+  perfumeCount: z.number().int().min(1).nullable().optional(),
+  price: z.number().min(0).nullable().optional(),
   discountPercent: z.number().int().min(0).max(100).nullable().optional(),
   discountAmount: z.number().min(0).nullable().optional(),
   promoCode: z.string().nullable().optional(),

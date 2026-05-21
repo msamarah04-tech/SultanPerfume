@@ -71,7 +71,12 @@ const Home = () => {
       .then(items => {
         const bundles = items
           .filter(o => o.type === 'bundle')
-          .map(o => ({ ...o, image: o.imageUrl || '/offer.png' }));
+          .map(o => ({
+            ...o,
+            titleAr: o.titleAr || o.title || '',
+            descriptionAr: o.descriptionAr || o.description || '',
+            image: o.imageUrl || '/offer.png',
+          }));
         setActiveBundleOffers(bundles.length ? bundles : DEFAULT_OFFERS);
         setCurrentOfferIndex(0);
       })
@@ -215,7 +220,7 @@ const Home = () => {
                         : 'border-gold/10 text-charcoal hover:border-gold/40 hover:text-gold bg-white'
                     }`}
                   >
-                    {offer.titleAr} ({offer.perfumeCount} عطور)
+                    {offer.titleAr}{offer.perfumeCount != null ? ` (${offer.perfumeCount} عطور)` : ''}
                     {isSelected && (
                       <span className="absolute bottom-0 inset-x-0 h-[2px] bg-gold" />
                     )}
@@ -245,7 +250,9 @@ const Home = () => {
                 <h2 className="font-serif text-3xl md:text-5xl text-jet mb-6 leading-tight">
                   {activeBundleOffer.titleAr} <br />
                   <span className="text-gold">
-                    {`${activeBundleOffer.perfumeCount} عطور بـ ${activeBundleOffer.price} دينار فقط!`}
+                    {activeBundleOffer.perfumeCount != null && activeBundleOffer.price != null
+                      ? `${activeBundleOffer.perfumeCount} عطور بـ ${activeBundleOffer.price} دينار فقط!`
+                      : activeBundleOffer.titleAr}
                   </span>
                 </h2>
 

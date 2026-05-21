@@ -95,13 +95,18 @@ const AnimatedRoutes = () => {
 
 function App() {
   useEffect(() => {
+    // Touch devices (phones/tablets) use native iOS/Android scroll — it's
+    // already the gold standard. Lenis event listeners add overhead and can
+    // make touch scroll feel sluggish. Only enable on pointer devices.
+    const isTouch = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+    if (isTouch) return;
+
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
       smoothTouch: false,
       wheelMultiplier: 1,
-      touchMultiplier: 1.2,
     });
 
     function raf(time) {

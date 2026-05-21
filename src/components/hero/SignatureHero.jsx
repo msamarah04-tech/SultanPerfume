@@ -7,6 +7,10 @@ import {
   useReducedMotion,
 } from 'framer-motion';
 
+// Computed once at module level — doesn't change mid-session
+const IS_TOUCH = typeof window !== 'undefined'
+  && window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+
 const SCENES = [
   {
     id: 'bella',
@@ -51,12 +55,17 @@ export default function SignatureHero() {
     offset: ['start start', 'end end'],
   });
 
+  // Spring adds cinematic momentum on desktop wheel scroll.
+  // On touch devices the raw value is used — native scroll is already
+  // smooth and the spring would make parallax lag behind the finger.
   const smooth = useSpring(scrollYProgress, {
-    stiffness: 70,
-    damping: 24,
-    mass: 0.5,
+    stiffness: 90,
+    damping: 28,
+    mass: 0.4,
     restDelta: 0.001,
   });
+
+  const progress = IS_TOUCH ? scrollYProgress : smooth;
 
   return (
     <section
@@ -67,7 +76,7 @@ export default function SignatureHero() {
     >
       <div className="sticky top-0 w-full h-[100dvh] overflow-hidden">
         {SCENES.map((scene, i) => (
-          <AtmosphereHaze key={`haze-${scene.id}`} scene={scene} index={i} progress={smooth} />
+          <AtmosphereHaze key={`haze-${scene.id}`} scene={scene} index={i} progress={progress} />
         ))}
 
         {SCENES.map((scene, i) => (
@@ -75,12 +84,12 @@ export default function SignatureHero() {
             key={scene.id}
             scene={scene}
             index={i}
-            progress={smooth}
+            progress={progress}
             reduced={reduced}
           />
         ))}
 
-        {!reduced && <ScrollHint progress={smooth} />}
+        {!reduced && <ScrollHint progress={progress} />}
       </div>
     </section>
   );
