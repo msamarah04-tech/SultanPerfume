@@ -74,7 +74,7 @@ export default function SignatureHero() {
       className="relative w-full"
       style={{ height: '320vh', background: BG }}
     >
-      <div className="sticky top-0 w-full h-[100dvh] overflow-hidden">
+      <div className="sticky top-0 w-full h-[100dvh]" style={{ overflow: 'clip' }}>
         {SCENES.map((scene, i) => (
           <AtmosphereHaze key={`haze-${scene.id}`} scene={scene} index={i} progress={progress} />
         ))}

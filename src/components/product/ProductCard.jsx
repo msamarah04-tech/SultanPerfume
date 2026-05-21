@@ -97,6 +97,9 @@ const ProductCard = ({ product, variant = 'grid', offerId = 'summer-5-for-25' })
                 <Sparkles className="w-3.5 h-3.5" />
                 أضف للعرض
               </button>
+              <p className="font-sans text-[9px] text-red-600 text-center leading-snug pt-0.5">
+                جميع العطور تركيب مطابقة للأصلية
+              </p>
             </div>
           </div>
         </div>
@@ -203,6 +206,9 @@ const ProductCard = ({ product, variant = 'grid', offerId = 'summer-5-for-25' })
             <Sparkles className="w-3.5 h-3.5" />
             أضف للعرض
           </button>
+          <p className="font-sans text-[10px] text-red-600 text-center leading-snug">
+            جميع العطور تركيب مطابقة للأصلية
+          </p>
 
         </div>
       </div>
