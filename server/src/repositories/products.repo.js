@@ -71,9 +71,9 @@ export const productsRepo = {
 
     db.prepare(`
       INSERT INTO products (id, name, name_ar, brand, description, category,
-        top_notes, heart_notes, base_notes, stock, featured, active, created_at, updated_at)
+        top_notes, heart_notes, base_notes, sections_json, stock, featured, active, created_at, updated_at)
       VALUES (@id, @name, @name_ar, @brand, @description, @category,
-        @top_notes, @heart_notes, @base_notes, @stock, @featured, @active,
+        @top_notes, @heart_notes, @base_notes, @sections_json, @stock, @featured, @active,
         @created_at, @updated_at)
     `).run(row);
 
@@ -92,8 +92,8 @@ export const productsRepo = {
       UPDATE products SET
         name = @name, name_ar = @name_ar, brand = @brand, description = @description,
         category = @category, top_notes = @top_notes, heart_notes = @heart_notes,
-        base_notes = @base_notes, stock = @stock, featured = @featured, active = @active,
-        updated_at = @updated_at
+        base_notes = @base_notes, sections_json = @sections_json, stock = @stock,
+        featured = @featured, active = @active, updated_at = @updated_at
       WHERE id = @id
     `).run(row);
 
@@ -105,19 +105,20 @@ export const productsRepo = {
   patch(id, fields) {
     const db = getDb();
     const allowed = ['name', 'name_ar', 'brand', 'description', 'category', 'stock', 'featured', 'active',
-      'top_notes', 'heart_notes', 'base_notes'];
+      'top_notes', 'heart_notes', 'base_notes', 'sections_json'];
     const sets = [];
     const params = [];
 
     // Handle camelCase to snake_case for patch fields
     const camelToSnake = { nameAr: 'name_ar', topNotes: 'top_notes', heartNotes: 'heart_notes',
-      baseNotes: 'base_notes' };
+      baseNotes: 'base_notes', sections: 'sections_json' };
 
     for (const [k, v] of Object.entries(fields)) {
       const col = camelToSnake[k] ?? k;
       if (!allowed.includes(col)) continue;
       let val = v;
       if (col === 'featured' || col === 'active') val = v ? 1 : 0;
+      if (col === 'sections_json') val = JSON.stringify(v ?? []);
       sets.push(`${col} = ?`);
       params.push(val);
     }

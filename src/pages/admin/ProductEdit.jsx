@@ -25,6 +25,7 @@ const ProductEdit = () => {
     topNotes: '',
     heartNotes: '',
     baseNotes: '',
+    sections: [],
     featured: false,
     active: true,
     images: [],
@@ -76,6 +77,22 @@ const ProductEdit = () => {
     const newSizes = [...formData.sizes];
     newSizes.splice(index, 1);
     setFormData(prev => ({ ...prev, sizes: newSizes }));
+  };
+
+  const handleSectionChange = (index, field, value) => {
+    const updated = [...formData.sections];
+    updated[index] = { ...updated[index], [field]: value };
+    setFormData(prev => ({ ...prev, sections: updated }));
+  };
+
+  const addSection = () => {
+    setFormData(prev => ({ ...prev, sections: [...prev.sections, { title: '', content: '' }] }));
+  };
+
+  const removeSection = (index) => {
+    const updated = [...formData.sections];
+    updated.splice(index, 1);
+    setFormData(prev => ({ ...prev, sections: updated }));
   };
 
   const handleImageUpload = (e) => {
@@ -267,6 +284,49 @@ const ProductEdit = () => {
                 placeholder="e.g. Amber, Musk, Vanilla"
               />
             </div>
+          </div>
+
+          <div className="bg-white p-6 border border-gray-200 shadow-sm">
+            <h2 className="font-serif text-xl text-jet mb-6">Product Sections</h2>
+            <p className="font-sans text-xs text-gray-400 mb-6">
+              Add custom sections that appear on the product page (e.g. "How to Use", "Story", "Ingredients").
+            </p>
+
+            <div className="space-y-6 mb-4">
+              {formData.sections.map((section, idx) => (
+                <div key={idx} className="border border-gray-100 p-4 relative">
+                  <button
+                    type="button"
+                    onClick={() => removeSection(idx)}
+                    className="absolute top-3 right-3 text-gray-300 hover:text-red-500 transition-colors"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                  <div className="space-y-3 pr-8">
+                    <Input
+                      label="Section Title"
+                      placeholder="e.g. How to Use"
+                      value={section.title}
+                      onChange={(e) => handleSectionChange(idx, 'title', e.target.value)}
+                    />
+                    <div>
+                      <label className="font-sans uppercase text-[10px] tracking-[0.1em] text-gray-500 block mb-1">Content</label>
+                      <textarea
+                        rows={4}
+                        placeholder="Section content..."
+                        value={section.content}
+                        onChange={(e) => handleSectionChange(idx, 'content', e.target.value)}
+                        className="w-full bg-white border border-gray-200 p-3 font-sans text-sm outline-none focus:border-gold resize-y"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <Button type="button" variant="outline" size="sm" onClick={addSection} className="flex items-center gap-2">
+              <Plus className="w-4 h-4" /> Add Section
+            </Button>
           </div>
 
           <div className="bg-white p-6 border border-gray-200 shadow-sm">

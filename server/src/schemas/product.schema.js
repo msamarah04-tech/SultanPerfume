@@ -5,6 +5,11 @@ const sizeSchema = z.object({
   price: z.number().min(0),
 });
 
+const sectionSchema = z.object({
+  title: z.string().default(''),
+  content: z.string().default(''),
+});
+
 export const createProductSchema = z.object({
   id: z.string().regex(/^p\d{3,}$/).optional(),
   name: z.string().min(1),
@@ -17,6 +22,7 @@ export const createProductSchema = z.object({
   topNotes: z.string().default(''),
   heartNotes: z.string().default(''),
   baseNotes: z.string().default(''),
+  sections: z.array(sectionSchema).default([]),
   images: z.array(z.string()).default([]),
   featured: z.boolean().default(false),
   active: z.boolean().default(true),

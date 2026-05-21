@@ -1,10 +1,21 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { getFadeUp, getStaggerContainer, useReducedMotion } from '../lib/motion';
 import PageTransition from '../components/layout/PageTransition';
 import { CONFIG } from '../config';
+import { settingsApi } from '../lib/api';
 
 const Contact = () => {
   const prefersReducedMotion = useReducedMotion();
+  const [settings, setSettings] = useState(null);
+
+  useEffect(() => {
+    settingsApi.getPublic().then(setSettings).catch(() => {});
+  }, []);
+
+  const contactEmail = settings?.contactEmail ?? CONFIG.contactEmail;
+  const contactPhone = settings?.contactPhone ?? CONFIG.contactPhone;
+  const whatsappNumber = settings?.whatsappNumber ?? CONFIG.whatsappNumber;
 
   return (
     <PageTransition>
@@ -25,15 +36,15 @@ const Contact = () => {
               هل لديك سؤال أو تحتاج مساعدة؟ نحن هنا لمساعدتك.
             </motion.p>
             <motion.div variants={getFadeUp(prefersReducedMotion)} className="flex flex-col gap-4">
-              <a href={`mailto:${CONFIG.contactEmail}`} className="font-sans text-jet hover:text-gold transition-colors">
-                <bdi>{CONFIG.contactEmail}</bdi>
+              <a href={`mailto:${contactEmail}`} className="font-sans text-jet hover:text-gold transition-colors">
+                <bdi>{contactEmail}</bdi>
               </a>
-              <a href={`tel:${CONFIG.contactPhone}`} className="font-sans text-jet hover:text-gold transition-colors">
-                <bdi dir="ltr">{CONFIG.contactPhone}</bdi>
+              <a href={`tel:${contactPhone}`} className="font-sans text-jet hover:text-gold transition-colors">
+                <bdi dir="ltr">{contactPhone}</bdi>
               </a>
-              {CONFIG.whatsappNumber && (
+              {whatsappNumber && (
                 <a
-                  href={`https://wa.me/${CONFIG.whatsappNumber}`}
+                  href={`https://wa.me/${whatsappNumber}`}
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center justify-center gap-2 font-sans text-sm bg-jet text-white px-6 py-3 hover:bg-gold transition-colors mx-auto"

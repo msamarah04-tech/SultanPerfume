@@ -215,6 +215,32 @@ const ProductDetail = () => {
             </div>
           </div>
 
+          {/* Custom Sections */}
+          {product.sections && product.sections.length > 0 && (
+            <div className="mb-24">
+              <motion.div
+                variants={getStaggerContainer()}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-10%" }}
+                className="flex flex-col gap-px border-t border-gold/15"
+              >
+                {product.sections.map((section, idx) => (
+                  <motion.div
+                    key={idx}
+                    variants={getFadeUp(prefersReducedMotion)}
+                    className="border-b border-gold/15 py-10"
+                  >
+                    {section.title && (
+                      <h3 className="font-serif text-2xl text-jet mb-4">{section.title}</h3>
+                    )}
+                    <p className="font-sans text-gray-600 leading-loose whitespace-pre-line">{section.content}</p>
+                  </motion.div>
+                ))}
+              </motion.div>
+            </div>
+          )}
+
           {/* Related Products */}
           {relatedProducts.length > 0 && (
             <div className="pt-20 border-t border-gold/30">

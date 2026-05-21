@@ -1,11 +1,24 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useReducedMotion, getStaggerContainer, getFadeUp } from '../../lib/motion';
 import { CONFIG } from '../../config';
+import { settingsApi } from '../../lib/api';
 import { Camera } from 'lucide-react';
 
 const Footer = () => {
   const prefersReducedMotion = useReducedMotion();
+  const [settings, setSettings] = useState(null);
+
+  useEffect(() => {
+    settingsApi.getPublic().then(setSettings).catch(() => {});
+  }, []);
+
+  const contactEmail = settings?.contactEmail ?? CONFIG.contactEmail;
+  const contactPhone = settings?.contactPhone ?? CONFIG.contactPhone;
+  const tagline = settings?.tagline ?? CONFIG.tagline;
+  const socials = settings?.socials ?? CONFIG.socials;
+
   return (
     <footer className="bg-jet text-white pt-16 pb-8 border-t border-gold/20">
       <div className="container mx-auto px-4 md:px-8">
@@ -23,7 +36,7 @@ const Footer = () => {
               {CONFIG.brandName}
             </Link>
             <p className="font-sans text-sm text-gray-400 max-w-xs leading-loose">
-              {CONFIG.tagline}. اكتشف مجموعتنا المختارة من العطور الفاخرة.
+              {tagline}. اكتشف مجموعتنا المختارة من العطور الفاخرة.
             </p>
           </motion.div>
 
@@ -41,26 +54,26 @@ const Footer = () => {
           <motion.div variants={getFadeUp(prefersReducedMotion)} className="flex flex-col items-center md:items-start">
             <h4 className="font-sans font-semibold text-sm mb-6 text-gray-400">التواصل</h4>
             <div className="flex flex-col gap-3 text-sm text-gray-300">
-              <a href={`mailto:${CONFIG.contactEmail}`} className="hover:text-gold transition-colors">
-                <bdi>{CONFIG.contactEmail}</bdi>
+              <a href={`mailto:${contactEmail}`} className="hover:text-gold transition-colors">
+                <bdi>{contactEmail}</bdi>
               </a>
-              <a href={`tel:${CONFIG.contactPhone}`} className="hover:text-gold transition-colors">
-                <bdi dir="ltr">{CONFIG.contactPhone}</bdi>
+              <a href={`tel:${contactPhone}`} className="hover:text-gold transition-colors">
+                <bdi dir="ltr">{contactPhone}</bdi>
               </a>
             </div>
             <div className="flex gap-2 mt-6">
-              {CONFIG.socials.instagram && (
-                <a href={CONFIG.socials.instagram} target="_blank" rel="noreferrer" className="p-2 -m-2 text-gray-400 hover:text-gold transition-colors inline-flex items-center justify-center min-h-[44px] min-w-[44px]">
+              {socials?.instagram && (
+                <a href={socials.instagram} target="_blank" rel="noreferrer" className="p-2 -m-2 text-gray-400 hover:text-gold transition-colors inline-flex items-center justify-center min-h-[44px] min-w-[44px]">
                   <Camera className="w-5 h-5" />
                 </a>
               )}
-              {CONFIG.socials.tiktok && (
-                <a href={CONFIG.socials.tiktok} target="_blank" rel="noreferrer" className="p-2 -m-2 text-gray-400 hover:text-gold transition-colors text-xs font-sans inline-flex items-center justify-center min-h-[44px] min-w-[44px]">
+              {socials?.tiktok && (
+                <a href={socials.tiktok} target="_blank" rel="noreferrer" className="p-2 -m-2 text-gray-400 hover:text-gold transition-colors text-xs font-sans inline-flex items-center justify-center min-h-[44px] min-w-[44px]">
                   TikTok
                 </a>
               )}
-              {CONFIG.socials.snapchat && (
-                <a href={CONFIG.socials.snapchat} target="_blank" rel="noreferrer" className="p-2 -m-2 text-gray-400 hover:text-gold transition-colors text-xs font-sans inline-flex items-center justify-center min-h-[44px] min-w-[44px]">
+              {socials?.snapchat && (
+                <a href={socials.snapchat} target="_blank" rel="noreferrer" className="p-2 -m-2 text-gray-400 hover:text-gold transition-colors text-xs font-sans inline-flex items-center justify-center min-h-[44px] min-w-[44px]">
                   Snap
                 </a>
               )}

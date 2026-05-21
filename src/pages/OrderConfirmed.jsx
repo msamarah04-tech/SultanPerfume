@@ -10,11 +10,23 @@ import Button from '../components/ui/Button';
 const OrderConfirmed = () => {
   const { id } = useParams();
   const [order, setOrder] = useState(null);
+  const [loadError, setLoadError] = useState(false);
   const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
-    ordersApi.getById(id).then(setOrder).catch(console.error);
+    ordersApi.getById(id).then(setOrder).catch(() => setLoadError(true));
   }, [id]);
+
+  if (loadError) return (
+    <PageTransition>
+      <div className="bg-ivory min-h-screen py-20 flex flex-col items-center justify-center">
+        <div className="text-center">
+          <p className="font-sans text-gray-500 mb-6">تعذّر تحميل تفاصيل الطلب. يرجى التحقق من اتصالك والمحاولة مجدداً.</p>
+          <Link to="/shop"><Button variant="outline">متابعة التسوّق</Button></Link>
+        </div>
+      </div>
+    </PageTransition>
+  );
 
   if (!order) return null;
 
