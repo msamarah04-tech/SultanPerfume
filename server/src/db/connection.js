@@ -6,7 +6,6 @@ import { config } from '../config.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// Resolve relative DATABASE_PATH from server/ root (../../ from src/db/)
 const dbPath = path.isAbsolute(config.databasePath)
   ? config.databasePath
   : path.resolve(__dirname, '../../', config.databasePath);
@@ -16,16 +15,30 @@ let _db = null;
 export function getDb() {
   if (_db) return _db;
 
-  // Ensure the data directory exists (required on platforms with ephemeral filesystems)
   mkdirSync(path.dirname(dbPath), { recursive: true });
 
   _db = new Database(dbPath);
 
-  // Enable WAL mode and foreign key enforcement on every connection.
   _db.pragma('journal_mode = WAL');
   _db.pragma('foreign_keys = ON');
+  // Auto-checkpoint when WAL reaches 200 pages (~800 KB) instead of the default 1000
+  _db.pragma('wal_autocheckpoint = 200');
 
   return _db;
+}
+
+// Flush WAL to the main DB file and close the connection.
+export function closeDb() {
+  if (!_db) return;
+  try {
+    _db.pragma('wal_checkpoint(TRUNCATE)');
+    _db.close();
+    console.log('✓ Database checkpointed and closed');
+  } catch (err) {
+    console.error('Error closing database:', err.message);
+  } finally {
+    _db = null;
+  }
 }
 
 export default getDb;

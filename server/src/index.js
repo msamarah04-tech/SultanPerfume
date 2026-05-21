@@ -2,7 +2,7 @@ import { migrate } from './db/migrate.js';
 import { seed } from './db/seed.js';
 import { config } from './config.js';
 import { createApp } from './app.js';
-import getDb from './db/connection.js';
+import getDb, { closeDb } from './db/connection.js';
 import { jodToPiaster } from './lib/pricing.js';
 
 async function bootstrap() {
@@ -39,3 +39,13 @@ bootstrap().catch(err => {
   console.error('Startup failed:', err);
   process.exit(1);
 });
+
+function shutdown(signal) {
+  console.log(`\nReceived ${signal} — shutting down...`);
+  closeDb();
+  process.exit(0);
+}
+
+process.on('SIGINT', () => shutdown('SIGINT'));
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('exit', closeDb);

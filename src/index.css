@@ -92,3 +92,34 @@
     background-size: 200% 100%;
   }
 }
+
+@keyframes heroFloat {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+
+@keyframes heroSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes heroDrift {
+  0%   { transform: translateY(0) translateX(0); opacity: 0; }
+  10%  { opacity: 0.5; }
+  90%  { opacity: 0.5; }
+  100% { transform: translateY(-100vh) translateX(20px); opacity: 0; }
+}
+
+@keyframes heroBounce {
+  0%, 100% { transform: translateY(0);   opacity: 0.9; }
+  50%      { transform: translateY(6px); opacity: 0.4; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [style*="heroFloat"],
+  [style*="heroSpin"],
+  [style*="heroDrift"],
+  [style*="heroBounce"] {
+    animation: none !important;
+  }
+}

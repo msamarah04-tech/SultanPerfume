@@ -1,15 +1,15 @@
-import { useState, useEffect, useRef, Fragment } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, AnimatePresence, useScroll, useSpring, useTransform } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { EASE, DURATION, useReducedMotion, getStaggerContainer, getFadeUp, isRTL } from '../lib/motion';
 import ProductCard from '../components/product/ProductCard';
 import PageTransition from '../components/layout/PageTransition';
 import Button from '../components/ui/Button';
-import { CONFIG } from '../config';
 import productsData from '../data/products.json';
 import { getProducts } from '../lib/storage';
 import { offersApi, feedbackApi, settingsApi } from '../lib/api';
 import { Sparkles } from 'lucide-react';
+import SignatureHero from '../components/hero/SignatureHero';
 
 const TESTIMONIALS = [
   {
@@ -53,24 +53,10 @@ const DEFAULT_OFFERS = [{
   image: '/offer.png'
 }];
 
-const PANEL_VARIANTS = {
-  enter: { y: 30, opacity: 0, filter: 'blur(8px)' },
-  center: { y: 0, opacity: 1, filter: 'blur(0px)', transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] } },
-  exit: { y: -20, opacity: 0, filter: 'blur(4px)', transition: { duration: 0.3 } },
-};
-
-
 const Home = () => {
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [bestSellers, setBestSellers] = useState([]);
   const prefersReducedMotion = useReducedMotion();
-
-  // Hero refs
-  const heroRef = useRef(null);
-  const videoRef = useRef(null);
-
-  const [videoError, setVideoError] = useState(false);
-  const [heroPanel, setHeroPanel] = useState(0);
 
   const [activeBundleOffers, setActiveBundleOffers] = useState(DEFAULT_OFFERS);
   const [currentOfferIndex, setCurrentOfferIndex] = useState(0);
@@ -78,47 +64,7 @@ const Home = () => {
   const [showTestimonialsSection, setShowTestimonialsSection] = useState(true);
   const [homeSections, setHomeSections] = useState(['hero', 'featured', 'bundle_offer', 'testimonials']);
 
-  const heroPanelRef = useRef(0);
-
   const activeBundleOffer = activeBundleOffers[currentOfferIndex] || activeBundleOffers[0] || DEFAULT_OFFERS[0];
-  const showPoster = prefersReducedMotion || videoError;
-
-  // Scroll runway = h-[300vh] outer div + sticky inner section = 200vh of travel on all screen sizes.
-  const scrollRange = useRef(
-    typeof window !== 'undefined' ? window.innerHeight * 2 : 1600
-  ).current;
-
-  const { scrollY } = useScroll();
-  const smooth = useSpring(scrollY, { stiffness: 80, damping: 20, mass: 0.4, restDelta: 0.001 });
-
-  const scrollIndicatorOpacity = useTransform(scrollY, [0, scrollRange * 0.12], [1, 0], { clamp: true });
-  const textY = useTransform(smooth, [0, scrollRange], [0, -40], { clamp: true });
-
-  // Panel switching — all screen sizes.
-  useEffect(() => {
-    if (showPoster) return;
-    const onScroll = () => {
-      const progress = Math.min(1, window.scrollY / scrollRange);
-      const next = Math.min(2, Math.floor(progress * 3));
-      if (heroPanelRef.current !== next) {
-        heroPanelRef.current = next;
-        setHeroPanel(next);
-      }
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, [showPoster, scrollRange]);
-
-  // Video scrubbing via spring — all screen sizes.
-  useEffect(() => {
-    if (showPoster) return;
-    const unsub = smooth.on('change', (px) => {
-      const video = videoRef.current;
-      if (!video || video.readyState < 2) return;
-      video.currentTime = Math.min(1, px / scrollRange) * video.duration;
-    });
-    return unsub;
-  }, [showPoster, smooth, scrollRange]);
 
   useEffect(() => {
     offersApi.list()
@@ -173,275 +119,11 @@ const Home = () => {
 
   const storyX = prefersReducedMotion ? 0 : (isRTL() ? 32 : -32);
 
-  const heroPanels = [
-    {
-      tagline: CONFIG.tagline,
-      words: ["عطور", "تروي", "حكاية"],
-      subtitle: "من قلب الأردن — عبق الشرق وأناقة الغرب",
-      cta: { label: "مجموعتنا المميزة", to: "/shop" },
-    },
-    {
-      tagline: "العروض الخاصة",
-      words: ["عروض", "لا", "تُفوَّت"],
-      subtitle: `اختر ${activeBundleOffer.perfumeCount} عطور بـ ${activeBundleOffer.price} دينار مع توصيل مجاني`,
-      cta: { label: "اكتشف العروض", to: `/offer/${activeBundleOffer.id}` },
-    },
-    {
-      tagline: "مجموعتنا الحصرية",
-      words: ["أكثر", "من", "300 عطر"],
-      subtitle: "تشكيلة فاخرة من أرقى العطور الشرقية والغربية",
-      cta: { label: "تسوّق الآن", to: "/shop" },
-    },
-  ];
-
   // ── Section variables ────────────────────────────────────────────
 
   const sectionHero = (
-    <div
-      ref={heroRef}
-      className={`-mt-[72px] ${showPoster ? 'h-[100dvh]' : 'h-[300vh]'} relative bg-jet`}
-    >
-      <section className="sticky top-0 h-[100dvh] min-h-[480px] w-full flex items-stretch relative overflow-hidden">
-
-        {/* Animated panel index strip — desktop only */}
-        <div
-          className="absolute left-6 top-1/2 -translate-y-1/2 z-30 hidden md:flex flex-col items-center gap-3"
-          style={{ direction: 'ltr' }}
-        >
-          <AnimatePresence mode="wait">
-            <motion.span
-              key={heroPanel}
-              initial={{ opacity: 0, y: -6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 6 }}
-              transition={{ duration: 0.25 }}
-              className="font-sans text-[11px] text-white font-semibold tracking-[0.2em]"
-            >
-              0{heroPanel + 1}
-            </motion.span>
-          </AnimatePresence>
-          <div className="w-[2px] h-6 bg-gold rounded-full" />
-          <div className="flex flex-col gap-[4px]">
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className="w-px h-[3px] bg-white/20" />
-            ))}
-          </div>
-          <span className="font-sans text-[11px] text-white/30 tracking-[0.2em]">03</span>
-        </div>
-
-        {/* Video panel */}
-        <div className="absolute inset-0 z-0 md:relative md:inset-auto md:flex-1 md:flex md:items-start md:justify-center md:pt-[88px] md:pb-6 md:pe-14 md:ps-2">
-          <motion.div
-            className="w-full h-full md:h-full md:w-auto md:aspect-[9/16] md:max-w-[270px] lg:max-w-[300px] xl:max-w-[330px] md:rounded-2xl overflow-hidden relative shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_20px_80px_rgba(0,0,0,0.75),0_0_120px_rgba(212,175,55,0.06)]"
-            initial={{ y: 50, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 1, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-          >
-            {showPoster ? (
-              <div
-                className="absolute inset-0 bg-cover bg-center"
-                style={{ backgroundImage: 'url(/hero-poster.jpg)' }}
-              />
-            ) : (
-              <motion.div
-                className="absolute inset-0"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 1, ease: EASE.standard }}
-              >
-                <video
-                  ref={videoRef}
-                  muted
-                  playsInline
-                  preload="auto"
-                  poster="/hero-poster.jpg"
-                  disablePictureInPicture
-                  aria-hidden="true"
-                  onError={() => setVideoError(true)}
-                  className="absolute inset-0 w-full h-full object-cover object-center brightness-[2.1] contrast-[1.0]"
-                >
-                  <source src="/hero.mp4" type="video/mp4" />
-                </video>
-              </motion.div>
-            )}
-
-            {/* Depth vignette */}
-            <div
-              className="absolute inset-0 pointer-events-none"
-              style={{ background: 'radial-gradient(ellipse at 50% 50%, transparent 60%, rgba(0,0,0,0.18) 100%)' }}
-            />
-
-            {/* Panel-reactive gold glow */}
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={heroPanel}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.6 }}
-                className="absolute inset-0 pointer-events-none"
-                style={{
-                  background: `radial-gradient(ellipse at 50% 90%, rgba(212,175,55,${heroPanel === 1 ? '0.14' : '0.06'}) 0%, transparent 65%)`
-                }}
-              />
-            </AnimatePresence>
-
-            {/* Floating collection card — hidden on mobile to avoid overlap with progress dots */}
-            <div className="absolute bottom-5 inset-x-0 hidden md:flex justify-center z-10 pointer-events-none">
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.2, duration: 0.6, ease: EASE.standard }}
-                className="bg-black/55 backdrop-blur-md rounded-xl px-5 py-2.5 border border-white/10 flex flex-col items-center"
-              >
-                <span className="font-sans text-[9px] text-gold/70 tracking-[0.35em] uppercase">المجموعة</span>
-                <span className="font-serif text-sm text-white font-semibold">عبق الشرق</span>
-              </motion.div>
-            </div>
-          </motion.div>
-        </div>
-
-        {/* Text panel — switches at scroll thirds; y parallax applied only on desktop (Fix A+H) */}
-        <motion.div
-          style={{ y: textY }}
-          className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center pt-16 pb-8 md:relative md:inset-auto md:w-[44%] md:flex-none md:items-start md:justify-center md:text-start md:pl-14 lg:pl-20 xl:pl-28 md:pr-10 md:pt-0 md:pb-0 will-change-transform"
-        >
-
-          {/* Mobile overlay gradient */}
-          <div className="absolute inset-0 bg-gradient-to-t from-jet/90 via-jet/50 to-jet/10 md:hidden pointer-events-none" />
-
-          <div className="relative z-10 px-6 md:px-0 w-full">
-
-            {/* Ghost large panel number — purely decorative */}
-            <div
-              className="absolute -top-10 -start-4 font-sans font-black leading-none select-none pointer-events-none hidden md:block"
-              style={{ fontSize: '200px', color: 'rgba(255,255,255,0.022)', direction: 'ltr', lineHeight: 1 }}
-            >
-              0{heroPanel + 1}
-            </div>
-
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={heroPanel}
-                variants={PANEL_VARIANTS}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                className="flex flex-col items-center md:items-start"
-              >
-                {(() => {
-                  const panel = heroPanels[heroPanel];
-                  return (
-                    <>
-                      {/* Pill badge */}
-                      <div className="inline-flex items-center gap-2.5 mb-8 bg-white/[0.06] border border-white/[0.12] backdrop-blur-sm px-4 py-2 rounded-full">
-                        <span className="w-1.5 h-1.5 rounded-full bg-gold shadow-[0_0_6px_rgba(212,175,55,0.8)]" />
-                        <span className="font-sans text-[9px] font-bold text-gold/90 tracking-[0.1em] md:tracking-[0.45em] uppercase">{panel.tagline}</span>
-                      </div>
-
-                      {/* Headline */}
-                      <div className="mb-7 w-full">
-                        <span className="block font-serif text-2xl md:text-3xl text-white/20 font-light leading-none mb-3 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
-                          {panel.words[0]}
-                        </span>
-                        <div className="flex flex-wrap justify-center md:justify-start items-baseline gap-x-3">
-                          {panel.words.slice(1).map((word, i) => (
-                            <span
-                              key={`${heroPanel}-w${i}`}
-                              className={`font-serif font-bold leading-none drop-shadow-[0_4px_20px_rgba(0,0,0,0.9)] text-5xl sm:text-6xl md:text-5xl lg:text-[60px] xl:text-[68px] ${
-                                i < panel.words.slice(1).length - 1 ? 'text-gold' : 'text-white'
-                              }`}
-                            >
-                              {word}
-                            </span>
-                          ))}
-                        </div>
-                        <motion.div
-                          className="mt-5 h-px bg-gradient-to-l from-gold via-gold/50 to-transparent hidden md:block"
-                          initial={{ scaleX: 0 }}
-                          animate={{ scaleX: 1 }}
-                          style={{ originX: 1, width: '65%' }}
-                          transition={{ duration: 0.9, ease: [0.25, 1, 0.5, 1] }}
-                        />
-                      </div>
-
-                      {/* Stats strip */}
-                      <div className="hidden md:flex items-stretch divide-x divide-x-reverse divide-white/10 border border-white/10 mb-8 overflow-hidden">
-                        {[
-                          { num: '+٣٠٠', lbl: 'عطر عالمي' },
-                          { num: '٥ ★', lbl: 'تقييم' },
-                          { num: 'مجاني', lbl: 'التوصيل' },
-                        ].map((s, i) => (
-                          <div key={i} className="flex flex-col items-center px-5 py-2.5">
-                            <span className="font-serif text-[13px] text-gold font-bold leading-none mb-1">{s.num}</span>
-                            <span className="font-sans text-[8px] text-white/30 tracking-[0.25em] uppercase">{s.lbl}</span>
-                          </div>
-                        ))}
-                      </div>
-
-                      {/* Subtitle */}
-                      <p className="font-sans text-xs sm:text-sm md:text-xs lg:text-sm text-white/45 max-w-[270px] mb-9 leading-[1.95] drop-shadow-[0_1px_5px_rgba(0,0,0,0.6)]">
-                        {panel.subtitle}
-                      </p>
-
-                      {/* CTA row */}
-                      <div className="flex items-center gap-3 flex-wrap justify-center md:justify-start">
-                        <Link to={panel.cta.to}>
-                          <motion.button
-                            whileHover={{ scale: 1.03 }}
-                            whileTap={{ scale: 0.97 }}
-                            className="relative overflow-hidden bg-gold text-jet font-sans text-[11px] font-extrabold py-4 px-8 tracking-[0.15em] uppercase flex items-center gap-3 shadow-[0_0_30px_rgba(212,175,55,0.28)] group"
-                          >
-                            <span className="relative z-10">{panel.cta.label}</span>
-                            <motion.span
-                              className="relative z-10 inline-block"
-                              animate={{ x: [0, -5, 0] }}
-                              transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
-                            >←</motion.span>
-                            <span className="absolute inset-0 bg-white/0 group-hover:bg-white/12 transition-all duration-300" />
-                          </motion.button>
-                        </Link>
-                        <Link to="/shop">
-                          <button className="border border-white/20 hover:border-gold/50 text-white/45 hover:text-gold font-sans text-[11px] font-semibold py-4 px-6 transition-all duration-300 tracking-[0.12em] uppercase">
-                            تصفّح الكل
-                          </button>
-                        </Link>
-                      </div>
-                    </>
-                  );
-                })()}
-              </motion.div>
-            </AnimatePresence>
-          </div>
-        </motion.div>
-
-        {/* Scroll progress dots + scroll indicator */}
-        <div className="absolute bottom-16 md:bottom-8 inset-x-0 z-30 flex flex-col items-center gap-3 pointer-events-none">
-          <div className="flex items-center gap-3">
-            {heroPanels.map((_, i) => (
-              <div
-                key={i}
-                className={`h-[2px] rounded-full transition-all duration-500 ${heroPanel === i ? 'w-10 bg-gold' : 'w-3 bg-white/20'}`}
-              />
-            ))}
-          </div>
-
-          {!showPoster && (
-            <motion.div
-              style={{ opacity: scrollIndicatorOpacity }}
-              className="flex flex-col items-center gap-1.5"
-            >
-              <motion.div
-                animate={{ y: [0, 5, 0] }}
-                transition={{ repeat: Infinity, duration: 1.4 }}
-                className="w-px h-8 bg-gradient-to-b from-white/30 to-transparent"
-              />
-              <span className="font-sans text-[8px] text-white/25 tracking-[0.3em] uppercase">تابع التصفح</span>
-            </motion.div>
-          )}
-        </div>
-
-      </section>
+    <div className="-mt-[72px]">
+      <SignatureHero />
     </div>
   );
 
