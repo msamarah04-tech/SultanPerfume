@@ -1,6 +1,7 @@
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import {
   motion,
+  AnimatePresence,
   useScroll,
   useTransform,
   useSpring,
@@ -46,8 +47,90 @@ const SCENES = [
 
 const BG = '#FAF7F2';
 
-export default function SignatureHero() {
-  const reduced = useReducedMotion();
+// ─── Mobile hero: auto-cycling carousel, zero scroll-jacking ────────────────
+function MobileHero({ reduced }) {
+  const [activeIdx, setActiveIdx] = useState(0);
+
+  useEffect(() => {
+    if (reduced) return;
+    const id = setInterval(() => setActiveIdx(i => (i + 1) % SCENES.length), 3800);
+    return () => clearInterval(id);
+  }, [reduced]);
+
+  const scene = SCENES[activeIdx];
+
+  return (
+    <section
+      aria-label="Signature perfumes"
+      className="relative w-full h-[100dvh]"
+      style={{ background: BG, overflow: 'hidden' }}
+    >
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={scene.id}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.7, ease: 'easeInOut' }}
+          className="absolute inset-0 flex flex-col items-center justify-center"
+        >
+          {/* Glow blob */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div
+              className="w-[80vmin] h-[80vmin] rounded-full"
+              style={{ background: `radial-gradient(closest-side, ${scene.glow} 0%, transparent 70%)` }}
+            />
+          </div>
+
+          {/* Filigree ring */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.10]">
+            <svg viewBox="0 0 600 600" className="w-[82vmin] h-[82vmin]">
+              <g stroke={scene.accent} strokeWidth="0.8" fill="none">
+                <circle cx="300" cy="300" r="280" />
+                <circle cx="300" cy="300" r="200" strokeDasharray="2 6" />
+                <circle cx="300" cy="300" r="120" />
+              </g>
+            </svg>
+          </div>
+
+          {/* Bottle */}
+          <img
+            src={scene.image}
+            alt={`${scene.name} perfume bottle`}
+            className="max-h-[55vh] w-auto select-none relative z-10"
+            draggable={false}
+            style={{ filter: 'drop-shadow(0 24px 50px rgba(50,30,10,0.22))' }}
+          />
+
+          {/* Name + tagline */}
+          <div className="relative z-10 text-center px-6 mt-6">
+            <h2 className="font-serif text-4xl sm:text-5xl tracking-wide" style={{ color: scene.accent }}>
+              {scene.name}
+            </h2>
+            <p className="mt-3 text-base" style={{ color: '#1A1A1A99' }}>
+              {scene.tagline}
+            </p>
+          </div>
+        </motion.div>
+      </AnimatePresence>
+
+      {/* Dot indicators */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2.5 z-20">
+        {SCENES.map((s, i) => (
+          <button
+            key={s.id}
+            onClick={() => setActiveIdx(i)}
+            className="w-2 h-2 rounded-full transition-all duration-300"
+            style={{ background: i === activeIdx ? scene.accent : 'rgba(26,26,26,0.2)', transform: i === activeIdx ? 'scale(1.4)' : 'scale(1)' }}
+          />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+// ─── Desktop hero: scroll-driven parallax ────────────────────────────────────
+function DesktopHero({ reduced }) {
   const ref = useRef(null);
 
   const { scrollYProgress } = useScroll({
@@ -55,17 +138,12 @@ export default function SignatureHero() {
     offset: ['start start', 'end end'],
   });
 
-  // Spring adds cinematic momentum on desktop wheel scroll.
-  // On touch devices the raw value is used — native scroll is already
-  // smooth and the spring would make parallax lag behind the finger.
   const smooth = useSpring(scrollYProgress, {
     stiffness: 90,
     damping: 28,
     mass: 0.4,
     restDelta: 0.001,
   });
-
-  const progress = IS_TOUCH ? scrollYProgress : smooth;
 
   return (
     <section
@@ -76,23 +154,20 @@ export default function SignatureHero() {
     >
       <div className="sticky top-0 w-full h-[100dvh]" style={{ overflow: 'clip' }}>
         {SCENES.map((scene, i) => (
-          <AtmosphereHaze key={`haze-${scene.id}`} scene={scene} index={i} progress={progress} />
+          <AtmosphereHaze key={`haze-${scene.id}`} scene={scene} index={i} progress={smooth} />
         ))}
-
         {SCENES.map((scene, i) => (
-          <Scene
-            key={scene.id}
-            scene={scene}
-            index={i}
-            progress={progress}
-            reduced={reduced}
-          />
+          <Scene key={scene.id} scene={scene} index={i} progress={smooth} reduced={reduced} />
         ))}
-
-        {!reduced && <ScrollHint progress={progress} />}
+        {!reduced && <ScrollHint progress={smooth} />}
       </div>
     </section>
   );
+}
+
+export default function SignatureHero() {
+  const reduced = useReducedMotion();
+  return IS_TOUCH ? <MobileHero reduced={reduced} /> : <DesktopHero reduced={reduced} />;
 }
 
 // Extracted from Atmosphere to avoid hooks-in-loop
