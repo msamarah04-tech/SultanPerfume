@@ -1,12 +1,10 @@
-import React from 'react';
-import { PackageOpen } from 'lucide-react';
+
 import Button from './Button';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useReducedMotion, DURATION, EASE } from '../../lib/motion';
 
 const EmptyState = ({ 
-  icon: Icon = PackageOpen, 
   title = "Nothing to see here", 
   description = "There are no items to display at this time.",
   actionText,

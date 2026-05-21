@@ -47,15 +47,7 @@ const SCENES = [
 
 const BG = '#FAF7F2';
 
-// ─── Pin state as CSS ─────────────────────────────────────────────────────────
-// 'before'  → absolute, top:0   (section not yet reached)
-// 'pinned'  → fixed,    top:0   (scrolling through section — replaces sticky)
-// 'after'   → absolute, bottom:0 (section fully scrolled past)
-function pinStyle(state) {
-  if (state === 'pinned') return { position: 'fixed',    top: 0,    bottom: 'auto' };
-  if (state === 'after')  return { position: 'absolute', top: 'auto', bottom: 0   };
-  return                         { position: 'absolute', top: 0,    bottom: 'auto' };
-}
+
 
 export default function SignatureHero() {
   const reduced = useReducedMotion();

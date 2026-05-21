@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 const SpriteSequence = ({ folder, frameCount = 12, fps = 24, loop = false, className = '', onComplete }) => {
   const [currentFrame, setCurrentFrame] = useState(1);

@@ -1,22 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Plus, Trash2, Edit2, Check, X, Tag, Sparkles, AlertCircle } from 'lucide-react';
+import { Plus, Trash2, Edit2, X, AlertCircle } from 'lucide-react';
 import { adminApi } from '../../lib/api';
 import { useToast } from '../../context/ToastContext';
-
-// Default Seed Offer so the website remains pre-populated with our beautiful Summer Offer
-const DEFAULT_SUMMER_OFFER = {
-  id: 'summer-5-for-25',
-  titleAr: 'عرض الصيف الاستثنائي',
-  titleEn: 'Exceptional Summer Offer',
-  descriptionAr: '5 عطور صيفية منعشة بـ 25 دينار فقط شامل التوصيل المجاني لكافة المناطق',
-  descriptionEn: '5 refreshing summer perfumes for 25 JOD only with free shipping',
-  type: 'bundle',
-  perfumeCount: 5,
-  price: 25,
-  active: true,
-  image: '/offer.png',
-  createdAt: '2026-05-16T00:00:00Z'
-};
 
 const AdminOffers = () => {
   const { showToast } = useToast();

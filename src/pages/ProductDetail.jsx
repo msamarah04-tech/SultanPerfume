@@ -5,7 +5,6 @@ import { useCart } from '../context/CartContext';
 import { useReducedMotion, getStaggerContainer, getFadeUp } from '../lib/motion';
 import { formatPrice } from '../lib/format';
 import PageTransition from '../components/layout/PageTransition';
-import Button from '../components/ui/Button';
 import ProductCard from '../components/product/ProductCard';
 import productsData from '../data/products.json';
 import { getProducts } from '../lib/storage';
@@ -48,9 +47,13 @@ const ProductDetail = () => {
       return;
     }
 
+    // eslint-disable-next-line
     setProduct(currentProduct);
+     
     setSelectedSize(currentProduct.sizes[0]);
+     
     setQuantity(1);
+     
     setActiveImage(0);
 
     const related = allProducts

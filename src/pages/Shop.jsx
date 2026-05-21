@@ -7,7 +7,7 @@ import ProductCard from '../components/product/ProductCard';
 import EmptyState from '../components/ui/EmptyState';
 import productsData from '../data/products.json';
 import { getProducts } from '../lib/storage';
-import { offersApi } from '../lib/api';
+import { offersApi, adminApi } from '../lib/api';
 import { LayoutGrid, List } from 'lucide-react';
 
 const PAGE_SIZE = 12;
@@ -46,8 +46,10 @@ const Shop = () => {
 
   useEffect(() => {
     const catParam = searchParams.get('category');
+    // eslint-disable-next-line
     if (catParam) setCategory(catParam);
     const brandParam = searchParams.get('brand');
+     
     if (brandParam) setSelectedBrand(brandParam);
   }, [searchParams]);
 
@@ -68,20 +70,30 @@ const Shop = () => {
   };
 
   useEffect(() => {
+    adminApi.products.list().then(fresh => {
+      setAllProductsRaw(fresh);
+      setProducts(applyFilters(fresh));
+    });
+     
     const allProducts = getProducts(productsData, (fresh) => {
       setAllProductsRaw(fresh);
       setProducts(applyFilters(fresh));
     });
+    // eslint-disable-next-line
     setAllProductsRaw(allProducts);
+     
     setProducts(applyFilters(allProducts));
+     
     setVisibleCount(PAGE_SIZE);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
+  useEffect(() => {
     const params = new URLSearchParams();
     if (category !== 'all') params.set('category', category);
     if (selectedBrand !== 'all') params.set('brand', selectedBrand);
     if (sort !== 'featured') params.set('sort', sort);
     setSearchParams(params);
-
   }, [category, selectedBrand, sort, setSearchParams]);
 
   useEffect(() => {

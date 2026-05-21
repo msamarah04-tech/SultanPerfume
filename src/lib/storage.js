@@ -48,7 +48,9 @@ export function getProducts(seedData, onUpdate) {
       }
       return parsed;
     }
-  } catch {}
+  } catch (err) {
+    console.warn('Cache read error', err);
+  }
 
   // No cache: return seed data immediately and hydrate from API
   if (onUpdate) {
@@ -67,5 +69,7 @@ export function getProducts(seedData, onUpdate) {
 export const persistProducts = (products) => {
   try {
     localStorage.setItem('products_cache', JSON.stringify(products));
-  } catch {}
+  } catch (err) {
+    console.warn('Cache write error', err);
+  }
 };

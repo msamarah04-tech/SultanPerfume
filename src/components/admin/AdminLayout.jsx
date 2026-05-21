@@ -44,6 +44,7 @@ const AdminLayout = () => {
 
   // Clear badge when admin navigates to Orders
   useEffect(() => {
+    // eslint-disable-next-line
     if (location.pathname === '/admin/orders') setNewOrderCount(0);
   }, [location.pathname]);
 

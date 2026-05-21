@@ -1,7 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { formatCurrency } from '../../lib/format';
 import { adminApi } from '../../lib/api';
 import { Package, ShoppingCart, DollarSign, TrendingUp } from 'lucide-react';
+
+const StatCard = ({ title, value, subtitle, icon: Icon }) => (
+  <div className="bg-white p-6 border border-gray-200 rounded shadow-sm flex items-start justify-between">
+    <div>
+      <p className="font-sans text-xs uppercase tracking-[0.1em] text-gray-500 mb-2">{title}</p>
+      <h3 className="font-serif text-3xl text-jet mb-1">{value}</h3>
+      {subtitle && <p className="font-sans text-xs text-gray-400">{subtitle}</p>}
+    </div>
+    <div className="p-3 bg-gray-50 rounded-full">
+      <Icon className="w-6 h-6 text-gold" />
+    </div>
+  </div>
+);
 
 const Dashboard = () => {
   const [stats, setStats] = useState({
@@ -24,19 +37,6 @@ const Dashboard = () => {
       });
     }).catch(console.error);
   }, []);
-
-  const StatCard = ({ title, value, subtitle, icon: Icon }) => (
-    <div className="bg-white p-6 border border-gray-200 rounded shadow-sm flex items-start justify-between">
-      <div>
-        <p className="font-sans text-xs uppercase tracking-[0.1em] text-gray-500 mb-2">{title}</p>
-        <h3 className="font-serif text-3xl text-jet mb-1">{value}</h3>
-        {subtitle && <p className="font-sans text-xs text-gray-400">{subtitle}</p>}
-      </div>
-      <div className="p-3 bg-gray-50 rounded-full">
-        <Icon className="w-6 h-6 text-gold" />
-      </div>
-    </div>
-  );
 
   return (
     <div>

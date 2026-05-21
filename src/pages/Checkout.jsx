@@ -237,7 +237,6 @@ const Checkout = () => {
 
   // Delivery fee and total are computed server-side on order submission.
   // Show client-side estimates from config for the summary sidebar.
-  const isFreeDelivery = subtotal > 0 && false; // server decides
   const deliveryFee = 0;
   const total = Math.max(0, subtotal - discountAmount);
 

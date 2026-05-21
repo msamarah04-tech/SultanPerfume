@@ -18,7 +18,7 @@ const CATEGORY_STYLE = {
 };
 
 const ProductCard = ({ product, variant = 'grid', offerId = 'summer-5-for-25' }) => {
-  const prefersReducedMotion = useReducedMotion();
+
   const navigate = useNavigate();
   const [activeImg, setActiveImg] = useState(0);
 
@@ -64,9 +64,10 @@ const ProductCard = ({ product, variant = 'grid', offerId = 'summer-5-for-25' })
           {/* Info */}
           <div className="flex-1 flex flex-col justify-between p-3 sm:p-4 min-w-0">
             <div>
-              <Link to={`/product/${product.id}`}>
-                <h3 className="font-serif text-jet text-base sm:text-lg leading-tight hover:text-gold transition-colors duration-300 mb-0.5 line-clamp-2">
+              <Link to={`/product/${product.id}`} className="inline-block group/title">
+                <h3 className="font-serif text-jet text-base sm:text-lg leading-tight group-hover/title:text-[#D4AF37] transition-colors duration-300 mb-0.5 line-clamp-2 relative">
                   {product.name}
+                  <span className="absolute -bottom-1 ltr:left-0 rtl:right-0 h-[1px] bg-[#D4AF37] w-0 group-hover/title:w-full transition-all duration-[400ms] ease-out" />
                 </h3>
               </Link>
               {product.brand && (
@@ -121,12 +122,12 @@ const ProductCard = ({ product, variant = 'grid', offerId = 'summer-5-for-25' })
 
           {/* Main image */}
           <div className="relative aspect-square bg-[#0e0e0e] overflow-hidden">
-            <img
-              src={images[activeImg]}
-              alt={product.name}
-              loading="lazy"
-              className="w-full h-full object-contain p-3 sm:p-5 transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:scale-[1.06]"
-            />
+              <img
+                src={images[activeImg]}
+                alt={product.name}
+                loading="lazy"
+                className="w-full h-full object-contain p-3 sm:p-5 transition-transform duration-[600ms] ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:scale-[1.05]"
+              />
 
             {/* Stock badges */}
             {product.stock <= 5 && product.stock > 0 && (
@@ -166,9 +167,10 @@ const ProductCard = ({ product, variant = 'grid', offerId = 'summer-5-for-25' })
 
           {/* Name */}
           <div>
-            <Link to={`/product/${product.id}`}>
-              <h3 className="font-serif text-jet text-sm sm:text-[19px] leading-tight sm:leading-snug hover:text-gold transition-colors duration-300">
+            <Link to={`/product/${product.id}`} className="inline-block group/title">
+              <h3 className="font-serif text-jet text-sm sm:text-[19px] leading-tight sm:leading-snug group-hover/title:text-[#D4AF37] transition-colors duration-300 relative">
                 {product.name}
+                <span className="absolute -bottom-1 ltr:left-0 rtl:right-0 h-[1px] bg-[#D4AF37] w-0 group-hover/title:w-full transition-all duration-[400ms] ease-out" />
               </h3>
             </Link>
             {product.brand && (

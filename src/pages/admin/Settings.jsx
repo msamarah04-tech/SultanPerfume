@@ -1,8 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { adminApi } from '../../lib/api';
 import { useToast } from '../../context/ToastContext';
 import Button from '../../components/ui/Button';
 import { Save, Info } from 'lucide-react';
+
+const Field = ({ label, name, type = 'text', value, onChange }) => (
+  <div>
+    <label className="block font-sans text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">{label}</label>
+    <input
+      type={type}
+      name={name}
+      value={value ?? ''}
+      onChange={onChange}
+      className="w-full border border-gray-200 px-3 py-2 font-sans text-sm focus:border-gold focus:outline-none"
+    />
+  </div>
+);
 
 const Settings = () => {
   const { showToast } = useToast();
@@ -53,19 +66,6 @@ const Settings = () => {
       setIsSaving(false);
     }
   };
-
-  const Field = ({ label, name, type = 'text', value, onChange }) => (
-    <div>
-      <label className="block font-sans text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">{label}</label>
-      <input
-        type={type}
-        name={name}
-        value={value ?? ''}
-        onChange={onChange}
-        className="w-full border border-gray-200 px-3 py-2 font-sans text-sm focus:border-gold focus:outline-none"
-      />
-    </div>
-  );
 
   return (
     <div>

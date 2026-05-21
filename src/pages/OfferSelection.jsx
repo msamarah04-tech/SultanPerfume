@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Plus, Trash2, ShoppingBag, Search, Sparkles } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
-import { useReducedMotion } from '../lib/motion';
 import PageTransition from '../components/layout/PageTransition';
 import productsData from '../data/products.json';
 import { getProducts } from '../lib/storage';
@@ -28,7 +27,6 @@ const OfferSelection = () => {
   const navigate = useNavigate();
   const { offerId } = useParams();
   const location = useLocation();
-  const prefersReducedMotion = useReducedMotion();
 
   const [currentOffer, setCurrentOffer] = useState(DEFAULT_SUMMER_OFFER);
   const [products, setProducts] = useState(() => productsData);
@@ -38,6 +36,7 @@ const OfferSelection = () => {
 
   useEffect(() => {
     const seed = getProducts(productsData, (fresh) => setProducts(fresh));
+    // eslint-disable-next-line
     setProducts(seed);
   }, []);
 
@@ -62,6 +61,7 @@ const OfferSelection = () => {
   // Reset selected perfumes when offer shifts, but check for pre-selected product
   useEffect(() => {
     if (location.state && location.state.preSelectedProduct) {
+      // eslint-disable-next-line
       setSelectedPerfumes([location.state.preSelectedProduct]);
       showToast(`تمت إضافة ${location.state.preSelectedProduct.name} كأول عطر في باقتك!`, 'success');
       // Clear location state so it doesn't re-add if they refresh or navigate

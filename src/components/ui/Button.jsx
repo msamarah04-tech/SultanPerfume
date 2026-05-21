@@ -15,7 +15,7 @@ const Button = React.forwardRef(({
   const baseStyles = "inline-flex items-center justify-center font-sans font-medium transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] disabled:opacity-50 disabled:cursor-not-allowed outline-none select-none rounded-none relative overflow-hidden";
   
   const variants = {
-    primary: "bg-gold text-white border border-gold hover:bg-gold-light hover:border-gold-light shadow-[0_4px_20px_rgba(212,175,55,0.15)] hover:shadow-[0_10px_25px_rgba(212,175,55,0.3)] hover:-translate-y-[2px] active:translate-y-0",
+    primary: "bg-gold text-white border border-gold hover:bg-gold-light hover:border-gold-light shadow-[0_4px_20px_rgba(212,175,55,0.15)] hover:shadow-[inset_0_0_20px_rgba(212,175,55,0.4),0_10px_25px_rgba(212,175,55,0.3)] hover:-translate-y-[2px] active:translate-y-0",
     outline: "bg-transparent border border-jet/40 text-jet hover:border-gold hover:text-gold hover:bg-gold/[0.03] hover:-translate-y-[2px] active:translate-y-0",
     outlineLight: "bg-transparent border border-white/40 text-white hover:border-gold hover:text-gold hover:bg-gold/[0.05] hover:-translate-y-[2px] active:translate-y-0",
     ghost: "bg-transparent text-jet hover:text-gold hover:bg-gold/[0.02]"

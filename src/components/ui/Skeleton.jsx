@@ -1,4 +1,4 @@
-import React from 'react';
+
 
 const Skeleton = ({ className = '', dark = false }) => {
   return (

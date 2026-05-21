@@ -41,7 +41,7 @@ export function createApp() {
   // ── Health ────────────────────────────────────────────────────────────────
   app.get('/api/health', (req, res) => {
     let dbOk = false;
-    try { getDb().prepare('SELECT 1').get(); dbOk = true; } catch (_) { /* intentionally empty */ }
+    try { getDb().prepare('SELECT 1').get(); dbOk = true; } catch (e) { /* intentionally empty */ }
     res.json({ ok: true, data: { uptime: process.uptime(), dbOk } });
   });
 

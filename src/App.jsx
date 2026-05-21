@@ -93,6 +93,11 @@ const AnimatedRoutes = () => {
   );
 };
 
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
+
 function App() {
   useEffect(() => {
     // Touch devices (phones/tablets) use native iOS/Android scroll — it's
@@ -109,15 +114,19 @@ function App() {
       wheelMultiplier: 1,
     });
 
-    function raf(time) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-    const id = requestAnimationFrame(raf);
+    lenis.on('scroll', ScrollTrigger.update);
+
+    const raf = (time) => {
+      lenis.raf(time * 1000);
+    };
+
+    gsap.ticker.add(raf);
+    gsap.ticker.lagSmoothing(0);
+
     window.__lenis = lenis;
 
     return () => {
-      cancelAnimationFrame(id);
+      gsap.ticker.remove(raf);
       lenis.destroy();
       delete window.__lenis;
     };

@@ -4,7 +4,6 @@ import path from 'path';
 import getDb from './connection.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const SCHEMA_VERSION = 2;
 
 export function migrate() {
   const db = getDb();

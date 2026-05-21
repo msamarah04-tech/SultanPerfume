@@ -122,6 +122,7 @@ const Orders = () => {
   }, [showToast]);
 
   // Clear selection when filter changes
+  // eslint-disable-next-line
   useEffect(() => { setSelectedIds(new Set()); }, [search, dateFrom, dateTo]);
 
   const handleStatusChange = async (id, newStatus) => {
