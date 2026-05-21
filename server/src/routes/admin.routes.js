@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import jwt from 'jsonwebtoken';
 import ExcelJS from 'exceljs';
 import { productsRepo } from '../repositories/products.repo.js';
 import { ordersRepo } from '../repositories/orders.repo.js';
@@ -13,6 +14,8 @@ import { createFeedbackSchema, patchFeedbackSchema } from '../schemas/feedback.s
 import { updateSettingsSchema } from '../schemas/settings.schema.js';
 import { generateProductId } from '../lib/ids.js';
 import { piasterToJod } from '../lib/pricing.js';
+import { config } from '../config.js';
+import { addSseClient, removeSseClient } from '../lib/sse.js';
 
 const router = Router();
 
@@ -121,6 +124,27 @@ router.delete('/products/:id', (req, res, next) => {
 });
 
 // ─── Orders ──────────────────────────────────────────────────────────────────
+
+// SSE stream — auth via query-param token (EventSource cannot send headers)
+router.get('/orders/events', (req, res) => {
+  const token = req.query.token;
+  if (!token) return res.status(401).end();
+  try {
+    jwt.verify(token, config.jwtSecret);
+  } catch {
+    return res.status(401).end();
+  }
+
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache, no-transform');
+  res.setHeader('Connection', 'keep-alive');
+  res.setHeader('X-Accel-Buffering', 'no'); // disable Nginx buffering
+  res.flushHeaders();
+
+  res.write('event: connected\ndata: {}\n\n');
+  addSseClient(res);
+  req.on('close', () => removeSseClient(res));
+});
 
 router.get('/orders/export', (req, res, next) => {
   try {

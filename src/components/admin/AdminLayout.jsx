@@ -1,16 +1,54 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { CONFIG } from '../../config';
 import { LayoutDashboard, Package, ShoppingCart, Settings, LogOut, Tag, MessageSquare, Menu, X, Home } from 'lucide-react';
+
+const BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000/api';
 
 const AdminLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { logout } = useAuth();
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+  const [newOrderCount, setNewOrderCount] = useState(0);
+  const esRef = useRef(null);
+
+  // Fetch initial count of unread (status=new) orders
+  useEffect(() => {
+    const token = sessionStorage.getItem('adminToken');
+    if (!token) return;
+    fetch(`${BASE}/admin/stats`, { headers: { Authorization: `Bearer ${token}` } })
+      .then(r => r.json())
+      .then(j => setNewOrderCount(j.data?.ordersByStatus?.new ?? 0))
+      .catch(() => {});
+  }, []);
+
+  // Open a single SSE connection for the whole admin session
+  useEffect(() => {
+    const token = sessionStorage.getItem('adminToken');
+    if (!token) return;
+
+    const es = new EventSource(`${BASE}/admin/orders/events?token=${encodeURIComponent(token)}`);
+    esRef.current = es;
+
+    es.addEventListener('new-order', (e) => {
+      const order = JSON.parse(e.data);
+      setNewOrderCount(prev => prev + 1);
+      // Notify the Orders page (if mounted) without prop-drilling
+      window.dispatchEvent(new CustomEvent('admin:new-order', { detail: order }));
+    });
+
+    return () => { es.close(); esRef.current = null; };
+  }, []);
+
+  // Clear badge when admin navigates to Orders
+  useEffect(() => {
+    if (location.pathname === '/admin/orders') setNewOrderCount(0);
+  }, [location.pathname]);
 
   const handleLogout = () => {
+    esRef.current?.close();
     logout();
     navigate('/admin/login');
   };
@@ -41,6 +79,7 @@ const AdminLayout = () => {
           {navItems.map((item) => {
             const isActive = location.pathname === item.path ||
                              (item.path !== '/admin' && location.pathname.startsWith(item.path));
+            const showBadge = item.path === '/admin/orders' && newOrderCount > 0;
             return (
               <Link
                 key={item.path}
@@ -50,7 +89,12 @@ const AdminLayout = () => {
                 }`}
               >
                 <item.icon className="w-5 h-5" />
-                {item.label}
+                <span className="flex-1">{item.label}</span>
+                {showBadge && (
+                  <span className="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center animate-pulse">
+                    {newOrderCount > 99 ? '99+' : newOrderCount}
+                  </span>
+                )}
               </Link>
             );
           })}
@@ -90,6 +134,7 @@ const AdminLayout = () => {
             {navItems.map((item) => {
               const isActive = location.pathname === item.path ||
                                (item.path !== '/admin' && location.pathname.startsWith(item.path));
+              const showBadge = item.path === '/admin/orders' && newOrderCount > 0;
               return (
                 <Link
                   key={item.path}
@@ -100,7 +145,12 @@ const AdminLayout = () => {
                   }`}
                 >
                   <item.icon className="w-4 h-4" />
-                  {item.label}
+                  <span className="flex-1">{item.label}</span>
+                  {showBadge && (
+                    <span className="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center animate-pulse">
+                      {newOrderCount > 99 ? '99+' : newOrderCount}
+                    </span>
+                  )}
                 </Link>
               );
             })}
@@ -120,17 +170,23 @@ const AdminLayout = () => {
           {navItems.map((item) => {
             const isActive = location.pathname === item.path ||
                              (item.path !== '/admin' && location.pathname.startsWith(item.path));
+            const showBadge = item.path === '/admin/orders' && newOrderCount > 0;
             return (
               <Link
                 key={item.path}
                 to={item.path}
                 onClick={() => setIsMobileNavOpen(false)}
-                className={`flex flex-col items-center gap-0.5 px-3 py-3.5 rounded text-center shrink-0 transition-colors ${
+                className={`relative flex flex-col items-center gap-0.5 px-3 py-3.5 rounded text-center shrink-0 transition-colors ${
                   isActive ? 'text-gold bg-white/10' : 'text-gray-400 hover:text-white'
                 }`}
               >
                 <item.icon className="w-4 h-4" />
                 <span className="font-sans text-[9px] uppercase tracking-wide">{item.label}</span>
+                {showBadge && (
+                  <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[8px] font-bold w-4 h-4 rounded-full flex items-center justify-center animate-pulse">
+                    {newOrderCount > 9 ? '9+' : newOrderCount}
+                  </span>
+                )}
               </Link>
             );
           })}

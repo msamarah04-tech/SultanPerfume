@@ -7,6 +7,7 @@ import { validate } from '../middleware/validate.js';
 import { createOrderSchema } from '../schemas/order.schema.js';
 import { generateOrderId } from '../lib/ids.js';
 import { computeOrderTotals, jodToPiaster } from '../lib/pricing.js';
+import { broadcastToAdmins } from '../lib/sse.js';
 
 const router = Router();
 
@@ -83,6 +84,9 @@ router.post('/', validate(createOrderSchema), (req, res, next) => {
       total,
       status: 'new',
     });
+
+    // Push to all connected admin panels in real-time
+    broadcastToAdmins('new-order', order);
 
     res.status(201).json({ ok: true, data: order });
   } catch (err) { next(err); }

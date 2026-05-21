@@ -74,6 +74,25 @@ function Checkbox({ checked, indeterminate, onChange, className = '' }) {
   );
 }
 
+function playNotificationSound() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    // Two-tone chime: high then low
+    [[880, 0, 0.15], [660, 0.18, 0.3]].forEach(([freq, start, end]) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.4, ctx.currentTime + start);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + end);
+      osc.start(ctx.currentTime + start);
+      osc.stop(ctx.currentTime + end);
+    });
+  } catch { /* audio not available */ }
+}
+
 const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [search, setSearch] = useState('');
@@ -89,6 +108,18 @@ const Orders = () => {
   useEffect(() => {
     adminApi.orders.list({ limit: 200 }).then(data => setOrders(data.items)).catch(console.error);
   }, []);
+
+  // Real-time: AdminLayout's SSE connection dispatches this event
+  useEffect(() => {
+    const onNewOrder = (e) => {
+      const order = e.detail;
+      setOrders(prev => prev.find(o => o.id === order.id) ? prev : [order, ...prev]);
+      showToast(`طلب جديد من ${order.customer.name} — ${order.id}`, 'success');
+      playNotificationSound();
+    };
+    window.addEventListener('admin:new-order', onNewOrder);
+    return () => window.removeEventListener('admin:new-order', onNewOrder);
+  }, [showToast]);
 
   // Clear selection when filter changes
   useEffect(() => { setSelectedIds(new Set()); }, [search, dateFrom, dateTo]);
