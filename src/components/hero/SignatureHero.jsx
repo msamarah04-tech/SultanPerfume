@@ -9,6 +9,14 @@ import {
   useReducedMotion,
 } from 'framer-motion';
 
+// Pointer devices use Lenis which already interpolates scrollY between wheel
+// events, so an extra spring just adds lag. Touch devices use native scroll
+// and any spring is felt as the bottle "trailing" the finger — also lag.
+// Skip the spring on touch entirely; on pointer, keep a very light spring
+// to soak up any remaining micro-jumps.
+const IS_TOUCH = typeof window !== 'undefined'
+  && window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+
 const SCENES = [
   {
     id: 'bella',
@@ -59,16 +67,16 @@ export default function SignatureHero() {
   const { scrollY } = useScroll();
   const progressValue = useMotionValue(0);
 
-  // Spring on every device (including touch). The position: sticky stage means
-  // the visible pinning is browser-native; the spring only smooths the
-  // transform values (bottle y, scale, scene opacity) so iOS momentum scroll
-  // doesn't step through them discretely.
-  const progress = useSpring(progressValue, {
-    stiffness: 110,
-    damping: 30,
-    mass: 0.3,
+  // On touch, drive transforms straight off the raw motion value — no spring,
+  // no lag. On pointer, a very tight spring soaks up the small gaps between
+  // wheel events (Lenis already does most of the work).
+  const smooth = useSpring(progressValue, {
+    stiffness: 400,
+    damping: 50,
+    mass: 0.1,
     restDelta: 0.0005,
   });
+  const progress = IS_TOUCH ? progressValue : smooth;
 
   useEffect(() => {
     const measure = () => {
