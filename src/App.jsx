@@ -11,7 +11,6 @@ import ProtectedRoute from './context/ProtectedRoute';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import ScrollProgressBar from './components/ui/ScrollProgressBar';
-import CursorSpotlight from './components/ui/CursorSpotlight';
 
 // Public Pages
 import Home from './pages/Home';
@@ -43,8 +42,7 @@ import ScrollToTop from './components/layout/ScrollToTop';
 const Layout = () => (
   <div className="min-h-screen flex flex-col bg-ivory">
     <ScrollProgressBar />
-    <CursorSpotlight />
-    <Navbar />
+<Navbar />
     <main className="flex-grow flex flex-col main-content-pt">
       <Outlet />
     </main>
