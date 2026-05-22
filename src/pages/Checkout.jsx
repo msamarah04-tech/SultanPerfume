@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useReducedMotion, getStaggerContainer, getFadeUp } from '../lib/motion';
@@ -226,10 +226,15 @@ function OrderSuccessPopup({ order, onContinue, onViewOrder }) {
 }
 
 const Checkout = () => {
-  const { cart, subtotal, clearCart } = useCart();
+  const { cart, subtotal, clearCart, refreshPrices, activeCartTier } = useCart();
   const navigate = useNavigate();
   const { showToast } = useToast();
   const prefersReducedMotion = useReducedMotion();
+
+  useEffect(() => {
+    refreshPrices();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const [promoCodeInput, setPromoCodeInput] = useState('');
   const [appliedCoupon, setAppliedCoupon] = useState(null);
@@ -411,7 +416,23 @@ const Checkout = () => {
                             </div>
                             <div className="min-w-0">
                               <p className="text-jet text-xs font-semibold truncate">{item.name}</p>
-                              <p className="text-gray-400 text-[10px] mt-0.5"><bdi>{item.size}</bdi> × {item.quantity}</p>
+                              <p className="text-gray-400 text-[10px] mt-0.5">
+                                <bdi>{item.size}</bdi> × {item.quantity}
+                                {item.basePrice != null && (
+                                  item.price < item.basePrice ? (
+                                    <>
+                                      {' · '}
+                                      <span className="text-gold font-bold">{formatPrice(Number(item.price.toFixed(3)))}</span>
+                                      <span className="line-through ms-1 text-gray-300">{formatPrice(item.basePrice)}</span>
+                                    </>
+                                  ) : (
+                                    <>
+                                      {' · '}
+                                      <span>{formatPrice(Number(item.price.toFixed(3)))} / للقطعة</span>
+                                    </>
+                                  )
+                                )}
+                              </p>
                             </div>
                           </div>
                           <span className="text-jet text-xs font-medium shrink-0">{formatPrice(item.lineTotal)}</span>
@@ -464,8 +485,13 @@ const Checkout = () => {
                 <div className="flex flex-col gap-3 font-sans text-sm mb-6 pb-6 border-b border-gray-100 pt-6 border-t border-gray-100">
                   <div className="flex justify-between">
                     <span className="text-gray-500">المجموع الفرعي</span>
-                    <span className="text-jet">{formatPrice(subtotal)}</span>
+                    <span className="text-jet">{formatPrice(Number(subtotal.toFixed(3)))}</span>
                   </div>
+                  {activeCartTier && (
+                    <p className="font-sans text-xs text-gold bg-gold/10 border border-gold/30 px-3 py-2">
+                      ✨ تم تطبيق عرض الباقة: اشترِ {activeCartTier.minQty} بسعر {formatPrice(activeCartTier.totalPrice)}
+                    </p>
+                  )}
                   {discountAmount > 0 && (
                     <div className="flex justify-between text-emerald-600 font-semibold">
                       <span>خصم الكوبون ({appliedCoupon?.promoCode})</span>

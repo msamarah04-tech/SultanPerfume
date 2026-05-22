@@ -29,7 +29,8 @@ const ProductEdit = () => {
     featured: false,
     active: true,
     images: [],
-    sizes: [{ size: '50ml', price: 0 }]
+    sizes: [{ size: '50ml', price: 0 }],
+    quantityTiers: []
   });
 
   useEffect(() => {
@@ -43,7 +44,7 @@ const ProductEdit = () => {
       )
         .then(r => r.json())
         .then(json => {
-          if (json.ok) setFormData(json.data);
+          if (json.ok) setFormData({ quantityTiers: [], ...json.data });
           else { showToast('Product not found', 'error'); navigate('/admin/products'); }
         })
         .catch(() => { showToast('Failed to load product', 'error'); navigate('/admin/products'); });
@@ -77,6 +78,28 @@ const ProductEdit = () => {
     const newSizes = [...formData.sizes];
     newSizes.splice(index, 1);
     setFormData(prev => ({ ...prev, sizes: newSizes }));
+  };
+
+  const handleTierChange = (index, field, value) => {
+    const newTiers = [...(formData.quantityTiers || [])];
+    newTiers[index] = { ...newTiers[index], [field]: Number(value) };
+    setFormData(prev => ({ ...prev, quantityTiers: newTiers }));
+  };
+
+  const addTier = () => {
+    const existing = formData.quantityTiers || [];
+    const maxMinQty = existing.reduce((m, t) => Math.max(m, Number(t.minQty) || 0), 1);
+    const basePrice = Number(formData.sizes?.[0]?.price) || 0;
+    setFormData(prev => ({
+      ...prev,
+      quantityTiers: [...existing, { minQty: maxMinQty + 1, unitPrice: basePrice }],
+    }));
+  };
+
+  const removeTier = (index) => {
+    const newTiers = [...(formData.quantityTiers || [])];
+    newTiers.splice(index, 1);
+    setFormData(prev => ({ ...prev, quantityTiers: newTiers }));
   };
 
   const handleSectionChange = (index, field, value) => {
@@ -367,6 +390,63 @@ const ProductEdit = () => {
             
             <Button type="button" variant="outline" size="sm" onClick={addSize} className="flex items-center gap-2">
               <Plus className="w-4 h-4" /> Add Size Option
+            </Button>
+          </div>
+
+          <div className="bg-white p-6 border border-gray-200 shadow-sm">
+            <h2 className="font-serif text-xl text-jet mb-2">Quantity Discount Tiers</h2>
+            <p className="font-sans text-xs text-gray-500 leading-relaxed mb-6">
+              Optional per-product overrides. Each row says: when the customer buys at least <em>Min Qty</em>,
+              the <strong>line total</strong> becomes <em>Total Price</em> (e.g. "buy 3 → 50 JOD total"). The
+              highest matching tier wins. If no tiers are set, the global default from Settings applies (if enabled).
+            </p>
+
+            <div className="space-y-4 mb-4">
+              {(formData.quantityTiers || []).length === 0 && (
+                <p className="font-sans text-xs text-gray-400 italic">No per-product tiers — global defaults will apply.</p>
+              )}
+              {(formData.quantityTiers || []).map((tier, idx) => (
+                <div key={idx} className="flex items-end gap-4">
+                  <div className="flex-1">
+                    <label className="font-sans uppercase text-[10px] tracking-[0.1em] text-gray-500 block mb-1">
+                      Min Qty (buy this many or more)
+                    </label>
+                    <Input
+                      type="number"
+                      min="1"
+                      step="1"
+                      value={tier.minQty}
+                      onChange={(e) => handleTierChange(idx, 'minQty', e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <label className="font-sans uppercase text-[10px] tracking-[0.1em] text-gray-500 block mb-1">
+                      Total Price for this Qty (JOD)
+                    </label>
+                    <Input
+                      type="number"
+                      min="0"
+                      step="0.001"
+                      value={tier.unitPrice}
+                      onChange={(e) => handleTierChange(idx, 'unitPrice', e.target.value)}
+                      required
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => removeTier(idx)}
+                    className="p-3 text-gray-400 hover:text-red-500"
+                    title="Remove tier"
+                  >
+                    <Trash2 className="w-5 h-5" />
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            <Button type="button" variant="outline" size="sm" onClick={addTier} className="flex items-center gap-2">
+              <Plus className="w-4 h-4" /> Add Tier
             </Button>
           </div>
         </div>

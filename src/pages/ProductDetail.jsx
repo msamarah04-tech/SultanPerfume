@@ -4,6 +4,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { useCart } from '../context/CartContext';
 import { useReducedMotion, getStaggerContainer, getFadeUp } from '../lib/motion';
 import { formatPrice } from '../lib/format';
+import { resolveTieredLineTotal, describeTiers } from '../lib/pricing';
 import PageTransition from '../components/layout/PageTransition';
 import ProductCard from '../components/product/ProductCard';
 import productsData from '../data/products.json';
@@ -19,7 +20,7 @@ const CATEGORY_AR = {
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { addToCart } = useCart();
+  const { addToCart, globalPricing } = useCart();
 
   const [product, setProduct] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
@@ -64,6 +65,17 @@ const ProductDetail = () => {
   }, [id, navigate]);
 
   if (!product) return null;
+
+  const basePrice = selectedSize?.price ?? 0;
+  const effectiveLineTotal = resolveTieredLineTotal(
+    basePrice,
+    quantity,
+    product.quantityTiers,
+    globalPricing,
+  );
+  const effectiveUnitPrice = quantity > 0 ? effectiveLineTotal / quantity : effectiveLineTotal;
+  const tierLadder = describeTiers(basePrice, product.quantityTiers, globalPricing);
+  const hasDiscount = effectiveUnitPrice < basePrice;
 
   const handleAddToCart = () => {
     addToCart(product, selectedSize, quantity);
@@ -142,8 +154,13 @@ const ProductDetail = () => {
               <div className="mb-6">
                 <div className="flex items-center justify-between mb-3">
                   <span className="font-sans text-xs text-gray-500 uppercase tracking-widest">الحجم</span>
-                  <span className="font-serif text-2xl text-gold font-bold">
-                    {formatPrice(selectedSize?.price)}
+                  <span className="font-serif text-2xl text-gold font-bold flex items-baseline gap-2">
+                    {formatPrice(Number(effectiveUnitPrice.toFixed(3)))}
+                    {hasDiscount && (
+                      <span className="font-sans text-sm text-gray-400 line-through">
+                        {formatPrice(basePrice)}
+                      </span>
+                    )}
                   </span>
                 </div>
                 <div className="flex flex-wrap gap-2">
@@ -188,6 +205,38 @@ const ProductDetail = () => {
                   </span>
                 )}
               </div>
+
+              {tierLadder.length > 0 && (
+                <div className="mb-8 border border-gold/20 bg-gold/[0.04] p-4">
+                  <p className="font-sans text-xs font-bold text-gold tracking-wider mb-3">
+                    خصومات الكمية
+                  </p>
+                  <ul className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    {tierLadder.map((t, i) => (
+                      <li
+                        key={i}
+                        className={`flex items-baseline justify-between gap-2 px-3 py-2 border ${
+                          quantity >= t.minQty ? 'border-gold bg-white' : 'border-gold/15 bg-white/60'
+                        }`}
+                      >
+                        <span className="font-sans text-xs text-gray-600">
+                          اشترِ {t.minQty}
+                        </span>
+                        <span className="flex items-baseline gap-1">
+                          <span className="font-serif text-sm font-bold text-jet">
+                            {formatPrice(Number(t.lineTotal.toFixed(3)))}
+                          </span>
+                          {t.savingsPercent > 0 && (
+                            <span className="font-sans text-[10px] text-gold font-bold">
+                              -{t.savingsPercent}%
+                            </span>
+                          )}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
               {/* CTA buttons */}
               <div className="flex flex-col gap-3">

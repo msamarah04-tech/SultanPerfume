@@ -68,7 +68,7 @@ const AdminLayout = () => {
     <div className="min-h-screen flex flex-col md:flex-row bg-gray-50" dir="ltr">
 
       {/* ── Desktop Sidebar (md+) ─────────────────────────────── */}
-      <aside className="hidden md:flex md:w-64 bg-jet text-white flex-col shrink-0">
+      <aside className="hidden md:flex md:w-64 bg-jet text-white flex-col shrink-0 md:sticky md:top-0 md:h-screen md:overflow-y-auto">
         <div className="p-6 border-b border-white/10">
           <Link to="/" className="font-serif text-2xl text-gold">
             {CONFIG.brandName}
@@ -195,7 +195,7 @@ const AdminLayout = () => {
       </div>
 
       {/* ── Main Content ──────────────────────────────────────── */}
-      <main className="flex-grow p-4 md:p-8 overflow-y-auto md:max-h-screen">
+      <main className="flex-grow p-4 md:p-8 min-w-0">
         <div className="max-w-6xl mx-auto">
           <Outlet />
         </div>

@@ -7,7 +7,7 @@ import { offersRepo } from '../repositories/offers.repo.js';
 import { feedbackRepo } from '../repositories/feedback.repo.js';
 import { settingsRepo } from '../repositories/settings.repo.js';
 import { validate } from '../middleware/validate.js';
-import { createProductSchema, updateProductSchema, patchProductSchema } from '../schemas/product.schema.js';
+import { createProductSchema, updateProductSchema, patchProductSchema, bulkTiersSchema } from '../schemas/product.schema.js';
 import { patchOrderSchema } from '../schemas/order.schema.js';
 import { createOfferSchema, updateOfferSchema } from '../schemas/offer.schema.js';
 import { createFeedbackSchema, patchFeedbackSchema } from '../schemas/feedback.schema.js';
@@ -52,6 +52,23 @@ router.get('/products/export', (req, res, next) => {
     res.setHeader('Content-Disposition', 'attachment; filename="products.json"');
     res.setHeader('Content-Type', 'application/json');
     res.send(JSON.stringify(products, null, 2));
+  } catch (err) { next(err); }
+});
+
+router.post('/products/bulk-tiers', validate(bulkTiersSchema), (req, res, next) => {
+  try {
+    const { mode, tiers = [] } = req.body;
+    const value = mode === 'clear'
+      ? { enabled: false, tiers: [] }
+      : {
+          enabled: true,
+          tiers: tiers.map(t => ({
+            minQty: Math.max(1, Math.floor(Number(t.minQty) || 1)),
+            totalPrice: Math.max(0, Number(t.totalPrice) || 0),
+          })).sort((a, b) => a.minQty - b.minQty),
+        };
+    settingsRepo.update({ cartQuantityTiers: value });
+    res.json({ ok: true, data: { cartQuantityTiers: value } });
   } catch (err) { next(err); }
 });
 

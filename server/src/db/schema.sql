@@ -51,6 +51,20 @@ CREATE TABLE IF NOT EXISTS product_sizes (
 
 CREATE INDEX IF NOT EXISTS idx_product_sizes_product ON product_sizes(product_id);
 
+-- Per-product quantity-tier pricing (one-to-many).
+-- Each row says: when ordering >= min_qty of this product (any size), the
+-- effective per-unit price becomes unit_price (piasters). The tier with the
+-- largest min_qty ≤ ordered quantity wins. If no row matches, the size's
+-- base price is used.
+CREATE TABLE IF NOT EXISTS product_quantity_tiers (
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  product_id TEXT NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+  min_qty    INTEGER NOT NULL CHECK (min_qty >= 1),
+  unit_price INTEGER NOT NULL CHECK (unit_price >= 0)  -- piasters
+);
+
+CREATE INDEX IF NOT EXISTS idx_product_qty_tiers_product ON product_quantity_tiers(product_id);
+
 -- Product images (one-to-many, ordered by position)
 CREATE TABLE IF NOT EXISTS product_images (
   id         INTEGER PRIMARY KEY AUTOINCREMENT,

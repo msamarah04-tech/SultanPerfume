@@ -2,7 +2,7 @@ import { piasterToJod, jodToPiaster } from './pricing.js';
 
 // ─── Products ────────────────────────────────────────────────────────────────
 
-export function productRowToApi(row, sizes = [], images = []) {
+export function productRowToApi(row, sizes = [], images = [], qtyTiers = []) {
   return {
     id: row.id,
     name: row.name,
@@ -13,6 +13,10 @@ export function productRowToApi(row, sizes = [], images = []) {
     sizes: sizes.map(s => ({
       size: s.size,
       price: piasterToJod(s.price),
+    })),
+    quantityTiers: qtyTiers.map(t => ({
+      minQty: t.min_qty,
+      unitPrice: piasterToJod(t.unit_price),
     })),
     stock: row.stock,
     topNotes: row.top_notes,

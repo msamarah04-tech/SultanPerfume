@@ -17,6 +17,20 @@ export const updateSettingsSchema = z.object({
     snapchat: z.string().optional(),
   }).optional(),
   homeSections: z.array(z.string()).optional(),
+  quantityPricing: z.object({
+    enabled: z.boolean().default(false),
+    tiers: z.array(z.object({
+      minQty: z.number().int().min(1),
+      discountPercent: z.number().min(0).max(100),
+    })).default([]),
+  }).optional(),
+  cartQuantityTiers: z.object({
+    enabled: z.boolean().default(true),
+    tiers: z.array(z.object({
+      minQty: z.number().int().min(1),
+      totalPrice: z.number().min(0),
+    })).default([]),
+  }).optional(),
 }).strict();
 
 export const loginSchema = z.object({

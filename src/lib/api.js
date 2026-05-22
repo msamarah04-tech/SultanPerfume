@@ -81,6 +81,7 @@ export const adminApi = {
     delete: (id) => apiDelete(`/admin/products/${id}`, { admin: true }),
     export: () => apiGet('/admin/products/export', { admin: true }),
     import: (products) => apiPost('/admin/products/import', products, { admin: true }),
+    bulkTiers: (payload) => apiPost('/admin/products/bulk-tiers', payload, { admin: true }),
   },
 
   // Orders

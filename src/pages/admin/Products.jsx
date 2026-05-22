@@ -5,7 +5,7 @@ import { adminApi } from '../../lib/api';
 import { useToast } from '../../context/ToastContext';
 import Button from '../../components/ui/Button';
 import Modal from '../../components/ui/Modal';
-import { Plus, Search, Edit, Trash2, Download, Upload } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Download, Upload, Layers } from 'lucide-react';
 
 const Products = () => {
   const [products, setProducts] = useState([]);
@@ -13,11 +13,28 @@ const Products = () => {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
 
+  const [tiersModalOpen, setTiersModalOpen] = useState(false);
+  const [bulkTiers, setBulkTiers] = useState([
+    { minQty: 2, totalPrice: 70 },
+    { minQty: 3, totalPrice: 90 },
+  ]);
+  const [bulkBusy, setBulkBusy] = useState(false);
+
   const fileInputRef = useRef(null);
   const { showToast } = useToast();
 
   useEffect(() => {
     adminApi.products.list({ limit: 200 }).then(data => setProducts(data.items)).catch(console.error);
+    // Pre-load the existing cart-wide tier so admin sees what's currently active
+    adminApi.settings.get().then(s => {
+      const cqt = s?.cartQuantityTiers;
+      if (cqt && Array.isArray(cqt.tiers) && cqt.tiers.length) {
+        setBulkTiers(cqt.tiers.map(t => ({
+          minQty: Number(t.minQty),
+          totalPrice: Number(t.totalPrice),
+        })));
+      }
+    }).catch(() => {});
   }, []);
 
   const confirmDelete = (product) => {
@@ -76,6 +93,62 @@ const Products = () => {
     e.target.value = null;
   };
 
+  const refreshProducts = async () => {
+    const fresh = await adminApi.products.list({ limit: 200 });
+    setProducts(fresh.items);
+  };
+
+  const updateBulkTier = (idx, field, value) => {
+    setBulkTiers(prev => {
+      const next = [...prev];
+      next[idx] = { ...next[idx], [field]: Number(value) };
+      return next;
+    });
+  };
+
+  const addBulkTier = () => {
+    setBulkTiers(prev => {
+      const maxQty = prev.reduce((m, t) => Math.max(m, Number(t.minQty) || 1), 1);
+      const lastPrice = prev[prev.length - 1]?.totalPrice ?? 0;
+      return [...prev, { minQty: maxQty + 1, totalPrice: lastPrice }];
+    });
+  };
+
+  const removeBulkTier = (idx) => {
+    setBulkTiers(prev => prev.filter((_, i) => i !== idx));
+  };
+
+  const applyBulkTiers = async (mode) => {
+    if (mode === 'set' && bulkTiers.length === 0) {
+      showToast('Add at least one tier first.', 'error');
+      return;
+    }
+    setBulkBusy(true);
+    try {
+      const payload = mode === 'set'
+        ? {
+            mode: 'set',
+            tiers: bulkTiers.map(t => ({
+              minQty: Math.max(1, Math.floor(Number(t.minQty) || 1)),
+              totalPrice: Math.max(0, Number(t.totalPrice) || 0),
+            })),
+          }
+        : { mode: 'clear', tiers: [] };
+      await adminApi.products.bulkTiers(payload);
+      showToast(
+        mode === 'set'
+          ? 'Cart-wide tier saved. Applies to mixed perfumes in any cart.'
+          : 'Cart-wide tier cleared.',
+      );
+      setTiersModalOpen(false);
+      await refreshProducts();
+    } catch (err) {
+      showToast(err.message || 'Bulk tier update failed.', 'error');
+    } finally {
+      setBulkBusy(false);
+    }
+  };
+
   const filteredProducts = products.filter(p =>
     p.name.toLowerCase().includes(search.toLowerCase()) ||
     p.category.toLowerCase().includes(search.toLowerCase())
@@ -107,7 +180,10 @@ const Products = () => {
               className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 font-sans text-sm outline-none focus:border-gold"
             />
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
+            <Button variant="outline" size="sm" onClick={() => setTiersModalOpen(true)} className="flex items-center gap-2">
+              <Layers className="w-4 h-4" /> Bulk Tiers
+            </Button>
             <Button variant="outline" size="sm" onClick={handleExport} className="flex items-center gap-2">
               <Download className="w-4 h-4" /> Export JSON
             </Button>
@@ -178,6 +254,103 @@ const Products = () => {
           </table>
         </div>
       </div>
+
+      <Modal isOpen={tiersModalOpen} onClose={() => setTiersModalOpen(false)} title="Cart-wide Bundle Tiers">
+        <p className="font-sans text-sm text-gray-600 mb-4">
+          One cart-wide deal across all perfumes. Counts total bottles in the cart (mixing different
+          perfumes is OK). When a tier matches, that <strong>total price</strong> replaces the cart subtotal.
+          Example: tier qty 2 → 70 JOD means any 2 bottles in the cart cost 70 JOD total.
+        </p>
+
+        {(() => {
+          const sorted = [...bulkTiers].sort((a, b) => Number(a.minQty) - Number(b.minQty));
+          const inverted = sorted.some((t, i) =>
+            i > 0 && Number(t.totalPrice) < Number(sorted[i - 1].totalPrice),
+          );
+          if (!inverted) return null;
+          return (
+            <p className="font-sans text-xs text-red-700 bg-red-50 border border-red-200 px-3 py-2 mb-4">
+              Warning: a higher-quantity tier has a LOWER total than a lower one — buying more would
+              cost less overall. Did you mean to increase the total?
+            </p>
+          );
+        })()}
+
+        <div className="mb-4">
+          <label className="block font-sans text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
+            Tiers
+          </label>
+          <div className="space-y-3">
+            {bulkTiers.length === 0 && (
+              <p className="font-sans text-xs text-gray-400 italic">No tiers — add at least one to apply.</p>
+            )}
+            {bulkTiers.map((tier, idx) => (
+              <div key={idx} className="flex items-end gap-3">
+                <div className="flex-1">
+                  <label className="block font-sans text-[10px] text-gray-500 uppercase tracking-wider mb-1">
+                    Min Qty
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    step="1"
+                    value={tier.minQty}
+                    onChange={(e) => updateBulkTier(idx, 'minQty', e.target.value)}
+                    className="w-full border border-gray-200 px-3 py-2 font-sans text-sm focus:border-gold focus:outline-none"
+                  />
+                </div>
+                <div className="flex-1">
+                  <label className="block font-sans text-[10px] text-gray-500 uppercase tracking-wider mb-1">
+                    Total Cart Price (JOD)
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.001"
+                    value={tier.totalPrice}
+                    onChange={(e) => updateBulkTier(idx, 'totalPrice', e.target.value)}
+                    className="w-full border border-gray-200 px-3 py-2 font-sans text-sm focus:border-gold focus:outline-none"
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={() => removeBulkTier(idx)}
+                  className="p-2 text-gray-400 hover:text-red-500"
+                  title="Remove tier"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+          <button
+            type="button"
+            onClick={addBulkTier}
+            className="mt-3 inline-flex items-center gap-1 text-xs font-sans text-gold hover:underline"
+          >
+            <Plus className="w-3 h-3" /> Add tier
+          </button>
+        </div>
+
+        <div className="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-t border-gray-100 pt-4">
+          <button
+            type="button"
+            disabled={bulkBusy}
+            onClick={() => applyBulkTiers('clear')}
+            className="text-xs font-sans text-red-500 hover:underline disabled:opacity-50 self-start"
+          >
+            Disable cart-wide tier
+          </button>
+          <div className="flex gap-3">
+            <Button variant="outline" onClick={() => setTiersModalOpen(false)} disabled={bulkBusy}>
+              Cancel
+            </Button>
+            <Button variant="primary" onClick={() => applyBulkTiers('set')} isLoading={bulkBusy}>
+              Save
+            </Button>
+          </div>
+        </div>
+      </Modal>
 
       <Modal isOpen={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} title="Confirm Deletion">
         <p className="font-sans text-gray-600 mb-6">

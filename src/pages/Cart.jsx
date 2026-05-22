@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useReducedMotion, getStaggerContainer, getFadeUp } from '../lib/motion';
@@ -50,10 +50,15 @@ function BundlePerfumeList({ item }) {
 }
 
 const Cart = () => {
-  const { cart, updateQuantity, removeFromCart, subtotal } = useCart();
+  const { cart, updateQuantity, removeFromCart, subtotal, refreshPrices, activeCartTier } = useCart();
   const prefersReducedMotion = useReducedMotion();
   const navigate = useNavigate();
   const [showConfirm, setShowConfirm] = useState(false);
+
+  useEffect(() => {
+    refreshPrices();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const isFreeDelivery = CONFIG.freeDeliveryThreshold > 0 && subtotal >= CONFIG.freeDeliveryThreshold;
   const deliveryFee = isFreeDelivery ? 0 : CONFIG.deliveryFee;
@@ -92,8 +97,13 @@ const Cart = () => {
                 <div className="flex flex-col gap-4 font-sans text-sm mb-6 pb-6 border-b border-gray-100">
                   <div className="flex justify-between">
                     <span className="text-gray-500">المجموع الفرعي</span>
-                    <span className="text-jet">{formatPrice(subtotal)}</span>
+                    <span className="text-jet">{formatPrice(Number(subtotal.toFixed(3)))}</span>
                   </div>
+                  {activeCartTier && (
+                    <p className="font-sans text-xs text-gold bg-gold/10 border border-gold/30 px-3 py-2">
+                      ✨ تم تطبيق عرض الباقة: اشترِ {activeCartTier.minQty} بسعر {formatPrice(activeCartTier.totalPrice)}
+                    </p>
+                  )}
                   <div className="flex justify-between">
                     <span className="text-gray-500">رسوم التوصيل</span>
                     <span className="text-jet">
@@ -153,7 +163,17 @@ const Cart = () => {
                         ) : (
                           <p className="font-sans text-xs text-gray-500 mb-2"><bdi>{item.size}</bdi></p>
                         )}
-                        <p className="font-sans text-sm text-gold mt-3">{formatPrice(item.price)}</p>
+                        {item.basePrice != null && item.price < item.basePrice ? (
+                          <p className="font-sans text-sm mt-3">
+                            <span className="text-gold font-semibold">{formatPrice(item.price)}</span>
+                            <span className="text-gray-400 line-through ms-2">{formatPrice(item.basePrice)}</span>
+                            <span className="ms-2 bg-gold/10 text-gold text-[10px] font-bold px-1.5 py-0.5">
+                              خصم الكمية
+                            </span>
+                          </p>
+                        ) : (
+                          <p className="font-sans text-sm text-gold mt-3">{formatPrice(item.price)}</p>
+                        )}
                       </div>
                     </div>
 

@@ -35,6 +35,25 @@ export function migrate() {
   } else {
     console.log('✓ Schema already at version 2');
   }
+
+  // Version 3: per-product quantity-tier pricing
+  const v3 = db.prepare('SELECT version FROM schema_version WHERE version = 3').get();
+  if (!v3) {
+    db.exec(`
+      CREATE TABLE IF NOT EXISTS product_quantity_tiers (
+        id         INTEGER PRIMARY KEY AUTOINCREMENT,
+        product_id TEXT NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+        min_qty    INTEGER NOT NULL CHECK (min_qty >= 1),
+        unit_price INTEGER NOT NULL CHECK (unit_price >= 0)
+      );
+      CREATE INDEX IF NOT EXISTS idx_product_qty_tiers_product
+        ON product_quantity_tiers(product_id);
+    `);
+    db.prepare('INSERT INTO schema_version (version) VALUES (3)').run();
+    console.log('✓ Schema version 3 applied (product_quantity_tiers)');
+  } else {
+    console.log('✓ Schema already at version 3');
+  }
 }
 
 // Allow running directly: node src/db/migrate.js

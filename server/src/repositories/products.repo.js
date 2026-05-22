@@ -15,10 +15,15 @@ function attachChildren(db, rows) {
     `SELECT * FROM product_images WHERE product_id IN (${placeholders}) ORDER BY position`
   ).all(...ids);
 
+  const tiers = db.prepare(
+    `SELECT * FROM product_quantity_tiers WHERE product_id IN (${placeholders}) ORDER BY min_qty`
+  ).all(...ids);
+
   return rows.map(row => {
     const rowSizes = sizes.filter(s => s.product_id === row.id);
     const rowImages = images.filter(img => img.product_id === row.id);
-    return productRowToApi(row, rowSizes, rowImages);
+    const rowTiers = tiers.filter(t => t.product_id === row.id);
+    return productRowToApi(row, rowSizes, rowImages, rowTiers);
   });
 }
 
@@ -59,7 +64,8 @@ export const productsRepo = {
 
     const sizes = db.prepare('SELECT * FROM product_sizes WHERE product_id = ? ORDER BY position').all(id);
     const images = db.prepare('SELECT * FROM product_images WHERE product_id = ? ORDER BY position').all(id);
-    return productRowToApi(row, sizes, images);
+    const tiers = db.prepare('SELECT * FROM product_quantity_tiers WHERE product_id = ? ORDER BY min_qty').all(id);
+    return productRowToApi(row, sizes, images, tiers);
   },
 
   create(data) {
@@ -79,6 +85,7 @@ export const productsRepo = {
 
     this._replaceSizes(db, data.id, data.sizes);
     this._replaceImages(db, data.id, data.images);
+    this._replaceQtyTiers(db, data.id, data.quantityTiers);
     return this.findById(data.id, false);
   },
 
@@ -99,6 +106,7 @@ export const productsRepo = {
 
     if (data.sizes !== undefined) this._replaceSizes(db, id, data.sizes);
     if (data.images !== undefined) this._replaceImages(db, id, data.images);
+    if (data.quantityTiers !== undefined) this._replaceQtyTiers(db, id, data.quantityTiers);
     return this.findById(id, false);
   },
 
@@ -123,16 +131,16 @@ export const productsRepo = {
       params.push(val);
     }
 
-    if (!sets.length) return this.findById(id, false);
-
-    sets.push('updated_at = ?');
-    params.push(new Date().toISOString());
-    params.push(id);
-
-    db.prepare(`UPDATE products SET ${sets.join(', ')} WHERE id = ?`).run(...params);
+    if (sets.length) {
+      sets.push('updated_at = ?');
+      params.push(new Date().toISOString());
+      params.push(id);
+      db.prepare(`UPDATE products SET ${sets.join(', ')} WHERE id = ?`).run(...params);
+    }
 
     if (fields.sizes !== undefined) this._replaceSizes(db, id, fields.sizes);
     if (fields.images !== undefined) this._replaceImages(db, id, fields.images);
+    if (fields.quantityTiers !== undefined) this._replaceQtyTiers(db, id, fields.quantityTiers);
     return this.findById(id, false);
   },
 
@@ -157,6 +165,35 @@ export const productsRepo = {
     return attachChildren(db, rows);
   },
 
+  // Bulk apply quantity tiers across many products.
+  // mode='clear' removes all tiers from products in scope.
+  // mode='set' takes [{minQty, unitPrice}] (JOD) and writes the same fixed
+  // unit price as a tier on every product in scope.
+  bulkApplyTiers({ mode, tiers = [], scope = 'all' }) {
+    const db = getDb();
+    const where = scope === 'active' ? 'WHERE active = 1' : '';
+    const products = db.prepare(`SELECT id FROM products ${where}`).all();
+
+    const apply = db.transaction(() => {
+      for (const { id } of products) {
+        db.prepare('DELETE FROM product_quantity_tiers WHERE product_id = ?').run(id);
+        if (mode === 'clear') continue;
+
+        const ins = db.prepare(
+          'INSERT INTO product_quantity_tiers (product_id, min_qty, unit_price) VALUES (?, ?, ?)'
+        );
+        for (const t of tiers) {
+          const minQty = Math.max(1, Math.floor(Number(t.minQty) || 1));
+          const unitPrice = jodToPiaster(Math.max(0, Number(t.unitPrice) || 0));
+          ins.run(id, minQty, unitPrice);
+        }
+      }
+    });
+
+    apply();
+    return { affected: products.length };
+  },
+
   _replaceSizes(db, productId, sizes) {
     db.prepare('DELETE FROM product_sizes WHERE product_id = ?').run(productId);
     const ins = db.prepare('INSERT INTO product_sizes (product_id, size, price, position) VALUES (?, ?, ?, ?)');
@@ -167,5 +204,18 @@ export const productsRepo = {
     db.prepare('DELETE FROM product_images WHERE product_id = ?').run(productId);
     const ins = db.prepare('INSERT INTO product_images (product_id, url, position) VALUES (?, ?, ?)');
     (images ?? []).forEach((url, i) => ins.run(productId, url, i));
+  },
+
+  _replaceQtyTiers(db, productId, tiers) {
+    db.prepare('DELETE FROM product_quantity_tiers WHERE product_id = ?').run(productId);
+    if (!tiers || !tiers.length) return;
+    const ins = db.prepare(
+      'INSERT INTO product_quantity_tiers (product_id, min_qty, unit_price) VALUES (?, ?, ?)'
+    );
+    for (const t of tiers) {
+      const minQty = Math.max(1, Math.floor(Number(t.minQty) || 1));
+      const unitPrice = jodToPiaster(Number(t.unitPrice) || 0);
+      ins.run(productId, minQty, unitPrice);
+    }
   },
 };
