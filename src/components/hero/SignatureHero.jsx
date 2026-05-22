@@ -137,12 +137,14 @@ function AtmosphereHaze({ scene, index, progress }) {
                :            [slot - W * 2, slot - W, slot + W, slot + W * 2];
   const output = isFirst ? [1, 1, 0] : isLast ? [0, 1, 1] : [0, 1, 1, 0];
   const opacity = useTransform(progress, input, output);
+  // Tip the haze entirely out of compositing once it's invisible.
+  const visibility = useTransform(opacity, (o) => (o < 0.01 ? 'hidden' : 'visible'));
 
   return (
     <motion.div
       aria-hidden="true"
       className="absolute inset-0"
-      style={{ opacity, background: scene.hazeTint, pointerEvents: 'none' }}
+      style={{ opacity, visibility, background: scene.hazeTint, pointerEvents: 'none' }}
     />
   );
 }
@@ -159,6 +161,10 @@ function Scene({ scene, index, progress, reduced }) {
                  :            [slot - W * 2, slot - W, slot + W, slot + W * 2];
   const opOutput = isFirst ? [1, 1, 0] : isLast ? [0, 1, 1] : [0, 1, 1, 0];
   const sceneOpacity = useTransform(progress, opInput, opOutput);
+  // When the scene fully fades out, hide it so its filigree spin / particle
+  // drift / drop-shadow ellipse stop being composited. This is the single
+  // largest win for scroll smoothness — only one scene paints at a time.
+  const sceneVisibility = useTransform(sceneOpacity, (o) => (o < 0.01 ? 'hidden' : 'visible'));
 
   const pStart = isFirst ? 0 : Math.max(0, slot - 0.30);
   const pEnd   = isLast  ? 1 : Math.min(1, slot + 0.30);
@@ -176,7 +182,7 @@ function Scene({ scene, index, progress, reduced }) {
   return (
     <motion.div
       className="absolute inset-0 pointer-events-none"
-      style={{ opacity: sceneOpacity, willChange: 'opacity' }}
+      style={{ opacity: sceneOpacity, visibility: sceneVisibility, willChange: 'opacity' }}
     >
       <motion.div aria-hidden="true" className="absolute inset-0 flex items-center justify-center"
         style={{ y: filigreeY, scale: filigreeScale, willChange: 'transform' }}>
@@ -203,9 +209,31 @@ function Scene({ scene, index, progress, reduced }) {
 
       <motion.div className="absolute inset-0 flex items-center justify-center"
         style={{ y: bottleY, scale: bottleScale, willChange: 'transform' }}>
-        <img src={scene.image} alt={`${scene.name} perfume bottle`}
-          className="max-h-[70vh] w-auto select-none" draggable={false}
-          style={{ filter: 'drop-shadow(0 24px 50px rgba(50, 30, 10, 0.22))' }} />
+        <div className="relative">
+          <img
+            src={scene.image}
+            alt={`${scene.name} perfume bottle`}
+            className="max-h-[70vh] w-auto block select-none"
+            loading="eager"
+            decoding="async"
+            draggable={false}
+          />
+          {/* Contact shadow as a separate radial-gradient div, not a
+              filter on the img. drop-shadow forces a per-frame GPU
+              re-raster from the alpha channel; a gradient div rides
+              along on the parent transform for free. */}
+          <div
+            aria-hidden="true"
+            className="absolute left-1/2 -translate-x-1/2 pointer-events-none"
+            style={{
+              bottom: '-10px',
+              width: '70%',
+              height: '24px',
+              background:
+                'radial-gradient(ellipse closest-side, rgba(40, 25, 10, 0.32) 0%, transparent 70%)',
+            }}
+          />
+        </div>
       </motion.div>
 
       {!reduced && (
