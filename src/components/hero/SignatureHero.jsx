@@ -9,9 +9,6 @@ import {
   useReducedMotion,
 } from 'framer-motion';
 
-const IS_TOUCH = typeof window !== 'undefined'
-  && window.matchMedia('(hover: none) and (pointer: coarse)').matches;
-
 const SCENES = [
   {
     id: 'bella',
@@ -52,63 +49,46 @@ const BG = '#FAF7F2';
 export default function SignatureHero() {
   const reduced = useReducedMotion();
   const sectionRef = useRef(null);
-  const boundsRef  = useRef({ top: 0, bottom: 0 });
-  const pinRef     = useRef(null); // direct DOM ref for the stage div
+  const boundsRef  = useRef({ top: 0, height: 0 });
+  // Cache the LARGEST window.innerHeight ever seen. On iOS Safari the URL bar
+  // slides in/out and `window.innerHeight` swings ~100px during scroll —
+  // recomputing progress against that moving denominator causes the bottles
+  // to jolt mid scroll-back. Locking to lvh keeps the math stable.
+  const vhRef = useRef(0);
 
-  // Window scroll — no target element, so no scroll container is created on iOS
   const { scrollY } = useScroll();
-
-  // Manual 0→1 progress so we don't attach useScroll to the section element
   const progressValue = useMotionValue(0);
 
-  const smooth = useSpring(progressValue, {
-    stiffness: 90,
-    damping: 28,
-    mass: 0.4,
-    restDelta: 0.001,
+  // Spring on every device (including touch). The position: sticky stage means
+  // the visible pinning is browser-native; the spring only smooths the
+  // transform values (bottle y, scale, scene opacity) so iOS momentum scroll
+  // doesn't step through them discretely.
+  const progress = useSpring(progressValue, {
+    stiffness: 110,
+    damping: 30,
+    mass: 0.3,
+    restDelta: 0.0005,
   });
 
-  const progress = IS_TOUCH ? progressValue : smooth;
-
-  // Measure section bounds once on mount and on resize
   useEffect(() => {
     const measure = () => {
       const el = sectionRef.current;
       if (!el) return;
-      boundsRef.current = { top: el.offsetTop, bottom: el.offsetTop + el.offsetHeight };
+      boundsRef.current = { top: el.offsetTop, height: el.offsetHeight };
+      if (window.innerHeight > vhRef.current) vhRef.current = window.innerHeight;
     };
     measure();
     window.addEventListener('resize', measure, { passive: true });
     return () => window.removeEventListener('resize', measure);
   }, []);
 
-  // On every scroll tick: update progress + flip position style directly on DOM
-  // (bypasses React state to avoid re-renders on every frame)
   useMotionValueEvent(scrollY, 'change', (y) => {
-    const { top, bottom } = boundsRef.current;
-    const vh = window.innerHeight;
-    const scrollable = bottom - vh - top;
-
-    // Progress 0→1 across the scrollable window of the section
+    const { top, height } = boundsRef.current;
+    if (window.innerHeight > vhRef.current) vhRef.current = window.innerHeight;
+    const vh = vhRef.current || window.innerHeight;
+    const scrollable = height - vh;
     const p = scrollable > 0 ? Math.max(0, Math.min(1, (y - top) / scrollable)) : 0;
     progressValue.set(p);
-
-    // Directly mutate the stage element's style — no setState, no re-render
-    const stage = pinRef.current;
-    if (!stage) return;
-    if (y < top) {
-      stage.style.position = 'absolute';
-      stage.style.top      = '0';
-      stage.style.bottom   = 'auto';
-    } else if (y >= bottom - vh) {
-      stage.style.position = 'absolute';
-      stage.style.top      = 'auto';
-      stage.style.bottom   = '0';
-    } else {
-      stage.style.position = 'fixed';
-      stage.style.top      = '0';
-      stage.style.bottom   = 'auto';
-    }
   });
 
   return (
@@ -118,10 +98,12 @@ export default function SignatureHero() {
       className="relative w-full"
       style={{ height: '320vh', background: BG }}
     >
-      {/* Stage — starts absolute/top:0; JS flips to fixed while scrolling through */}
+      {/* Sticky stage — browser pins it natively. No JS position-flipping,
+          which on iOS used to cause stacking-context flicker and a vertical
+          jolt as the URL bar slid in during scroll-back. */}
       <div
-        ref={pinRef}
-        style={{ position: 'absolute', top: 0, bottom: 'auto', left: 0, right: 0, height: '100dvh', overflow: 'hidden' }}
+        className="sticky top-0 w-full overflow-hidden"
+        style={{ height: '100dvh' }}
       >
         {SCENES.map((scene, i) => (
           <AtmosphereHaze key={`haze-${scene.id}`} scene={scene} index={i} progress={progress} />
@@ -248,7 +230,7 @@ function Particles({ color, progress, isFirst, isLast, slot }) {
   }));
 
   return (
-    <motion.div aria-hidden="true" className="absolute inset-0"
+    <motion.div aria-hidden="true" className="absolute inset-0 hero-particles"
       style={{ y: wrapperY, willChange: 'transform' }}>
       {particles.map((p, i) => (
         <span key={i} className="absolute bottom-0 rounded-full"

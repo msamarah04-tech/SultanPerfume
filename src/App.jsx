@@ -110,6 +110,7 @@ function App() {
       smoothWheel: true,
       smoothTouch: false,
       wheelMultiplier: 1,
+      touchMultiplier: 1.2,
     });
 
     lenis.on('scroll', ScrollTrigger.update);

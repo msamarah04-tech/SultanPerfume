@@ -22,7 +22,7 @@ export const CONFIG = {
 
   adminPassword: "admin",
 
-  enableCursorSpotlight: true,
+  enableCursorSpotlight: false,
 
   numeralSystem: "arab",
 };

@@ -129,6 +129,11 @@ html::-webkit-scrollbar-thumb:hover {
   50%      { transform: translateY(6px); }
 }
 
+/* Mobile throttle: fewer animated particles to keep frame rate up */
+@media (max-width: 768px) {
+  .hero-particles span:nth-child(n+8) { display: none; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   [style*="heroSpin"],
   [style*="heroDrift"],
