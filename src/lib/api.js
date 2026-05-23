@@ -58,6 +58,7 @@ export const productsApi = {
 
 export const ordersApi = {
   create: (payload) => apiPost('/orders', payload),
+  preview: (payload) => apiPost('/orders/preview', payload),
   getById: (id) => apiGet(`/orders/${id}`),
 };
 

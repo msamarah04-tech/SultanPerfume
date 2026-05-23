@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useReducedMotion, getStaggerContainer, getFadeUp } from '../lib/motion';
 import { useCart } from '../context/CartContext';
 import { formatPrice } from '../lib/format';
-import { CONFIG } from '../config';
+import { ordersApi } from '../lib/api';
 import PageTransition from '../components/layout/PageTransition';
 import EmptyState from '../components/ui/EmptyState';
 import Button from '../components/ui/Button';
@@ -60,9 +60,35 @@ const Cart = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const isFreeDelivery = CONFIG.freeDeliveryThreshold > 0 && subtotal >= CONFIG.freeDeliveryThreshold;
-  const deliveryFee = isFreeDelivery ? 0 : CONFIG.deliveryFee;
-  const total = subtotal + deliveryFee;
+  // Server is the source of truth for delivery + total. Mirror Checkout:
+  // call /orders/preview whenever the cart changes; fall back to subtotal
+  // (with deliveryFee 0) only if preview fails.
+  const [previewDeliveryFee, setPreviewDeliveryFee] = useState(0);
+  const [previewTotal, setPreviewTotal] = useState(subtotal);
+  const [previewSubtotal, setPreviewSubtotal] = useState(subtotal);
+
+  useEffect(() => {
+    if (cart.length === 0) return;
+    let cancelled = false;
+    ordersApi.preview({
+      items: cart.map(item => ({ productId: item.id, size: item.size, quantity: item.quantity })),
+    }).then(data => {
+      if (cancelled) return;
+      setPreviewSubtotal(data.subtotal ?? subtotal);
+      setPreviewDeliveryFee(data.deliveryFee ?? 0);
+      setPreviewTotal(data.total ?? subtotal);
+    }).catch(() => {
+      if (cancelled) return;
+      setPreviewSubtotal(subtotal);
+      setPreviewDeliveryFee(0);
+      setPreviewTotal(subtotal);
+    });
+    return () => { cancelled = true; };
+  }, [cart, subtotal]);
+
+  const deliveryFee = previewDeliveryFee;
+  const total = previewTotal;
+  const displaySubtotal = previewSubtotal;
 
   if (cart.length === 0) {
     return (
@@ -97,7 +123,7 @@ const Cart = () => {
                 <div className="flex flex-col gap-4 font-sans text-sm mb-6 pb-6 border-b border-gray-100">
                   <div className="flex justify-between">
                     <span className="text-gray-500">المجموع الفرعي</span>
-                    <span className="text-jet">{formatPrice(Number(subtotal.toFixed(3)))}</span>
+                    <span className="text-jet">{formatPrice(displaySubtotal)}</span>
                   </div>
                   {activeCartTier && (
                     <p className="font-sans text-xs text-gold bg-gold/10 border border-gold/30 px-3 py-2">
@@ -119,9 +145,11 @@ const Cart = () => {
 
                 <Button variant="primary" fullWidth onClick={() => setShowConfirm(true)}>متابعة الطلب</Button>
 
-                <div className="flex items-center justify-center gap-1.5 mt-4 bg-gold/5 border border-gold/10 py-2">
-                  <span className="text-[10px] font-sans text-gold font-bold">✨ التوصيل مجاني بالكامل لكافة الطلبات!</span>
-                </div>
+                {deliveryFee === 0 && (
+                  <div className="flex items-center justify-center gap-1.5 mt-4 bg-gold/5 border border-gold/10 py-2">
+                    <span className="text-[10px] font-sans text-gold font-bold">✨ التوصيل مجاني!</span>
+                  </div>
+                )}
               </div>
             </div>
 

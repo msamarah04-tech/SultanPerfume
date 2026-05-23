@@ -30,6 +30,8 @@ export const updateSettingsSchema = z.object({
       minQty: z.number().int().min(1),
       totalPrice: z.number().min(0),
     })).default([]),
+    // Per-bottle JOD rate for excess beyond the highest tier minQty.
+    excessUnitPrice: z.number().min(0).default(5),
   }).optional(),
 }).strict();
 

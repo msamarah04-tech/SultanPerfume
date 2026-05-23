@@ -76,19 +76,21 @@ CREATE INDEX IF NOT EXISTS idx_product_images_product ON product_images(product_
 
 -- Orders
 CREATE TABLE IF NOT EXISTS orders (
-  id               TEXT PRIMARY KEY,
-  customer_name    TEXT NOT NULL,
-  customer_phone   TEXT NOT NULL,
-  customer_address TEXT NOT NULL DEFAULT '',
-  customer_notes   TEXT NOT NULL DEFAULT '',
-  subtotal         INTEGER NOT NULL,  -- piasters
-  delivery_fee     INTEGER NOT NULL DEFAULT 0,  -- piasters
-  total            INTEGER NOT NULL,  -- piasters
-  status           TEXT NOT NULL DEFAULT 'new'
+  id                  TEXT PRIMARY KEY,
+  customer_name       TEXT NOT NULL,
+  customer_phone      TEXT NOT NULL,
+  customer_address    TEXT NOT NULL DEFAULT '',
+  customer_notes      TEXT NOT NULL DEFAULT '',
+  subtotal            INTEGER NOT NULL,  -- piasters, PRE-discount
+  discount            INTEGER NOT NULL DEFAULT 0,  -- piasters
+  applied_promo_code  TEXT,                            -- nullable
+  delivery_fee        INTEGER NOT NULL DEFAULT 0,  -- piasters
+  total               INTEGER NOT NULL,  -- piasters; = max(0, subtotal - discount) + delivery_fee
+  status              TEXT NOT NULL DEFAULT 'new'
     CHECK (status IN ('new', 'contacted', 'confirmed', 'fulfilled', 'cancelled')),
-  whatsapp_sent    INTEGER NOT NULL DEFAULT 0 CHECK (whatsapp_sent IN (0, 1)),
-  created_at       TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at       TEXT NOT NULL DEFAULT (datetime('now'))
+  whatsapp_sent       INTEGER NOT NULL DEFAULT 0 CHECK (whatsapp_sent IN (0, 1)),
+  created_at          TEXT NOT NULL DEFAULT (datetime('now')),
+  updated_at          TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
 CREATE INDEX IF NOT EXISTS idx_orders_status     ON orders(status);
@@ -149,3 +151,20 @@ CREATE TABLE IF NOT EXISTS settings (
   key   TEXT PRIMARY KEY,
   value TEXT NOT NULL  -- JSON-encoded
 );
+
+-- Audit log for pricing-affecting changes (offer create/update, settings
+-- edits to delivery/tiers, etc). Append-only; read from /admin/audit/pricing.
+-- Used to investigate "why did this order total what it totalled".
+CREATE TABLE IF NOT EXISTS pricing_audit (
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  actor      TEXT NOT NULL DEFAULT '',
+  entity     TEXT NOT NULL,            -- 'offers' | 'settings' | 'orders' | ...
+  entity_key TEXT NOT NULL,            -- e.g. offer id, setting key, order id
+  old_value  TEXT,                     -- JSON or NULL
+  new_value  TEXT,                     -- JSON or NULL
+  note       TEXT NOT NULL DEFAULT '',
+  at         TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_pricing_audit_entity ON pricing_audit(entity);
+CREATE INDEX IF NOT EXISTS idx_pricing_audit_at     ON pricing_audit(at);

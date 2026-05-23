@@ -22,6 +22,7 @@ const Products = () => {
     { minQty: 2, totalPrice: 70 },
     { minQty: 3, totalPrice: 90 },
   ]);
+  const [bulkExcessUnit, setBulkExcessUnit] = useState(5);
   const [bulkBusy, setBulkBusy] = useState(false);
 
   const fileInputRef = useRef(null);
@@ -38,6 +39,7 @@ const Products = () => {
           totalPrice: Number(t.totalPrice),
         })));
       }
+      if (cqt && cqt.excessUnitPrice != null) setBulkExcessUnit(Number(cqt.excessUnitPrice));
     }).catch(() => {});
   }, []);
 
@@ -136,8 +138,9 @@ const Products = () => {
               minQty: Math.max(1, Math.floor(Number(t.minQty) || 1)),
               totalPrice: Math.max(0, Number(t.totalPrice) || 0),
             })),
+            excessUnitPrice: Math.max(0, Number(bulkExcessUnit) || 0),
           }
-        : { mode: 'clear', tiers: [] };
+        : { mode: 'clear', tiers: [], excessUnitPrice: Math.max(0, Number(bulkExcessUnit) || 0) };
       await adminApi.products.bulkTiers(payload);
       showToast(
         mode === 'set'
@@ -437,6 +440,23 @@ const Products = () => {
           >
             <Plus className="w-3 h-3" /> Add tier
           </button>
+        </div>
+
+        <div className="mb-2">
+          <label className="block font-sans text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
+            Price per extra bottle past the highest tier (JOD)
+          </label>
+          <input
+            type="number"
+            min="0"
+            step="0.001"
+            value={bulkExcessUnit}
+            onChange={(e) => setBulkExcessUnit(e.target.value)}
+            className="w-40 border border-gray-200 px-3 py-2 font-sans text-sm focus:border-gold focus:outline-none"
+          />
+          <p className="font-sans text-xs text-gray-500 mt-1">
+            Bottles beyond the largest tier&apos;s Min Qty cost this much each. Default is 5 JOD.
+          </p>
         </div>
 
         <div className="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-t border-gray-100 pt-4">

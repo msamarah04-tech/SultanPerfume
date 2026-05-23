@@ -43,6 +43,9 @@ export const bulkTiersSchema = z.object({
     minQty: z.number().int().min(1),
     totalPrice: z.number().min(0),
   })).default([]),
+  // Per-bottle JOD rate charged for every bottle beyond the highest tier's
+  // minQty. Defaults to 5 JOD if the admin doesn't set it.
+  excessUnitPrice: z.number().min(0).default(5),
 }).refine(
   d => d.mode !== 'set' || d.tiers.length > 0,
   { message: 'At least one tier is required when mode is "set"', path: ['tiers'] },

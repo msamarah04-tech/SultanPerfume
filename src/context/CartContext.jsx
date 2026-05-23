@@ -34,26 +34,40 @@ function priceCart(stored, gp, cartTiers) {
     };
   });
 
-  // Second pass: cart-wide tier on total non-bundle qty.
+  // Second pass: cart-wide tier on total non-bundle qty. The deal caps at the
+  // highest configured tier's minQty — every bottle beyond costs
+  // `excessUnitPrice` JOD (default 5). Mirrors server/src/lib/pricing.js.
   const nonBundle = lines.filter(l => !l.isBundle);
   const cartQty = nonBundle.reduce((s, l) => s + l.quantity, 0);
   const match = resolveCartTier(cartQty, cartTiers);
 
   if (match && nonBundle.length) {
     const tierTotal = Number(match.totalPrice) || 0;
-    // Split by raw catalog so global % doesn't skew proportions.
     const rawSum = nonBundle.reduce((s, l) => s + l.rawCatalog, 0);
+    const cap = cartTiers?.enabled && Array.isArray(cartTiers.tiers) && cartTiers.tiers.length
+      ? Math.max(...cartTiers.tiers.map(t => Math.max(1, Math.floor(Number(t.minQty) || 1))))
+      : null;
+    const excessUnit = cartTiers?.excessUnitPrice != null
+      ? Number(cartTiers.excessUnitPrice) || 0
+      : 5;
+
+    let effectiveSubtotal;
+    if (!cap || cartQty <= cap) {
+      effectiveSubtotal = tierTotal;
+    } else {
+      effectiveSubtotal = tierTotal + (cartQty - cap) * excessUnit;
+    }
 
     let allocated = 0;
     nonBundle.forEach((l, idx) => {
       const isLast = idx === nonBundle.length - 1;
       let share;
       if (isLast) {
-        share = tierTotal - allocated;
+        share = effectiveSubtotal - allocated;
       } else if (rawSum > 0) {
-        share = (l.rawCatalog / rawSum) * tierTotal;
+        share = (l.rawCatalog / rawSum) * effectiveSubtotal;
       } else {
-        share = tierTotal / nonBundle.length;
+        share = effectiveSubtotal / nonBundle.length;
       }
       allocated += share;
       l.cartTierApplied = true;

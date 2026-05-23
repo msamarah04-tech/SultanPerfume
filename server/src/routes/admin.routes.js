@@ -13,6 +13,19 @@ import { createFeedbackSchema, patchFeedbackSchema } from '../schemas/feedback.s
 import { updateSettingsSchema } from '../schemas/settings.schema.js';
 import { generateProductId } from '../lib/ids.js';
 import { piasterToJod } from '../lib/pricing.js';
+import { writePricingAudit, listPricingAudit } from '../lib/audit.js';
+
+// Pull pricing-affecting subset out of a settings payload, so we only log
+// when a key that actually moves order totals changes.
+const PRICING_SETTING_KEYS = ['deliveryFee', 'freeDeliveryThreshold', 'quantityPricing', 'cartQuantityTiers'];
+function pricingSubset(obj) {
+  const out = {};
+  for (const k of PRICING_SETTING_KEYS) {
+    if (obj && Object.prototype.hasOwnProperty.call(obj, k)) out[k] = obj[k];
+  }
+  return out;
+}
+function actorOf(req) { return req.admin?.username ?? 'admin'; }
 
 const router = Router();
 
@@ -54,17 +67,27 @@ router.get('/products/export', (req, res, next) => {
 
 router.post('/products/bulk-tiers', validate(bulkTiersSchema), (req, res, next) => {
   try {
-    const { mode, tiers = [] } = req.body;
+    const { mode, tiers = [], excessUnitPrice = 5 } = req.body;
     const value = mode === 'clear'
-      ? { enabled: false, tiers: [] }
+      ? { enabled: false, tiers: [], excessUnitPrice: Math.max(0, Number(excessUnitPrice) || 0) }
       : {
           enabled: true,
           tiers: tiers.map(t => ({
             minQty: Math.max(1, Math.floor(Number(t.minQty) || 1)),
             totalPrice: Math.max(0, Number(t.totalPrice) || 0),
           })).sort((a, b) => a.minQty - b.minQty),
+          excessUnitPrice: Math.max(0, Number(excessUnitPrice) || 0),
         };
+    const before = settingsRepo.getAll().cartQuantityTiers ?? null;
     settingsRepo.update({ cartQuantityTiers: value });
+    writePricingAudit({
+      actor: actorOf(req),
+      entity: 'settings',
+      entityKey: 'cartQuantityTiers',
+      oldValue: before,
+      newValue: value,
+      note: 'bulk-tiers',
+    });
     res.json({ ok: true, data: { cartQuantityTiers: value } });
   } catch (err) { next(err); }
 });
@@ -353,22 +376,48 @@ router.get('/offers', (req, res, next) => {
 router.post('/offers', validate(createOfferSchema), (req, res, next) => {
   try {
     const offer = offersRepo.create(req.body);
+    writePricingAudit({
+      actor: actorOf(req),
+      entity: 'offers',
+      entityKey: offer.id,
+      oldValue: null,
+      newValue: offer,
+      note: 'created',
+    });
     res.status(201).json({ ok: true, data: offer });
   } catch (err) { next(err); }
 });
 
 router.put('/offers/:id', validate(updateOfferSchema), (req, res, next) => {
   try {
+    const before = offersRepo.findById(req.params.id);
     const offer = offersRepo.update(req.params.id, req.body);
     if (!offer) return res.status(404).json({ ok: false, error: { code: 'NOT_FOUND', message: 'Offer not found' } });
+    writePricingAudit({
+      actor: actorOf(req),
+      entity: 'offers',
+      entityKey: offer.id,
+      oldValue: before,
+      newValue: offer,
+      note: 'updated',
+    });
     res.json({ ok: true, data: offer });
   } catch (err) { next(err); }
 });
 
 router.delete('/offers/:id', (req, res, next) => {
   try {
+    const before = offersRepo.findById(req.params.id);
     const deleted = offersRepo.delete(req.params.id);
     if (!deleted) return res.status(404).json({ ok: false, error: { code: 'NOT_FOUND', message: 'Offer not found' } });
+    writePricingAudit({
+      actor: actorOf(req),
+      entity: 'offers',
+      entityKey: req.params.id,
+      oldValue: before,
+      newValue: null,
+      note: 'deleted',
+    });
     res.json({ ok: true, data: { deleted: true } });
   } catch (err) { next(err); }
 });
@@ -414,8 +463,36 @@ router.get('/settings', (req, res, next) => {
 
 router.put('/settings', validate(updateSettingsSchema), (req, res, next) => {
   try {
+    const before = pricingSubset(settingsRepo.getAll());
     const updated = settingsRepo.update(req.body);
+    const afterPricing = pricingSubset(updated);
+    // Only log if a pricing-affecting key actually changed.
+    if (JSON.stringify(before) !== JSON.stringify(afterPricing)) {
+      writePricingAudit({
+        actor: actorOf(req),
+        entity: 'settings',
+        entityKey: 'pricing',
+        oldValue: before,
+        newValue: afterPricing,
+        note: 'settings-update',
+      });
+    }
     res.json({ ok: true, data: updated });
+  } catch (err) { next(err); }
+});
+
+// ─── Pricing audit log ───────────────────────────────────────────────────────
+
+router.get('/audit/pricing', (req, res, next) => {
+  try {
+    const { entity, limit } = req.query;
+    res.json({
+      ok: true,
+      data: listPricingAudit({
+        entity: typeof entity === 'string' && entity ? entity : undefined,
+        limit: Math.min(500, Math.max(1, Number(limit) || 200)),
+      }),
+    });
   } catch (err) { next(err); }
 });
 

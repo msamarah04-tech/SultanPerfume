@@ -1,5 +1,5 @@
 import { migrate } from './db/migrate.js';
-import { seed } from './db/seed.js';
+import { seed, ensureAdminUser } from './db/seed.js';
 import { config } from './config.js';
 import { createApp } from './app.js';
 import getDb, { closeDb } from './db/connection.js';
@@ -15,6 +15,10 @@ async function bootstrap() {
   if (count === 0) {
     console.log('Products table is empty — running seed...');
     await seed();
+  } else {
+    // Products exist → seed() won't run, but we still need to keep the admin
+    // password in sync with the ADMIN_PASSWORD env var on every boot.
+    await ensureAdminUser();
   }
 
   // Ensure the default summer bundle offer exists (idempotent upsert)

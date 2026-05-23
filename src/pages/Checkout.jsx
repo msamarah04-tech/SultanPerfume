@@ -6,7 +6,7 @@ import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
 import { formatPrice } from '../lib/format';
 import { validateRequired, validateMinLength, validatePhone } from '../lib/validation';
-import { ordersApi, offersApi } from '../lib/api';
+import { ordersApi } from '../lib/api';
 import PageTransition from '../components/layout/PageTransition';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
@@ -239,11 +239,33 @@ const Checkout = () => {
   const [promoCodeInput, setPromoCodeInput] = useState('');
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [discountAmount, setDiscountAmount] = useState(0);
+  const [previewDeliveryFee, setPreviewDeliveryFee] = useState(0);
+  const [previewTotal, setPreviewTotal] = useState(subtotal);
 
-  // Delivery fee and total are computed server-side on order submission.
-  // Show client-side estimates from config for the summary sidebar.
-  const deliveryFee = 0;
-  const total = Math.max(0, subtotal - discountAmount);
+  // The server is the source of truth for delivery + total. We call
+  // /orders/preview whenever the cart or applied coupon changes, and show
+  // whatever the server returns. If preview fails, fall back to subtotal.
+  const deliveryFee = previewDeliveryFee;
+  const total = previewTotal;
+
+  useEffect(() => {
+    if (cart.length === 0) return;
+    let cancelled = false;
+    ordersApi.preview({
+      items: cart.map(item => ({ productId: item.id, size: item.size, quantity: item.quantity })),
+      promoCode: appliedCoupon?.promoCode ?? null,
+    }).then(data => {
+      if (cancelled) return;
+      setPreviewDeliveryFee(data.deliveryFee ?? 0);
+      setPreviewTotal(data.total ?? subtotal);
+      setDiscountAmount(data.discount ?? 0);
+    }).catch(() => {
+      if (cancelled) return;
+      setPreviewDeliveryFee(0);
+      setPreviewTotal(subtotal);
+    });
+    return () => { cancelled = true; };
+  }, [cart, appliedCoupon, subtotal]);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -283,30 +305,39 @@ const Checkout = () => {
   };
 
   const handleApplyPromo = async () => {
-    if (!promoCodeInput.trim()) {
+    const code = promoCodeInput.trim().toUpperCase();
+    if (!code) {
       showToast('يرجى إدخال كود الخصم أولاً', 'error');
       return;
     }
 
+    // Server-side validation: /orders/preview is the single source of truth
+    // for whether a code is valid, what discount it grants, and whether it
+    // meets any future constraints. We send the cart and the code; the server
+    // either returns the discounted total or a structured PromoError.
     try {
-      const code = promoCodeInput.trim().toUpperCase();
-      const offers = await offersApi.list();
-      const matched = offers.find(
-        o => o.promoCode === code && (o.type === 'percentage' || o.type === 'fixed')
-      );
-
-      if (matched) {
-        setAppliedCoupon(matched);
-        const computedDiscount = matched.type === 'percentage'
-          ? Math.round((subtotal * matched.discountPercent) / 100)
-          : (matched.discountAmount ?? 0);
-        setDiscountAmount(computedDiscount);
-        showToast(`تم تطبيق كود الخصم بنجاح! خصم بقيمة ${computedDiscount} د.أ`, 'success');
-      } else {
-        showToast('كود الخصم غير صالح أو منتهي الصلاحية', 'error');
+      const data = await ordersApi.preview({
+        items: cart.map(item => ({ productId: item.id, size: item.size, quantity: item.quantity })),
+        promoCode: code,
+      });
+      if (!data.appliedOffer) {
+        showToast('كود الخصم غير صالح', 'error');
+        return;
       }
-    } catch {
-      showToast('تعذّر التحقق من كود الخصم، يرجى المحاولة مجدداً', 'error');
+      setAppliedCoupon({ promoCode: code, ...data.appliedOffer });
+      setDiscountAmount(data.discount ?? 0);
+      setPreviewDeliveryFee(data.deliveryFee ?? 0);
+      setPreviewTotal(data.total ?? subtotal);
+      showToast(`تم تطبيق كود الخصم بنجاح! خصم بقيمة ${data.discount} د.أ`, 'success');
+    } catch (err) {
+      const messages = {
+        PROMO_INVALID: 'كود الخصم غير صالح',
+        PROMO_INACTIVE: 'هذا الكود غير مفعل حالياً',
+        PROMO_WRONG_TYPE: 'هذا الكود لا يستخدم خصماً',
+        PROMO_NOT_STARTED: 'هذا الكود لم يبدأ بعد',
+        PROMO_EXPIRED: 'انتهت صلاحية هذا الكود',
+      };
+      showToast(messages[err.code] || 'تعذّر التحقق من كود الخصم', 'error');
     }
   };
 
@@ -346,6 +377,7 @@ const Checkout = () => {
           size: item.size,
           quantity: item.quantity,
         })),
+        promoCode: appliedCoupon?.promoCode ?? null,
       };
 
       const order = await ordersApi.create(payload);
@@ -358,8 +390,15 @@ const Checkout = () => {
       console.error(err);
       if (err.code === 'PRODUCT_NOT_FOUND' || err.code === 'SIZE_NOT_FOUND') {
         showToast('أحد منتجات سلتك لم يعد متوفراً. يرجى مراجعة السلة وإعادة المحاولة.', 'error');
-      } else if (err.code === 'OFFER_NOT_FOUND') {
+      } else if (err.code === 'OFFER_NOT_FOUND' || err.code === 'OFFER_EXPIRED' || err.code === 'OFFER_NOT_STARTED') {
         showToast('العرض المحدد لم يعد متاحاً. يرجى مراجعة السلة وإعادة المحاولة.', 'error');
+      } else if (err.code === 'PROMO_INVALID' || err.code === 'PROMO_INACTIVE' ||
+                 err.code === 'PROMO_EXPIRED' || err.code === 'PROMO_NOT_STARTED' ||
+                 err.code === 'PROMO_WRONG_TYPE') {
+        // The applied coupon went stale between apply and submit.
+        setAppliedCoupon(null);
+        setDiscountAmount(0);
+        showToast('كود الخصم لم يعد صالحاً. تم إزالته من الطلب.', 'error');
       } else {
         showToast('حدث خطأ. يرجى المحاولة مجدداً.', 'error');
       }

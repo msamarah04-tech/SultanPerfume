@@ -77,6 +77,8 @@ export function orderRowToApi(row, items = []) {
     },
     items: items.map(orderItemRowToApi),
     subtotal: piasterToJod(row.subtotal),
+    discount: piasterToJod(row.discount ?? 0),
+    appliedPromoCode: row.applied_promo_code ?? null,
     deliveryFee: piasterToJod(row.delivery_fee),
     total: piasterToJod(row.total),
     status: row.status,

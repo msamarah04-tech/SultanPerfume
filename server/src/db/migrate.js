@@ -97,6 +97,36 @@ export function migrate() {
   } else {
     console.log('✓ Schema already at version 6');
   }
+
+  // Version 7: pricing audit — persist applied promo on orders and add the
+  // pricing_audit log table. See PRICING_AUDIT.md for the why.
+  const v7 = db.prepare('SELECT version FROM schema_version WHERE version = 7').get();
+  if (!v7) {
+    try {
+      db.exec('ALTER TABLE orders ADD COLUMN discount INTEGER NOT NULL DEFAULT 0');
+    } catch { /* column already present */ }
+    try {
+      db.exec('ALTER TABLE orders ADD COLUMN applied_promo_code TEXT');
+    } catch { /* column already present */ }
+    db.exec(`
+      CREATE TABLE IF NOT EXISTS pricing_audit (
+        id         INTEGER PRIMARY KEY AUTOINCREMENT,
+        actor      TEXT NOT NULL DEFAULT '',
+        entity     TEXT NOT NULL,
+        entity_key TEXT NOT NULL,
+        old_value  TEXT,
+        new_value  TEXT,
+        note       TEXT NOT NULL DEFAULT '',
+        at         TEXT NOT NULL DEFAULT (datetime('now'))
+      );
+      CREATE INDEX IF NOT EXISTS idx_pricing_audit_entity ON pricing_audit(entity);
+      CREATE INDEX IF NOT EXISTS idx_pricing_audit_at     ON pricing_audit(at);
+    `);
+    db.prepare('INSERT INTO schema_version (version) VALUES (7)').run();
+    console.log('✓ Schema version 7 applied (orders.discount/applied_promo_code + pricing_audit)');
+  } else {
+    console.log('✓ Schema already at version 7');
+  }
 }
 
 // Allow running directly: node src/db/migrate.js

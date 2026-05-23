@@ -33,12 +33,14 @@ const DEFAULT_SETTINGS = {
   },
 };
 
-export async function seed() {
-  migrate();
+// Sync the admin row with the current ADMIN_USERNAME / ADMIN_PASSWORD env vars.
+// Runs on every boot so rotating the password on a hosting platform (e.g.
+// changing ADMIN_PASSWORD on Render and redeploying) actually updates the
+// stored hash — without this, the first-deploy hash would be locked in
+// forever and the new env value would silently never apply.
+export async function ensureAdminUser() {
   const db = getDb();
-
-  // ── Admin user ──────────────────────────────────────────────────────────────
-  const existingAdmin = db.prepare('SELECT id FROM admin_users WHERE username = ?')
+  const existingAdmin = db.prepare('SELECT id, password_hash FROM admin_users WHERE username = ?')
     .get(config.adminUsername);
 
   if (!existingAdmin) {
@@ -46,9 +48,26 @@ export async function seed() {
     db.prepare('INSERT INTO admin_users (username, password_hash) VALUES (?, ?)')
       .run(config.adminUsername, hash);
     console.log(`✓ Admin user "${config.adminUsername}" created`);
-  } else {
-    console.log(`✓ Admin user "${config.adminUsername}" already exists`);
+    return;
   }
+
+  const matches = await bcrypt.compare(config.adminPassword, existingAdmin.password_hash);
+  if (!matches) {
+    const hash = await bcrypt.hash(config.adminPassword, 12);
+    db.prepare('UPDATE admin_users SET password_hash = ? WHERE id = ?')
+      .run(hash, existingAdmin.id);
+    console.log(`✓ Admin user "${config.adminUsername}" password synced from env`);
+  } else {
+    console.log(`✓ Admin user "${config.adminUsername}" already up to date`);
+  }
+}
+
+export async function seed() {
+  migrate();
+  const db = getDb();
+
+  // ── Admin user ──────────────────────────────────────────────────────────────
+  await ensureAdminUser();
 
   // ── Settings ────────────────────────────────────────────────────────────────
   const upsertSetting = db.prepare(

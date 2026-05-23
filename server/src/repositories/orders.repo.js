@@ -46,17 +46,17 @@ export const ordersRepo = {
     return orderRowToApi(row, items);
   },
 
-  create({ id, customer, itemRows, subtotal, deliveryFee, total, status = 'new' }) {
+  create({ id, customer, itemRows, subtotal, discount = 0, appliedPromoCode = null, deliveryFee, total, status = 'new' }) {
     const db = getDb();
     const now = new Date().toISOString();
 
     const insert = db.transaction(() => {
       db.prepare(`
         INSERT INTO orders (id, customer_name, customer_phone, customer_address,
-          customer_notes, subtotal, delivery_fee, total, status, created_at, updated_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          customer_notes, subtotal, discount, applied_promo_code, delivery_fee, total, status, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `).run(id, customer.name, customer.phone, customer.address ?? '',
-        customer.notes ?? '', subtotal, deliveryFee, total, status, now, now);
+        customer.notes ?? '', subtotal, discount, appliedPromoCode, deliveryFee, total, status, now, now);
 
       const insItem = db.prepare(`
         INSERT INTO order_items (order_id, product_id, product_name, size, unit_price, quantity, line_total)
