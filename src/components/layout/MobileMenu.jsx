@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X } from 'lucide-react';
+import { X, Search } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useReducedMotion, getStaggerContainer, getFadeUp, isRTL } from '../../lib/motion';
 
-const MobileMenu = ({ isOpen, onClose, links }) => {
+const MobileMenu = ({ isOpen, onClose, links, onOpenSearch }) => {
   const location = useLocation();
   const prefersReducedMotion = useReducedMotion();
 
@@ -69,6 +69,18 @@ const MobileMenu = ({ isOpen, onClose, links }) => {
               animate="visible"
               className="flex flex-col p-6 gap-6 flex-grow"
             >
+              {onOpenSearch && (
+                <motion.div variants={getFadeUp(prefersReducedMotion)}>
+                  <button
+                    type="button"
+                    onClick={() => { onClose(); setTimeout(onOpenSearch, 220); }}
+                    className="w-full flex items-center gap-3 px-4 py-3 border border-gold/25 bg-gold/[0.04] hover:bg-gold hover:text-white text-jet transition-colors duration-300"
+                  >
+                    <Search className="w-4 h-4 text-gold" />
+                    <span className="font-sans text-sm">ابحث عن عطر، ماركة...</span>
+                  </button>
+                </motion.div>
+              )}
               {links.map((link) => (
                 <motion.div key={`${link.label}-${link.path}`} variants={getFadeUp(prefersReducedMotion)}>
                   <Link

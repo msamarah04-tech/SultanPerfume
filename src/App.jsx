@@ -104,12 +104,15 @@ function App() {
     const isTouch = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
     if (isTouch) return;
 
+    // Tight, snappy smoothing. 1.2 duration felt sluggish; 0.7 keeps scroll
+    // responsive while still smoothing out wheel deltas. The easeOutQuart
+    // curve settles fast at the tail rather than dragging.
     const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      duration: 0.7,
+      easing: (t) => 1 - Math.pow(1 - t, 4),
       smoothWheel: true,
       smoothTouch: false,
-      wheelMultiplier: 1,
+      wheelMultiplier: 1.05,
       touchMultiplier: 1.2,
     });
 

@@ -24,6 +24,6 @@ export const config = {
   adminUsername: process.env.ADMIN_USERNAME || 'admin',
   adminPassword: requireEnv('ADMIN_PASSWORD'),
   rateLimitWindowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000', 10),
-  rateLimitMax: parseInt(process.env.RATE_LIMIT_MAX || '100', 10),
+  rateLimitMax: parseInt(process.env.RATE_LIMIT_MAX || '1000', 10),
   isDev: (process.env.NODE_ENV || 'development') === 'development',
 };

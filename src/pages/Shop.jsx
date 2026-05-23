@@ -8,7 +8,7 @@ import EmptyState from '../components/ui/EmptyState';
 import productsData from '../data/products.json';
 import { getProducts } from '../lib/storage';
 import { offersApi } from '../lib/api';
-import { LayoutGrid, List } from 'lucide-react';
+import { LayoutGrid, List, Search, X } from 'lucide-react';
 
 const PAGE_SIZE = 12;
 
@@ -28,6 +28,7 @@ const Shop = () => {
   const [category, setCategory] = useState(searchParams.get('category') || 'all');
   const [selectedBrand, setSelectedBrand] = useState(searchParams.get('brand') || 'all');
   const [sort, setSort] = useState(searchParams.get('sort') || 'featured');
+  const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [bundleOffers, setBundleOffers] = useState([]);
   const [viewMode, setViewMode] = useState(() => localStorage.getItem('shopViewMode') || 'grid');
@@ -49,14 +50,34 @@ const Shop = () => {
     // eslint-disable-next-line
     if (catParam) setCategory(catParam);
     const brandParam = searchParams.get('brand');
-     
+
     if (brandParam) setSelectedBrand(brandParam);
+    const qParam = searchParams.get('q');
+    setSearchQuery(qParam || '');
   }, [searchParams]);
+
+  const normalizeAr = (s) => String(s || '')
+    .toLowerCase()
+    .replace(/[إأآا]/g, 'ا')
+    .replace(/ى/g, 'ي')
+    .replace(/ؤ/g, 'و')
+    .replace(/ئ/g, 'ي')
+    .replace(/ة/g, 'ه')
+    .replace(/\s+/g, ' ')
+    .trim();
 
   const applyFilters = (allProducts) => {
     let filtered = allProducts.filter(p => p.active);
     if (category !== 'all') filtered = filtered.filter(p => p.category === category);
     if (selectedBrand !== 'all') filtered = filtered.filter(p => p.brand === selectedBrand);
+    const q = normalizeAr(searchQuery);
+    if (q) {
+      const tokens = q.split(' ').filter(Boolean);
+      filtered = filtered.filter(p => {
+        const hay = normalizeAr(`${p.name} ${p.nameAr || ''} ${p.brand || ''} ${p.category || ''}`);
+        return tokens.every(t => hay.includes(t));
+      });
+    }
     const getStartingPrice = (p) => Math.min(...p.sizes.map(s => s.price));
     filtered.sort((a, b) => {
       switch (sort) {
@@ -78,15 +99,16 @@ const Shop = () => {
     setProducts(applyFilters(allProducts));
     setVisibleCount(PAGE_SIZE);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [searchQuery, category, selectedBrand, sort]);
 
   useEffect(() => {
     const params = new URLSearchParams();
     if (category !== 'all') params.set('category', category);
     if (selectedBrand !== 'all') params.set('brand', selectedBrand);
     if (sort !== 'featured') params.set('sort', sort);
+    if (searchQuery) params.set('q', searchQuery);
     setSearchParams(params);
-  }, [category, selectedBrand, sort, setSearchParams]);
+  }, [category, selectedBrand, sort, searchQuery, setSearchParams]);
 
   useEffect(() => {
     offersApi.list()
@@ -103,6 +125,7 @@ const Shop = () => {
     setCategory('all');
     setSelectedBrand('all');
     setSort('featured');
+    setSearchQuery('');
   };
 
   return (
@@ -113,6 +136,21 @@ const Shop = () => {
           <div className="mb-10">
             <h1 className="font-serif text-4xl md:text-5xl text-jet mb-4">المتجر</h1>
             <div className="w-16 h-px bg-gold"></div>
+            {searchQuery && (
+              <div className="mt-6 inline-flex items-center gap-2 bg-gold/[0.06] border border-gold/30 px-4 py-2">
+                <Search className="w-3.5 h-3.5 text-gold" />
+                <span className="font-sans text-xs text-charcoal">
+                  نتائج البحث عن: <span className="font-bold text-gold">{searchQuery}</span>
+                </span>
+                <button
+                  onClick={() => setSearchQuery('')}
+                  aria-label="مسح البحث"
+                  className="ms-2 p-1 text-charcoal/60 hover:text-gold transition-colors"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Featured Perfumes */}

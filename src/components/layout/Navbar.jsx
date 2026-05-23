@@ -4,6 +4,7 @@ import { motion, useScroll, useMotionValueEvent, AnimatePresence } from 'framer-
 import { ShoppingBag, Menu, Search, ChevronDown } from 'lucide-react';
 import { CONFIG } from '../../config';
 import MobileMenu from './MobileMenu';
+import SearchModal from '../ui/SearchModal';
 import { useCart } from '../../context/CartContext';
 import { useReducedMotion } from '../../lib/motion';
 import { useToast } from '../../context/ToastContext';
@@ -11,6 +12,9 @@ import { useToast } from '../../context/ToastContext';
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const closeMobileMenu = useCallback(() => setIsMobileMenuOpen(false), []);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const openSearch = useCallback(() => setIsSearchOpen(true), []);
+  const closeSearch = useCallback(() => setIsSearchOpen(false), []);
   const [isScrolled, setIsScrolled] = useState(false);
   const [hoveredMenu, setHoveredMenu] = useState(null);
   const [currentLang, setCurrentLang] = useState('ar');
@@ -72,12 +76,15 @@ const Navbar = () => {
       >
        
 
-        {/* Main Navbar */}
-        <div 
-          className={`transition-all duration-500 text-jet ${
-            isScrolled 
-              ? 'bg-ivory/95 backdrop-blur-lg py-2.5 border-b border-gold/20 shadow-[0_4px_30px_rgba(212,175,55,0.05)]' 
-              : 'bg-ivory/80 backdrop-blur-md py-4 border-b border-gold/10 shadow-[0_2px_20px_rgba(212,175,55,0.02)]'
+        {/* Main Navbar — solid opaque bg, no backdrop-blur. backdrop-filter on
+            a fixed full-width bar forces the GPU to re-blur the entire strip
+            on every scroll frame; on long pages that was the single biggest
+            scroll-jank source. */}
+        <div
+          className={`transition-[padding,box-shadow,border-color,background-color] duration-300 text-jet ${
+            isScrolled
+              ? 'bg-ivory py-2.5 border-b border-gold/20 shadow-[0_4px_30px_rgba(212,175,55,0.05)]'
+              : 'bg-ivory py-4 border-b border-gold/10 shadow-[0_2px_20px_rgba(212,175,55,0.02)]'
           }`}
         >
           <div className="container mx-auto px-4 md:px-8 flex items-center justify-between relative">
@@ -90,7 +97,11 @@ const Navbar = () => {
               >
                 <Menu className="w-6 h-6" />
               </button>
-              <button className="p-3 rounded-none hover:bg-gold/5 transition-colors">
+              <button
+                onClick={openSearch}
+                aria-label="بحث"
+                className="p-3 rounded-none hover:bg-gold/5 transition-colors"
+              >
                 <Search className="w-5 h-5" />
               </button>
             </div>
@@ -172,7 +183,11 @@ const Navbar = () => {
 
             {/* Desktop Actions (Search, User, Cart) */}
             <div className="flex items-center justify-end gap-1 md:gap-3 flex-1">
-              <button className="hidden md:flex p-2 rounded-full hover:bg-jet/10 transition-colors focus:outline-none focus:ring-2 focus:ring-gold/50">
+              <button
+                onClick={openSearch}
+                aria-label="بحث"
+                className="hidden md:flex p-2 rounded-full hover:bg-jet/10 transition-colors focus:outline-none focus:ring-2 focus:ring-gold/50"
+              >
                 <Search className="w-5 h-5" />
               </button>
               
@@ -221,7 +236,10 @@ const Navbar = () => {
         isOpen={isMobileMenuOpen}
         onClose={closeMobileMenu}
         links={mobileLinks}
+        onOpenSearch={openSearch}
       />
+
+      <SearchModal isOpen={isSearchOpen} onClose={closeSearch} />
     </>
   );
 };

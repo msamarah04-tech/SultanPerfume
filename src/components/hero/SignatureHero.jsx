@@ -3,19 +3,10 @@ import {
   motion,
   useScroll,
   useTransform,
-  useSpring,
   useMotionValue,
   useMotionValueEvent,
   useReducedMotion,
 } from 'framer-motion';
-
-// Pointer devices use Lenis which already interpolates scrollY between wheel
-// events, so an extra spring just adds lag. Touch devices use native scroll
-// and any spring is felt as the bottle "trailing" the finger — also lag.
-// Skip the spring on touch entirely; on pointer, keep a very light spring
-// to soak up any remaining micro-jumps.
-const IS_TOUCH = typeof window !== 'undefined'
-  && window.matchMedia('(hover: none) and (pointer: coarse)').matches;
 
 const SCENES = [
   {
@@ -24,9 +15,8 @@ const SCENES = [
     tagline: 'هدوءٌ من اللافندر',
     image: '/images/hero/bella.png',
     accent: '#7D5BA6',
-    glow: 'rgba(125, 91, 166, 0.18)',
-    hazeTint: 'rgba(125, 91, 166, 0.04)',
-    particleColor: '#9F7DCC',
+    accent2: '#C1A8E0',
+    glow: 'rgba(125, 91, 166, 0.32)',
   },
   {
     id: 'alsultan',
@@ -34,9 +24,8 @@ const SCENES = [
     tagline: 'فخامة لا تُنسى',
     image: '/images/hero/alsultan.png',
     accent: '#B8941F',
-    glow: 'rgba(184, 148, 31, 0.22)',
-    hazeTint: 'rgba(184, 148, 31, 0.05)',
-    particleColor: '#D4AF37',
+    accent2: '#F0D979',
+    glow: 'rgba(184, 148, 31, 0.38)',
   },
   {
     id: 'pantera',
@@ -44,39 +33,21 @@ const SCENES = [
     tagline: 'ياسمين بنعومة الحرير',
     image: '/images/hero/pantera.png',
     accent: '#A06B7A',
-    glow: 'rgba(160, 107, 122, 0.28)',
-    hazeTint: 'rgba(160, 107, 122, 0.04)',
-    particleColor: '#C99AA8',
+    accent2: '#E7B9C5',
+    glow: 'rgba(160, 107, 122, 0.36)',
   },
 ];
 
 const BG = '#FAF7F2';
 
-
-
 export default function SignatureHero() {
   const reduced = useReducedMotion();
   const sectionRef = useRef(null);
-  const boundsRef  = useRef({ top: 0, height: 0 });
-  // Cache the LARGEST window.innerHeight ever seen. On iOS Safari the URL bar
-  // slides in/out and `window.innerHeight` swings ~100px during scroll —
-  // recomputing progress against that moving denominator causes the bottles
-  // to jolt mid scroll-back. Locking to lvh keeps the math stable.
+  const boundsRef = useRef({ top: 0, height: 0 });
   const vhRef = useRef(0);
 
   const { scrollY } = useScroll();
-  const progressValue = useMotionValue(0);
-
-  // On touch, drive transforms straight off the raw motion value — no spring,
-  // no lag. On pointer, a very tight spring soaks up the small gaps between
-  // wheel events (Lenis already does most of the work).
-  const smooth = useSpring(progressValue, {
-    stiffness: 400,
-    damping: 50,
-    mass: 0.1,
-    restDelta: 0.0005,
-  });
-  const progress = IS_TOUCH ? progressValue : smooth;
+  const progress = useMotionValue(0);
 
   useEffect(() => {
     const measure = () => {
@@ -96,7 +67,7 @@ export default function SignatureHero() {
     const vh = vhRef.current || window.innerHeight;
     const scrollable = height - vh;
     const p = scrollable > 0 ? Math.max(0, Math.min(1, (y - top) / scrollable)) : 0;
-    progressValue.set(p);
+    progress.set(p);
   });
 
   return (
@@ -106,174 +77,348 @@ export default function SignatureHero() {
       className="relative w-full"
       style={{ height: '320vh', background: BG }}
     >
-      {/* Sticky stage — browser pins it natively. No JS position-flipping,
-          which on iOS used to cause stacking-context flicker and a vertical
-          jolt as the URL bar slid in during scroll-back. */}
       <div
         className="sticky top-0 w-full overflow-hidden"
         style={{ height: '100dvh' }}
       >
-        {SCENES.map((scene, i) => (
-          <AtmosphereHaze key={`haze-${scene.id}`} scene={scene} index={i} progress={progress} />
-        ))}
-        {SCENES.map((scene, i) => (
-          <Scene key={scene.id} scene={scene} index={i} progress={progress} reduced={reduced} />
-        ))}
+        <CreativeBackdrop progress={progress} reduced={reduced} />
+
+        {/* Bottles — pure crossfade, zero transform animation */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          {SCENES.map((scene, i) => (
+            <BottleStill key={scene.id} scene={scene} index={i} progress={progress} />
+          ))}
+        </div>
+
+        {/* Labels — crossfade only */}
+        <div className="absolute inset-x-0 bottom-16 sm:bottom-20 z-30 text-center px-6 pointer-events-none">
+          {SCENES.map((scene, i) => (
+            <SceneLabel key={scene.id} scene={scene} index={i} progress={progress} />
+          ))}
+        </div>
+
         {!reduced && <ScrollHint progress={progress} />}
       </div>
     </section>
   );
 }
 
-// ─── Sub-components (unchanged) ───────────────────────────────────────────────
-
-function AtmosphereHaze({ scene, index, progress }) {
+// ── Bottle: just an image, crossfade tied to scroll, no transform ──────────
+function BottleStill({ scene, index, progress }) {
   const slot = index / (SCENES.length - 1);
   const isFirst = index === 0;
-  const isLast  = index === SCENES.length - 1;
+  const isLast = index === SCENES.length - 1;
   const W = 0.20;
-  const input  = isFirst ? [0, Math.min(1, slot + W), Math.min(1, slot + W * 2)]
-               : isLast  ? [Math.max(0, slot - W * 2), Math.max(0, slot - W), 1]
-               :            [slot - W * 2, slot - W, slot + W, slot + W * 2];
+
+  const input = isFirst
+    ? [0, Math.min(1, slot + W), Math.min(1, slot + W * 2)]
+    : isLast
+      ? [Math.max(0, slot - W * 2), Math.max(0, slot - W), 1]
+      : [slot - W * 2, slot - W, slot + W, slot + W * 2];
   const output = isFirst ? [1, 1, 0] : isLast ? [0, 1, 1] : [0, 1, 1, 0];
+
   const opacity = useTransform(progress, input, output);
-  // Tip the haze entirely out of compositing once it's invisible.
   const visibility = useTransform(opacity, (o) => (o < 0.01 ? 'hidden' : 'visible'));
 
   return (
     <motion.div
-      aria-hidden="true"
-      className="absolute inset-0"
-      style={{ opacity, visibility, background: scene.hazeTint, pointerEvents: 'none' }}
-    />
+      className="absolute inset-0 flex items-center justify-center"
+      style={{ opacity, visibility, willChange: 'opacity' }}
+    >
+      <div className="relative">
+        <img
+          src={scene.image}
+          alt={`${scene.name} perfume bottle`}
+          className="max-h-[68vh] w-auto block select-none"
+          loading="eager"
+          decoding="async"
+          draggable={false}
+        />
+        <div
+          aria-hidden="true"
+          className="absolute left-1/2 -translate-x-1/2 pointer-events-none"
+          style={{
+            bottom: '-12px',
+            width: '70%',
+            height: '26px',
+            background:
+              'radial-gradient(ellipse closest-side, rgba(40, 25, 10, 0.34) 0%, transparent 70%)',
+          }}
+        />
+      </div>
+    </motion.div>
   );
 }
 
-function Scene({ scene, index, progress, reduced }) {
-  const nScenes = SCENES.length;
-  const slot    = index / (nScenes - 1);
+function SceneLabel({ scene, index, progress }) {
+  const slot = index / (SCENES.length - 1);
   const isFirst = index === 0;
-  const isLast  = index === nScenes - 1;
+  const isLast = index === SCENES.length - 1;
   const W = 0.20;
 
-  const opInput  = isFirst ? [0, Math.min(1, slot + W), Math.min(1, slot + W * 2)]
-                 : isLast  ? [Math.max(0, slot - W * 2), Math.max(0, slot - W), 1]
-                 :            [slot - W * 2, slot - W, slot + W, slot + W * 2];
-  const opOutput = isFirst ? [1, 1, 0] : isLast ? [0, 1, 1] : [0, 1, 1, 0];
-  const sceneOpacity = useTransform(progress, opInput, opOutput);
-  // When the scene fully fades out, hide it so its filigree spin / particle
-  // drift / drop-shadow ellipse stop being composited. This is the single
-  // largest win for scroll smoothness — only one scene paints at a time.
-  const sceneVisibility = useTransform(sceneOpacity, (o) => (o < 0.01 ? 'hidden' : 'visible'));
-
-  const pStart = isFirst ? 0 : Math.max(0, slot - 0.30);
-  const pEnd   = isLast  ? 1 : Math.min(1, slot + 0.30);
-
-  const filigreeY     = useTransform(progress, [pStart, pEnd], reduced ? ['0%','0%']    : [isFirst ? '0%'  : '8%',   isLast ? '0%'  : '-8%']);
-  const filigreeScale = useTransform(progress, [pStart, pEnd], reduced ? [1,1]          : [isFirst ? 1     : 0.92,   isLast ? 1     : 1.08]);
-  const glowY         = useTransform(progress, [pStart, pEnd], reduced ? ['0%','0%']    : [isFirst ? '0%'  : '20%',  isLast ? '0%'  : '-20%']);
-  const glowScale     = useTransform(progress, [pStart, pEnd], reduced ? [1,1]          : [isFirst ? 1     : 0.85,   isLast ? 1     : 1.15]);
-  const bottleY       = useTransform(progress, [pStart, pEnd], reduced ? ['0%','0%']    : [isFirst ? '0%'  : '30%',  isLast ? '0%'  : '-30%']);
-  const bottleScale   = useTransform(progress, [pStart, pEnd], reduced ? [1,1]          : [isFirst ? 1     : 0.75,   isLast ? 1     : 1.25]);
-
-  const tMid  = isFirst ? 0.15 : isLast ? pEnd - 0.15 : slot;
-  const textY = useTransform(progress, [pStart, tMid, pEnd], reduced ? ['0px','0px','0px'] : [isFirst ? '0px' : '16px', '0px', isLast ? '0px' : '-16px']);
+  const input = isFirst
+    ? [0, Math.min(1, slot + W), Math.min(1, slot + W * 2)]
+    : isLast
+      ? [Math.max(0, slot - W * 2), Math.max(0, slot - W), 1]
+      : [slot - W * 2, slot - W, slot + W, slot + W * 2];
+  const output = isFirst ? [1, 1, 0] : isLast ? [0, 1, 1] : [0, 1, 1, 0];
+  const opacity = useTransform(progress, input, output);
+  const visibility = useTransform(opacity, (o) => (o < 0.01 ? 'hidden' : 'visible'));
 
   return (
-    <motion.div
+    <motion.div className="absolute inset-x-0 bottom-0" style={{ opacity, visibility }}>
+      <h2 className="font-serif text-4xl sm:text-6xl tracking-wide" style={{ color: scene.accent }}>
+        {scene.name}
+      </h2>
+      <p className="mt-3 text-base sm:text-lg" style={{ color: '#1A1A1A99' }}>
+        {scene.tagline}
+      </p>
+    </motion.div>
+  );
+}
+
+// ── The creative background: mesh + arabesque + constellation + spotlight ──
+function CreativeBackdrop({ progress, reduced }) {
+  // Smoothly interpolate accent + glow color through the scenes.
+  const accents = SCENES.map(s => s.accent);
+  const accents2 = SCENES.map(s => s.accent2);
+  const glows = SCENES.map(s => s.glow);
+  const stops = SCENES.map((_, i) => i / (SCENES.length - 1));
+
+  const accent = useTransform(progress, stops, accents);
+  const accent2 = useTransform(progress, stops, accents2);
+  const glow = useTransform(progress, stops, glows);
+
+  // Spotlight position drifts horizontally as you scroll (purely scroll-driven).
+  const spotX = useTransform(progress, [0, 0.5, 1], ['28%', '50%', '72%']);
+  const spotY = useTransform(progress, [0, 0.5, 1], ['38%', '46%', '40%']);
+
+  const spotlight = useTransform(
+    [spotX, spotY, glow],
+    ([x, y, g]) => `radial-gradient(circle at ${x} ${y}, ${g} 0%, transparent 55%)`,
+  );
+
+  const meshBg = useTransform(
+    [accent, accent2],
+    ([a, b]) => `
+      radial-gradient(at 15% 20%, ${a}22 0%, transparent 50%),
+      radial-gradient(at 85% 25%, ${b}28 0%, transparent 55%),
+      radial-gradient(at 75% 85%, ${a}1f 0%, transparent 50%),
+      radial-gradient(at 25% 80%, ${b}1a 0%, transparent 55%)
+    `,
+  );
+
+  const bottomHaze = useTransform(glow, (g) => `linear-gradient(to top, ${g} 0%, transparent 100%)`);
+
+  // Static brand-gold for all the ornamental layers. Tying their stroke /
+  // fill colors to scroll meant every wheel event wrote inline style to 30+
+  // DOM nodes (ring strokes, constellation dots, light shafts, frame),
+  // which paint-bombed each frame. The mesh + spotlight + bottom haze still
+  // morph through the scene's accent — that's enough color story.
+  const ORNAMENT_GOLD = '#B8941F';
+
+  return (
+    <>
+      {/* Soft mesh gradient that morphs with scroll */}
+      <motion.div
+        aria-hidden="true"
+        className="absolute inset-0 pointer-events-none"
+        style={{ background: meshBg }}
+      />
+
+      {/* Color-shifting spotlight follows the scene */}
+      <motion.div
+        aria-hidden="true"
+        className="absolute inset-0 pointer-events-none"
+        style={{ background: spotlight }}
+      />
+
+      {/* Slow drifting arabesque tile pattern — pure CSS animation, not scroll-driven */}
+      {!reduced && <ArabesquePattern color={ORNAMENT_GOLD} />}
+
+      {/* Concentric ornament rings — gentle independent spin */}
+      {!reduced && <OrnamentRings color={ORNAMENT_GOLD} />}
+
+      {/* Constellation of dots, gently twinkling */}
+      {!reduced && <Constellation color={ORNAMENT_GOLD} />}
+
+      {/* Vertical scanlines of light */}
+      {!reduced && <LightShafts color={ORNAMENT_GOLD} />}
+
+      {/* Inner gold frame — static color */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-6 sm:inset-10 pointer-events-none border"
+        style={{ borderColor: `${ORNAMENT_GOLD}55` }}
+      />
+
+      {/* Bottom haze rising */}
+      <motion.div
+        aria-hidden="true"
+        className="absolute inset-x-0 bottom-0 h-1/3 pointer-events-none"
+        style={{ background: bottomHaze }}
+      />
+
+      <style>{`
+        @keyframes heroPatternDrift {
+          0%   { transform: translate3d(0,0,0); }
+          100% { transform: translate3d(-220px, -220px, 0); }
+        }
+        @keyframes heroSlowSpin {
+          from { transform: rotate(0deg); }
+          to   { transform: rotate(360deg); }
+        }
+        @keyframes heroReverseSpin {
+          from { transform: rotate(360deg); }
+          to   { transform: rotate(0deg); }
+        }
+        @keyframes heroTwinkle {
+          0%,100% { opacity: 0.15; transform: scale(0.85); }
+          50%     { opacity: 0.85; transform: scale(1.15); }
+        }
+        @keyframes heroShaft {
+          0%   { transform: translateY(-100%); opacity: 0; }
+          15%  { opacity: 0.9; }
+          85%  { opacity: 0.9; }
+          100% { transform: translateY(120%); opacity: 0; }
+        }
+        @media (max-width: 768px) {
+          .hero-constellation span:nth-child(n+14) { display: none; }
+        }
+      `}</style>
+    </>
+  );
+}
+
+function ArabesquePattern({ color }) {
+  return (
+    <div
+      aria-hidden="true"
       className="absolute inset-0 pointer-events-none"
-      style={{ opacity: sceneOpacity, visibility: sceneVisibility, willChange: 'opacity' }}
+      style={{ animation: 'heroPatternDrift 80s linear infinite', willChange: 'transform' }}
     >
-      <motion.div aria-hidden="true" className="absolute inset-0 flex items-center justify-center"
-        style={{ y: filigreeY, scale: filigreeScale, willChange: 'transform' }}>
-        <svg viewBox="0 0 600 600" className="w-[88vmin] h-[88vmin] opacity-[0.12]"
-          style={!reduced ? { animation: 'heroSpin 90s linear infinite' } : {}}>
-          <g stroke={scene.accent} strokeWidth="0.8" fill="none">
-            <circle cx="300" cy="300" r="280" />
-            <circle cx="300" cy="300" r="220" strokeDasharray="2 6" />
-            <circle cx="300" cy="300" r="160" />
-            <circle cx="300" cy="300" r="100" strokeDasharray="1 4" />
-            {Array.from({ length: 12 }).map((_, j) => (
-              <path key={j} d="M300,40 Q320,150 300,260 Q280,150 300,40 Z"
-                transform={`rotate(${(j * 360) / 12} 300 300)`} />
+      <svg
+        className="absolute -inset-[15%] w-[130%] h-[130%]"
+        viewBox="0 0 800 800"
+        preserveAspectRatio="xMidYMid slice"
+      >
+        <defs>
+          <pattern id="arabesque-tile" x="0" y="0" width="160" height="160" patternUnits="userSpaceOnUse">
+            <g fill="none" stroke={color} strokeWidth="0.7" opacity={0.18}>
+              <path d="M80 10 L96 64 L150 64 L106 96 L122 150 L80 118 L38 150 L54 96 L10 64 L64 64 Z" />
+              <path d="M80 35 L92 70 L130 70 L100 92 L112 128 L80 106 L48 128 L60 92 L30 70 L68 70 Z" />
+              <circle cx="80" cy="80" r="6" />
+              <circle cx="80" cy="80" r="22" />
+              <line x1="0" y1="80" x2="160" y2="80" />
+              <line x1="80" y1="0" x2="80" y2="160" />
+              <line x1="0" y1="0" x2="160" y2="160" />
+              <line x1="160" y1="0" x2="0" y2="160" />
+            </g>
+          </pattern>
+        </defs>
+        <rect width="800" height="800" fill="url(#arabesque-tile)" />
+      </svg>
+    </div>
+  );
+}
+
+function OrnamentRings({ color }) {
+  return (
+    <div aria-hidden="true" className="absolute inset-0 flex items-center justify-center pointer-events-none">
+      {/* Outer slow ring */}
+      <div className="absolute" style={{ animation: 'heroSlowSpin 120s linear infinite', willChange: 'transform' }}>
+        <svg viewBox="0 0 600 600" className="w-[95vmin] h-[95vmin] opacity-[0.18]">
+          <g fill="none" stroke={color} strokeWidth="0.6">
+            <circle cx="300" cy="300" r="290" />
+            <circle cx="300" cy="300" r="270" strokeDasharray="2 8" />
+            {Array.from({ length: 24 }).map((_, i) => (
+              <line key={i} x1="300" y1="20" x2="300" y2="40"
+                transform={`rotate(${(i * 360) / 24} 300 300)`} />
             ))}
           </g>
         </svg>
-      </motion.div>
+      </div>
 
-      <motion.div aria-hidden="true" className="absolute inset-0 flex items-center justify-center"
-        style={{ y: glowY, scale: glowScale, willChange: 'transform' }}>
-        <div className="w-[80vmin] h-[80vmin] rounded-full"
-          style={{ background: `radial-gradient(closest-side, ${scene.glow} 0%, transparent 70%)` }} />
-      </motion.div>
+      {/* Mid medallion, opposite direction */}
+      <div className="absolute" style={{ animation: 'heroReverseSpin 90s linear infinite', willChange: 'transform' }}>
+        <svg viewBox="0 0 600 600" className="w-[72vmin] h-[72vmin] opacity-[0.15]">
+          <g fill="none" stroke={color} strokeWidth="0.8">
+            <circle cx="300" cy="300" r="220" strokeDasharray="1 4" />
+            <circle cx="300" cy="300" r="180" />
+            {Array.from({ length: 16 }).map((_, j) => (
+              <path key={j} d="M300,120 Q314,210 300,300 Q286,210 300,120 Z"
+                transform={`rotate(${(j * 360) / 16} 300 300)`} />
+            ))}
+          </g>
+        </svg>
+      </div>
 
-      <motion.div className="absolute inset-0 flex items-center justify-center"
-        style={{ y: bottleY, scale: bottleScale, willChange: 'transform' }}>
-        <div className="relative">
-          <img
-            src={scene.image}
-            alt={`${scene.name} perfume bottle`}
-            className="max-h-[70vh] w-auto block select-none"
-            loading="eager"
-            decoding="async"
-            draggable={false}
-          />
-          {/* Contact shadow as a separate radial-gradient div, not a
-              filter on the img. drop-shadow forces a per-frame GPU
-              re-raster from the alpha channel; a gradient div rides
-              along on the parent transform for free. */}
-          <div
-            aria-hidden="true"
-            className="absolute left-1/2 -translate-x-1/2 pointer-events-none"
-            style={{
-              bottom: '-10px',
-              width: '70%',
-              height: '24px',
-              background:
-                'radial-gradient(ellipse closest-side, rgba(40, 25, 10, 0.32) 0%, transparent 70%)',
-            }}
-          />
-        </div>
-      </motion.div>
-
-      {!reduced && (
-        <Particles color={scene.particleColor} progress={progress} isFirst={isFirst} isLast={isLast} slot={slot} />
-      )}
-
-      <motion.div className="absolute inset-x-0 bottom-16 sm:bottom-20 z-20 text-center px-6"
-        style={{ y: textY }}>
-        <h2 className="font-serif text-4xl sm:text-6xl tracking-wide" style={{ color: scene.accent }}>
-          {scene.name}
-        </h2>
-        <p className="mt-3 text-base sm:text-lg" style={{ color: '#1A1A1A99' }}>
-          {scene.tagline}
-        </p>
-      </motion.div>
-    </motion.div>
+      {/* Inner ornament ring */}
+      <div className="absolute" style={{ animation: 'heroSlowSpin 60s linear infinite', willChange: 'transform' }}>
+        <svg viewBox="0 0 600 600" className="w-[52vmin] h-[52vmin] opacity-[0.10]">
+          <g fill="none" stroke={color} strokeWidth="0.6">
+            <circle cx="300" cy="300" r="140" strokeDasharray="3 3" />
+            <circle cx="300" cy="300" r="110" />
+            {Array.from({ length: 8 }).map((_, j) => (
+              <circle key={j} cx="300" cy="180" r="3"
+                transform={`rotate(${(j * 360) / 8} 300 300)`} />
+            ))}
+          </g>
+        </svg>
+      </div>
+    </div>
   );
 }
 
-function Particles({ color, progress, isFirst, isLast, slot }) {
-  const pStart   = isFirst ? 0 : Math.max(0, slot - 0.30);
-  const pEnd     = isLast  ? 1 : Math.min(1, slot + 0.30);
-  const wrapperY = useTransform(progress, [pStart, pEnd], [isFirst ? '0%' : '40%', isLast ? '0%' : '-40%']);
-
-  const particles = Array.from({ length: 14 }).map((_, i) => ({
-    left: `${(i * 23) % 100}%`,
-    size: 2 + (i % 3) * 2,
-    delay: `${(i * 0.4) % 8}s`,
-    duration: `${10 + (i % 5)}s`,
+function Constellation({ color }) {
+  const dots = Array.from({ length: 14 }).map((_, i) => ({
+    left: `${(i * 41 + 7) % 100}%`,
+    top: `${(i * 23 + 11) % 100}%`,
+    size: 2 + (i % 3),
+    delay: `${(i * 0.7) % 9}s`,
+    duration: `${4 + (i % 5)}s`,
   }));
-
   return (
-    <motion.div aria-hidden="true" className="absolute inset-0 hero-particles"
-      style={{ y: wrapperY, willChange: 'transform' }}>
-      {particles.map((p, i) => (
-        <span key={i} className="absolute bottom-0 rounded-full"
-          style={{ left: p.left, width: p.size, height: p.size, background: color,
-                   opacity: 0.55, animation: `heroDrift ${p.duration} linear ${p.delay} infinite` }} />
+    <div aria-hidden="true" className="absolute inset-0 hero-constellation pointer-events-none">
+      {dots.map((d, i) => (
+        <span
+          key={i}
+          className="absolute rounded-full"
+          style={{
+            left: d.left,
+            top: d.top,
+            width: d.size,
+            height: d.size,
+            background: color,
+            boxShadow: `0 0 8px ${color}`,
+            animation: `heroTwinkle ${d.duration} ease-in-out ${d.delay} infinite`,
+            willChange: 'opacity, transform',
+          }}
+        />
       ))}
-    </motion.div>
+    </div>
+  );
+}
+
+function LightShafts({ color }) {
+  const gradient = `linear-gradient(to bottom, transparent, ${color}40, transparent)`;
+  const cols = [12, 28, 48, 64, 82];
+  return (
+    <div aria-hidden="true" className="absolute inset-0 pointer-events-none overflow-hidden">
+      {cols.map((c, i) => (
+        <span
+          key={i}
+          className="absolute top-0 h-full w-[1px]"
+          style={{
+            left: `${c}%`,
+            background: gradient,
+            animation: `heroShaft ${10 + i * 2}s ease-in-out ${i * 1.4}s infinite`,
+            opacity: 0.4,
+            willChange: 'transform, opacity',
+          }}
+        />
+      ))}
+    </div>
   );
 }
 

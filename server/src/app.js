@@ -28,17 +28,27 @@ export function createApp() {
 
   if (config.isDev) app.use(morgan('dev'));
 
-  // Global rate limiter
-  const globalLimiter = rateLimit({
-    windowMs: config.rateLimitWindowMs,
-    max: config.rateLimitMax,
-    standardHeaders: true,
-    legacyHeaders: false,
-  });
-  app.use(globalLimiter);
+  // Global rate limiter. Skipped in dev — localhost is single-user and
+  // React StrictMode double-fires effects, so a 100/15min cap 429s the
+  // browser within a few navigations. In prod we keep a sensible per-IP
+  // cap, but it's an order of magnitude higher than the previous 100
+  // since normal browsing easily makes 4–6 GETs per page change.
+  if (!config.isDev) {
+    const globalLimiter = rateLimit({
+      windowMs: config.rateLimitWindowMs,
+      max: config.rateLimitMax,
+      standardHeaders: true,
+      legacyHeaders: false,
+    });
+    app.use(globalLimiter);
+  }
 
-  // Stricter limiters for sensitive endpoints
-  const strictLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 20 });
+  // Stricter limiters for sensitive endpoints — these stay on in dev too
+  // because we want to catch login/order-spam loops even locally.
+  const strictLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: config.isDev ? 200 : 20,
+  });
 
   // ── Health ────────────────────────────────────────────────────────────────
   app.get('/api/health', (req, res) => {
