@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import jwt from 'jsonwebtoken';
 import ExcelJS from 'exceljs';
 import { productsRepo } from '../repositories/products.repo.js';
 import { ordersRepo } from '../repositories/orders.repo.js';
@@ -14,8 +13,6 @@ import { createFeedbackSchema, patchFeedbackSchema } from '../schemas/feedback.s
 import { updateSettingsSchema } from '../schemas/settings.schema.js';
 import { generateProductId } from '../lib/ids.js';
 import { piasterToJod } from '../lib/pricing.js';
-import { config } from '../config.js';
-import { addSseClient, removeSseClient } from '../lib/sse.js';
 
 const router = Router();
 
@@ -141,27 +138,9 @@ router.delete('/products/:id', (req, res, next) => {
 });
 
 // ─── Orders ──────────────────────────────────────────────────────────────────
-
-// SSE stream — auth via query-param token (EventSource cannot send headers)
-router.get('/orders/events', (req, res) => {
-  const token = req.query.token;
-  if (!token) return res.status(401).end();
-  try {
-    jwt.verify(token, config.jwtSecret);
-  } catch {
-    return res.status(401).end();
-  }
-
-  res.setHeader('Content-Type', 'text/event-stream');
-  res.setHeader('Cache-Control', 'no-cache, no-transform');
-  res.setHeader('Connection', 'keep-alive');
-  res.setHeader('X-Accel-Buffering', 'no'); // disable Nginx buffering
-  res.flushHeaders();
-
-  res.write('event: connected\ndata: {}\n\n');
-  addSseClient(res);
-  req.on('close', () => removeSseClient(res));
-});
+// Note: the SSE stream /admin/orders/events is mounted in app.js BEFORE
+// requireAuth, so it can authenticate from the query-string token that
+// EventSource has to use.
 
 router.get('/orders/export', (req, res, next) => {
   try {
@@ -226,6 +205,7 @@ router.get('/orders/export/excel', async (req, res, next) => {
 
     // Data rows
     const DATA_START = 2;
+    const CANCELLED = 'cancelled';
     orders.forEach((order, idx) => {
       const rowNum = DATA_START + idx;
       const productsText = order.items
@@ -235,6 +215,7 @@ router.get('/orders/export/excel', async (req, res, next) => {
       const subtotalJod  = piasterToJod(order.subtotal);
       const deliveryJod  = piasterToJod(order.delivery_fee);
       const totalJod     = piasterToJod(order.total);
+      const isCancelled  = order.status === CANCELLED;
 
       const row = sheet.addRow({
         orderId:   order.id,
@@ -266,24 +247,45 @@ router.get('/orders/export/excel', async (req, res, next) => {
         });
       }
 
+      // Cancelled orders: strike through + muted color so it's obvious they
+      // are excluded from the totals row at the bottom.
+      if (isCancelled) {
+        row.eachCell(cell => {
+          cell.font = { ...(cell.font || {}), strike: true, color: { argb: 'FF999999' } };
+        });
+      }
+
       row.getCell('G').alignment = { horizontal: 'center' };
     });
 
-    // Totals row
+    // Totals row — excludes cancelled orders so it reflects realised revenue only
     const totalsRowNum = DATA_START + orders.length;
     if (orders.length > 0) {
-      const sumH = orders.reduce((s, o) => s + piasterToJod(o.subtotal),    0);
-      const sumI = orders.reduce((s, o) => s + piasterToJod(o.delivery_fee), 0);
-      const sumJ = orders.reduce((s, o) => s + piasterToJod(o.total),       0);
+      const lastDataRow = totalsRowNum - 1;
+      const dataRange = (col) => `${col}${DATA_START}:${col}${lastDataRow}`;
+      // Exclude cancelled rows: use SUMIFS / COUNTIFS against the Status column (K)
+      const counted = orders.filter(o => o.status !== CANCELLED);
+      const sumH = counted.reduce((s, o) => s + piasterToJod(o.subtotal),    0);
+      const sumI = counted.reduce((s, o) => s + piasterToJod(o.delivery_fee), 0);
+      const sumJ = counted.reduce((s, o) => s + piasterToJod(o.total),       0);
 
       sheet.getCell(`A${totalsRowNum}`).value = {
-        formula: `COUNTA(A${DATA_START}:A${totalsRowNum - 1})`,
-        result: orders.length,
+        formula: `COUNTIFS(${dataRange('K')},"<>${CANCELLED}")`,
+        result: counted.length,
       };
-      sheet.getCell(`B${totalsRowNum}`).value = 'Order Count ↑';
-      sheet.getCell(`H${totalsRowNum}`).value = { formula: `SUM(H${DATA_START}:H${totalsRowNum - 1})`, result: sumH };
-      sheet.getCell(`I${totalsRowNum}`).value = { formula: `SUM(I${DATA_START}:I${totalsRowNum - 1})`, result: sumI };
-      sheet.getCell(`J${totalsRowNum}`).value = { formula: `SUM(J${DATA_START}:J${totalsRowNum - 1})`, result: sumJ };
+      sheet.getCell(`B${totalsRowNum}`).value = 'Order Count (excl. cancelled) ↑';
+      sheet.getCell(`H${totalsRowNum}`).value = {
+        formula: `SUMIFS(${dataRange('H')},${dataRange('K')},"<>${CANCELLED}")`,
+        result: sumH,
+      };
+      sheet.getCell(`I${totalsRowNum}`).value = {
+        formula: `SUMIFS(${dataRange('I')},${dataRange('K')},"<>${CANCELLED}")`,
+        result: sumI,
+      };
+      sheet.getCell(`J${totalsRowNum}`).value = {
+        formula: `SUMIFS(${dataRange('J')},${dataRange('K')},"<>${CANCELLED}")`,
+        result: sumJ,
+      };
 
       ['H', 'I', 'J'].forEach(col => {
         sheet.getCell(`${col}${totalsRowNum}`).numFmt = '#,##0.000 "JOD"';

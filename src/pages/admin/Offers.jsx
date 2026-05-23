@@ -1,7 +1,14 @@
 import { useState, useEffect } from 'react';
-import { Plus, Trash2, Edit2, X, AlertCircle } from 'lucide-react';
+import { Plus, Trash2, Edit2, X, AlertCircle, GripVertical } from 'lucide-react';
 import { adminApi } from '../../lib/api';
 import { useToast } from '../../context/ToastContext';
+
+const DEFAULT_BUNDLE_FEATURES = [
+  'توصيل سريع ومجاني',
+  'ثبات وفوحان',
+  '٥ عطور من اختيارك',
+  'معاينة عند الاستلام',
+];
 
 const AdminOffers = () => {
   const { showToast } = useToast();
@@ -22,6 +29,7 @@ const AdminOffers = () => {
   const [promoCode, setPromoCode] = useState('');
   const [active, setActive] = useState(true);
   const [image, setImage] = useState('');
+  const [features, setFeatures] = useState(DEFAULT_BUNDLE_FEATURES);
 
   useEffect(() => {
     adminApi.offers.list().then(setOffers).catch(console.error);
@@ -41,6 +49,7 @@ const AdminOffers = () => {
     setPromoCode('');
     setActive(true);
     setImage('/offer.png');
+    setFeatures(DEFAULT_BUNDLE_FEATURES);
     setIsModalOpen(true);
   };
 
@@ -58,7 +67,28 @@ const AdminOffers = () => {
     setPromoCode(offer.promoCode || '');
     setActive(offer.active);
     setImage(offer.imageUrl || '/offer.png');
+    setFeatures(
+      Array.isArray(offer.features) && offer.features.length
+        ? offer.features
+        : DEFAULT_BUNDLE_FEATURES
+    );
     setIsModalOpen(true);
+  };
+
+  const handleFeatureChange = (index, value) => {
+    setFeatures(prev => prev.map((f, i) => (i === index ? value : f)));
+  };
+
+  const handleAddFeature = () => {
+    setFeatures(prev => [...prev, '']);
+  };
+
+  const handleRemoveFeature = (index) => {
+    setFeatures(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleResetFeatures = () => {
+    setFeatures(DEFAULT_BUNDLE_FEATURES);
   };
 
   const handleDeleteOffer = async (id) => {
@@ -112,6 +142,7 @@ const AdminOffers = () => {
       discountPercent: type === 'percentage' ? Number(discountPercentage) : null,
       discountAmount: type === 'fixed' ? Number(discountAmount) : null,
       productIds: [],
+      features: type === 'bundle' ? features.map(f => f.trim()).filter(Boolean) : [],
     };
 
     try {
@@ -388,6 +419,58 @@ const AdminOffers = () => {
                       className="w-full border border-gray-200 rounded p-2 focus:border-gold focus:outline-none"
                     />
                   </div>
+                </div>
+              )}
+
+              {/* Bundle Feature Bullets — shown on the home offer section */}
+              {type === 'bundle' && (
+                <div className="bg-gray-50 p-4 border border-gray-200 rounded space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-500">Offer Highlights (Arabic bullets)</label>
+                      <p className="text-[10px] text-gray-400 mt-0.5">Displayed under the offer title on the homepage. Leave empty to hide.</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleResetFeatures}
+                      className="text-[10px] text-gray-500 hover:text-gold underline-offset-2 hover:underline"
+                    >
+                      Reset to defaults
+                    </button>
+                  </div>
+
+                  <div className="space-y-2">
+                    {features.map((feature, index) => (
+                      <div key={index} className="flex items-center gap-2">
+                        <GripVertical className="w-3.5 h-3.5 text-gray-300 shrink-0" />
+                        <input
+                          type="text"
+                          value={feature}
+                          onChange={(e) => handleFeatureChange(index, e.target.value)}
+                          placeholder="مثال: توصيل سريع ومجاني"
+                          dir="rtl"
+                          className="flex-1 border border-gray-200 rounded p-2 focus:border-gold focus:outline-none text-right text-xs"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveFeature(index)}
+                          className="p-1.5 border border-gray-200 hover:border-red-500 hover:text-red-500 text-gray-400 transition-colors rounded"
+                          title="Remove highlight"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleAddFeature}
+                    className="flex items-center gap-1.5 text-xs font-semibold text-gold hover:text-gold-light"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    Add highlight
+                  </button>
                 </div>
               )}
 

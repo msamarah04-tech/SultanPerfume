@@ -30,11 +30,11 @@ export const offersRepo = {
     db.prepare(`
       INSERT INTO offers (id, title, description, type, perfume_count, price,
         discount_percent, discount_amount, promo_code, product_ids, image_url,
-        active, starts_at, ends_at, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        features, active, starts_at, ends_at, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).run(id, row.title, row.description, row.type, row.perfume_count, row.price,
       row.discount_percent, row.discount_amount, row.promo_code,
-      row.product_ids, row.image_url, row.active,
+      row.product_ids, row.image_url, row.features, row.active,
       row.starts_at, row.ends_at, now, now);
     return this.findById(id);
   },
@@ -46,11 +46,11 @@ export const offersRepo = {
     db.prepare(`
       UPDATE offers SET title = ?, description = ?, type = ?, perfume_count = ?, price = ?,
         discount_percent = ?, discount_amount = ?, promo_code = ?, product_ids = ?,
-        image_url = ?, active = ?, starts_at = ?, ends_at = ?, updated_at = ?
+        image_url = ?, features = ?, active = ?, starts_at = ?, ends_at = ?, updated_at = ?
       WHERE id = ?
     `).run(row.title, row.description, row.type, row.perfume_count, row.price,
       row.discount_percent, row.discount_amount, row.promo_code,
-      row.product_ids, row.image_url, row.active,
+      row.product_ids, row.image_url, row.features, row.active,
       row.starts_at, row.ends_at, now, id);
     return this.findById(id);
   },

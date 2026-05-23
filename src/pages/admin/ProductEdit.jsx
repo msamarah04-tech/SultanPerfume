@@ -21,7 +21,6 @@ const ProductEdit = () => {
     name: '',
     description: '',
     category: 'unisex',
-    stock: 0,
     topNotes: '',
     heartNotes: '',
     baseNotes: '',
@@ -29,7 +28,7 @@ const ProductEdit = () => {
     featured: false,
     active: true,
     images: [],
-    sizes: [{ size: '50ml', price: 0 }],
+    sizes: [{ size: '50ml', price: 12 }],
     quantityTiers: []
   });
 
@@ -69,7 +68,7 @@ const ProductEdit = () => {
   const addSize = () => {
     setFormData(prev => ({
       ...prev,
-      sizes: [...prev.sizes, { size: '', price: 0 }]
+      sizes: [...prev.sizes, { size: '', price: 12 }]
     }));
   };
 
@@ -207,10 +206,14 @@ const ProductEdit = () => {
 
     try {
       if (isNew) {
-        await adminApi.products.create({ ...formData, sizes: formData.sizes });
+        const { id: _omit, ...payload } = formData;
+        await adminApi.products.create(payload);
       } else {
         await adminApi.products.update(id, formData);
       }
+      // Invalidate the homepage's cached product list so the next visit
+      // (or the Home page's background revalidation) sees the new featured flag.
+      try { localStorage.removeItem('products_cache'); } catch { /* ignore */ }
       showToast(`Product ${isNew ? 'created' : 'updated'} successfully.`);
       navigate('/admin/products');
     } catch (err) {
@@ -255,29 +258,18 @@ const ProductEdit = () => {
                 required
               />
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="font-sans uppercase text-[10px] tracking-[0.1em] text-gray-500 block mb-1">Category</label>
-                  <select 
-                    name="category"
-                    value={formData.category}
-                    onChange={handleChange}
-                    className="w-full bg-white border border-gray-200 p-3 font-sans text-sm outline-none focus:border-gold"
-                  >
-                    <option value="women">Women</option>
-                    <option value="men">Men</option>
-                    <option value="unisex">Unisex</option>
-                  </select>
-                </div>
-                <Input 
-                  label="Stock Quantity" 
-                  name="stock"
-                  type="number"
-                  min="0"
-                  value={formData.stock}
+              <div>
+                <label className="font-sans uppercase text-[10px] tracking-[0.1em] text-gray-500 block mb-1">Category</label>
+                <select
+                  name="category"
+                  value={formData.category}
                   onChange={handleChange}
-                  required
-                />
+                  className="w-full bg-white border border-gray-200 p-3 font-sans text-sm outline-none focus:border-gold"
+                >
+                  <option value="women">Women</option>
+                  <option value="men">Men</option>
+                  <option value="unisex">Unisex</option>
+                </select>
               </div>
             </div>
           </div>

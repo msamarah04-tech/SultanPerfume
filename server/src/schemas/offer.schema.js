@@ -11,6 +11,7 @@ export const createOfferSchema = z.object({
   promoCode: z.string().nullable().optional(),
   productIds: z.array(z.string()).default([]),
   imageUrl: z.string().default(''),
+  features: z.array(z.string()).default([]),
   active: z.boolean().default(true),
   startsAt: z.string().nullable().optional(),
   endsAt: z.string().nullable().optional(),

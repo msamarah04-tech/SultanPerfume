@@ -15,11 +15,11 @@ export const feedbackRepo = {
     return row ? feedbackRowToApi(row) : null;
   },
 
-  create({ customerName, rating, message, approved = true }) {
+  create({ customerName = '', rating, message = '', imageUrl = '', approved = true }) {
     const db = getDb();
     const result = db.prepare(
-      'INSERT INTO feedback (customer_name, rating, message, approved) VALUES (?, ?, ?, ?)'
-    ).run(customerName, rating ?? null, message, approved ? 1 : 0);
+      'INSERT INTO feedback (customer_name, rating, message, image_url, approved) VALUES (?, ?, ?, ?, ?)'
+    ).run(customerName, rating ?? null, message, imageUrl, approved ? 1 : 0);
     return this.findById(result.lastInsertRowid);
   },
 

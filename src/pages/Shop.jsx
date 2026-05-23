@@ -7,7 +7,7 @@ import ProductCard from '../components/product/ProductCard';
 import EmptyState from '../components/ui/EmptyState';
 import productsData from '../data/products.json';
 import { getProducts } from '../lib/storage';
-import { offersApi, adminApi } from '../lib/api';
+import { offersApi } from '../lib/api';
 import { LayoutGrid, List } from 'lucide-react';
 
 const PAGE_SIZE = 12;
@@ -70,20 +70,12 @@ const Shop = () => {
   };
 
   useEffect(() => {
-    adminApi.products.list().then(fresh => {
-      setAllProductsRaw(fresh);
-      setProducts(applyFilters(fresh));
-    });
-     
     const allProducts = getProducts(productsData, (fresh) => {
       setAllProductsRaw(fresh);
       setProducts(applyFilters(fresh));
     });
-    // eslint-disable-next-line
     setAllProductsRaw(allProducts);
-     
     setProducts(applyFilters(allProducts));
-     
     setVisibleCount(PAGE_SIZE);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

@@ -24,7 +24,6 @@ export const createProductSchema = z.object({
   category: z.enum(['unisex', 'women', 'men']).default('unisex'),
   sizes: z.array(sizeSchema).min(1),
   quantityTiers: z.array(qtyTierSchema).default([]),
-  stock: z.number().int().min(0).default(0),
   topNotes: z.string().default(''),
   heartNotes: z.string().default(''),
   baseNotes: z.string().default(''),

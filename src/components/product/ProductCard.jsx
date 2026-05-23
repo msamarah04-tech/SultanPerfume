@@ -49,16 +49,6 @@ const ProductCard = ({ product, variant = 'grid', offerId = 'summer-5-for-25' })
                 className="w-full h-full object-contain p-2 sm:p-3"
               />
             </div>
-            {product.stock <= 5 && product.stock > 0 && (
-              <div className="absolute top-2 start-2 bg-gold text-black font-sans text-[8px] font-extrabold px-1.5 py-0.5 tracking-wider z-10">
-                كمية محدودة
-              </div>
-            )}
-            {product.stock === 0 && (
-              <div className="absolute top-2 start-2 bg-white text-jet font-sans text-[8px] font-bold px-1.5 py-0.5 z-10">
-                نفذت الكمية
-              </div>
-            )}
           </Link>
 
           {/* Info */}
@@ -129,17 +119,6 @@ const ProductCard = ({ product, variant = 'grid', offerId = 'summer-5-for-25' })
                 className="w-full h-full object-contain p-3 sm:p-5 transition-transform duration-[600ms] ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:scale-[1.05]"
               />
 
-            {/* Stock badges */}
-            {product.stock <= 5 && product.stock > 0 && (
-              <div className="absolute top-3 start-3 bg-gold text-black font-sans text-[9px] font-extrabold px-2.5 py-1 tracking-wider z-10">
-                كمية محدودة
-              </div>
-            )}
-            {product.stock === 0 && (
-              <div className="absolute top-3 start-3 bg-white text-jet font-sans text-[9px] font-bold px-2.5 py-1 z-10">
-                نفذت الكمية
-              </div>
-            )}
           </div>
 
           {/* Thumbnail strip — only when multiple images */}

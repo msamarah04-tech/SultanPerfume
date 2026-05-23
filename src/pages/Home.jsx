@@ -8,41 +8,18 @@ import ProductCard from '../components/product/ProductCard';
 import productsData from '../data/products.json';
 import { getProducts } from '../lib/storage';
 import { offersApi, feedbackApi, settingsApi } from '../lib/api';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, X } from 'lucide-react';
 import SignatureHero from '../components/hero/SignatureHero';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const TESTIMONIALS = [
-  {
-    id: 1,
-    name: "فيصل الحارثي",
-    location: "عمان",
-    product: "Sultan Absolute",
-    rating: 5,
-    text: "ثباتٌ أسطوري! قمت برشه على معطفي وظلت رائحة العود الفاخر والمسك تنبض بالدفء لثلاثة أيام متتالية. اختيار المكونات ينم عن خبرة ملكية عميقة.",
-    glow: "from-gold/20 via-gold/5 to-transparent"
-  },
-  {
-    id: 2,
-    name: "سارة العبدالله",
-    location: "إربد",
-    product: "Oud Imperial",
-    rating: 5,
-    text: "العطر متوازن بشكل ساحر، عبق فواح يأسر القلوب من أول رشة. التوصيل كان سريعاً جداً والتغليف راقي كأنه هدية ملكية معدّة بعناية.",
-    glow: "from-rose-500/10 via-gold/5 to-transparent"
-  },
-  {
-    id: 3,
-    name: "ياسر العتوم",
-    location: "العقبة",
-    product: "Sultan Selection",
-    rating: 5,
-    text: "تجربة باقة الـ 5 عطور كانت استثنائية! حصلت على تشكيلة مذهلة من الروائح اليومية والمناسبات بسعر رائع وثبات فوّاح يدوم طويلاً فعلاً.",
-    glow: "from-blue-500/10 via-gold/5 to-transparent"
-  }
+const DEFAULT_OFFER_FEATURES = [
+  'توصيل سريع ومجاني',
+  'ثبات وفوحان',
+  '٥ عطور من اختيارك',
+  'معاينة عند الاستلام',
 ];
 
 const DEFAULT_OFFERS = [{
@@ -54,7 +31,8 @@ const DEFAULT_OFFERS = [{
   type: 'bundle',
   perfumeCount: 5,
   price: 25,
-  image: '/offer.png'
+  image: '/offer.png',
+  features: DEFAULT_OFFER_FEATURES,
 }];
 
 const Home = () => {
@@ -66,6 +44,7 @@ const Home = () => {
   const [currentOfferIndex, setCurrentOfferIndex] = useState(0);
   const [testimonials, setTestimonials] = useState([]);
   const [showTestimonialsSection] = useState(true);
+  const [feedbackLightbox, setFeedbackLightbox] = useState(null);
   const [homeSections, setHomeSections] = useState(['hero', 'featured', 'bundle_offer', 'testimonials']);
 
   const activeBundleOffer = activeBundleOffers[currentOfferIndex] || activeBundleOffers[0] || DEFAULT_OFFERS[0];
@@ -80,6 +59,7 @@ const Home = () => {
             titleAr: o.titleAr || o.title || '',
             descriptionAr: o.descriptionAr || o.description || '',
             image: o.imageUrl || '/offer.png',
+            features: Array.isArray(o.features) ? o.features.filter(Boolean) : [],
           }));
         setActiveBundleOffers(bundles.length ? bundles : DEFAULT_OFFERS);
         setCurrentOfferIndex(0);
@@ -111,19 +91,18 @@ const Home = () => {
 
     feedbackApi.list()
       .then(items => {
-        if (items.length > 0) {
-          setTestimonials(items.map(f => ({
+        const withImages = items.filter(f => f.imageUrl);
+        if (withImages.length > 0) {
+          setTestimonials(withImages.map(f => ({
             id: f.id,
-            name: f.customerName,
-            rating: f.rating,
-            text: f.message,
-            glow: 'from-gold/20 via-gold/5 to-transparent',
+            name: f.customerName || 'عميل كريم',
+            imageUrl: f.imageUrl,
           })));
         } else {
-          setTestimonials(TESTIMONIALS);
+          setTestimonials([]);
         }
       })
-      .catch(() => setTestimonials(TESTIMONIALS));
+      .catch(() => setTestimonials([]));
   }, []);
 
   useEffect(() => {
@@ -420,14 +399,16 @@ const Home = () => {
                 </p>
 
                 {/* Bullet Points with Gold Icons */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
-                  {['توصيل سريع ومجاني', 'ثبات وفوحان', '٥ عطور من اختيارك', 'معاينة عند الاستلام'].map((text, i) => (
-                    <div key={i} className="gsap-body flex items-center gap-3">
-                      <span className="w-6 h-6 rounded-full bg-gold/10 text-gold flex items-center justify-center shrink-0">✓</span>
-                      <span className="font-sans text-xs text-charcoal font-semibold">{text}</span>
-                    </div>
-                  ))}
-                </div>
+                {(activeBundleOffer.features?.length ?? 0) > 0 && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
+                    {activeBundleOffer.features.map((text, i) => (
+                      <div key={i} className="gsap-body flex items-center gap-3">
+                        <span className="w-6 h-6 rounded-full bg-gold/10 text-gold flex items-center justify-center shrink-0">✓</span>
+                        <span className="font-sans text-xs text-charcoal font-semibold">{text}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
 
                 <div className="gsap-body">
                   <Link to={`/offer/${activeBundleOffer.id}`}>
@@ -527,9 +508,21 @@ const Home = () => {
           0% { transform: translate3d(0, -100%, 0); }
           100% { transform: translate3d(0, 400%, 0); }
         }
+        @keyframes feedbackScroll {
+          from { transform: translate3d(0, 0, 0); }
+          to   { transform: translate3d(-50%, 0, 0); }
+        }
         .animate-wave-slow { animation: waveSlow 25s ease-in-out infinite; transform-origin: center; }
         .animate-wave-fast { animation: waveFast 18s ease-in-out infinite; transform-origin: center; }
         .animate-shimmer-vertical { animation: shimmerVertical 7s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+        .feedback-track {
+          animation: feedbackScroll 70s linear infinite;
+          width: max-content;
+        }
+        .feedback-strip:hover .feedback-track { animation-play-state: paused; }
+        @media (prefers-reduced-motion: reduce) {
+          .feedback-track { animation: none; }
+        }
       `}</style>
 
       <div className="absolute inset-0 flex justify-around pointer-events-none opacity-[0.25]">
@@ -555,53 +548,73 @@ const Home = () => {
       </svg>
 
       <div className="container mx-auto px-4 md:px-8 relative z-10">
-        <div className="text-center mb-16 md:mb-24">
+        <div className="text-center mb-12 md:mb-16">
           <span className="gsap-body font-sans text-xs font-semibold text-gold tracking-[0.25em] uppercase mb-4 block">
             همسات الرضا / Aromatic Voices
           </span>
           <h2 className="font-serif text-3xl md:text-5xl text-jet mb-6 leading-tight">
-            <span className="block overflow-hidden"><span className="gsap-heading-line block">ماذا يقول عشاق السلطان؟</span></span>
+            <span className="block overflow-hidden"><span className="gsap-heading-line block">شهادات حقيقية من عملائنا</span></span>
           </h2>
+          <p className="gsap-body font-sans text-sm text-charcoal/70 max-w-xl mx-auto mb-6">
+            لقطات أصلية من محادثات الواتساب — كل صورة تحكي قصة عميل راضٍ
+          </p>
           <div className="gsap-body w-16 h-px bg-gold mx-auto"></div>
         </div>
+      </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {testimonials.map((t) => (
-            <div
-              key={t.id}
-              className="gsap-grid-item bg-gray-500/[0.06] backdrop-blur-md border border-gray-200/40 p-8 rounded-3xl relative overflow-hidden group transition-all duration-500 hover:shadow-[0_20px_50px_rgba(0,0,0,0.05)] hover:border-gold/35 hover:bg-gray-500/[0.12] flex flex-col justify-between min-h-[320px]"
-            >
-              <div className={`absolute -top-12 -right-12 w-40 h-40 rounded-full bg-gradient-to-tr ${t.glow} blur-3xl opacity-20 group-hover:scale-125 transition-transform duration-700 pointer-events-none`} />
+      {/* Polaroid marquee — auto-scrolls, pauses on hover */}
+      <div className="gsap-grid-item feedback-strip relative z-10 py-10 md:py-14">
+        {/* Side fade masks so cards melt into the background at the edges */}
+        <div className="absolute inset-y-0 left-0 w-12 md:w-32 bg-gradient-to-r from-white to-transparent z-20 pointer-events-none" />
+        <div className="absolute inset-y-0 right-0 w-12 md:w-32 bg-gradient-to-l from-white to-transparent z-20 pointer-events-none" />
 
-              <div className="flex justify-between items-start mb-6">
-                <span className="text-gold/15 font-serif text-6xl leading-none select-none pointer-events-none">"</span>
-                <div className="flex gap-1">
-                  {[...Array(t.rating)].map((_, i) => (
-                    <span key={i} className="text-gold text-sm drop-shadow-[0_0_4px_rgba(212,175,55,0.35)]">♦</span>
-                  ))}
+        <div className="feedback-track flex items-center gap-6 md:gap-10 px-6">
+          {[...testimonials, ...testimonials].map((t, idx) => {
+            const rotate = idx % 4 === 0 ? -2.2 : idx % 4 === 1 ? 1.6 : idx % 4 === 2 ? -1.2 : 2.4;
+            return (
+              <button
+                key={`${t.id}-${idx}`}
+                type="button"
+                onClick={() => setFeedbackLightbox(t.imageUrl)}
+                style={{ '--rot': `${rotate}deg` }}
+                className="group relative shrink-0 w-[200px] sm:w-[230px] md:w-[260px] bg-white p-3 pb-12 shadow-[0_18px_45px_-12px_rgba(0,0,0,0.18)] hover:shadow-[0_28px_60px_-10px_rgba(212,175,55,0.35)] transition-[transform,box-shadow] duration-500 ease-out [transform:rotate(var(--rot))] hover:[transform:rotate(0deg)_translateY(-8px)_scale(1.02)] cursor-zoom-in"
+              >
+                {/* Tape accent at top-center */}
+                <span className="absolute -top-2 left-1/2 -translate-x-1/2 w-12 h-4 bg-gold/25 backdrop-blur-sm rotate-[-3deg] shadow-sm" aria-hidden />
+
+                {/* Image — phone aspect, fully visible (no crop) */}
+                <div className="relative aspect-[9/16] overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+                  <img
+                    src={t.imageUrl}
+                    alt={t.name}
+                    loading="lazy"
+                    className="max-w-full max-h-full object-contain transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+                    draggable={false}
+                  />
+                  {/* Verified chip */}
+                  <span className="absolute top-2 end-2 inline-flex items-center gap-1 bg-jet/90 text-gold text-[8px] font-bold tracking-widest uppercase px-2 py-0.5 backdrop-blur-sm z-10">
+                    موثّق
+                  </span>
                 </div>
-              </div>
 
-              <p className="font-sans text-sm text-charcoal/90 leading-relaxed mb-8 relative z-10 flex-grow">
-                {t.text}
-              </p>
-
-              <div className="border-t border-gold/10 pt-6 mt-auto">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <h4 className="font-serif text-base text-jet font-semibold mb-1">{t.name}</h4>
-                    <p className="font-sans text-[10px] text-gray-400 tracking-wider uppercase">{t.location}</p>
-                  </div>
-                  {t.product && (
-                     <span className="font-sans text-[10px] text-gold/90 bg-gold/5 border border-gold/15 px-3 py-1 rounded-full uppercase tracking-wider">
-                      <bdi dir="ltr">{t.product}</bdi>
-                    </span>
-                  )}
+                {/* Polaroid caption */}
+                <div className="absolute bottom-2 inset-x-3 flex items-center justify-between gap-2" dir="rtl">
+                  <span className="font-sans text-[12px] text-jet font-semibold truncate">
+                    {t.name}
+                  </span>
+                  <span className="font-serif text-[11px] text-gold/80 italic shrink-0">
+                    شكراً
+                  </span>
                 </div>
-              </div>
-            </div>
-          ))}
+              </button>
+            );
+          })}
         </div>
+
+        {/* Helper hint */}
+        <p className="text-center font-sans text-[11px] text-charcoal/50 mt-8 tracking-wider">
+          مرّر فوق الصور للإيقاف · انقر لعرضها بالكامل
+        </p>
       </div>
     </section>
   ) : null;
@@ -623,6 +636,28 @@ const Home = () => {
           return section ? <Fragment key={key}>{section}</Fragment> : null;
         })}
       </PageTransition>
+
+      {feedbackLightbox && (
+        <div
+          className="fixed inset-0 bg-black/85 z-[1000] flex items-center justify-center p-4"
+          onClick={() => setFeedbackLightbox(null)}
+        >
+          <button
+            type="button"
+            onClick={() => setFeedbackLightbox(null)}
+            className="absolute top-4 end-4 text-white/80 hover:text-white p-2 bg-white/10 hover:bg-white/20 rounded-full"
+            aria-label="إغلاق"
+          >
+            <X className="w-5 h-5" />
+          </button>
+          <img
+            src={feedbackLightbox}
+            alt="تقييم"
+            className="max-w-full max-h-full object-contain shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
     </div>
   );
 };

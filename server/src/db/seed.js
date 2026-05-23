@@ -64,9 +64,9 @@ export async function seed() {
   // ── Products ────────────────────────────────────────────────────────────────
   const insertProduct = db.prepare(`
     INSERT INTO products (id, name, name_ar, brand, description, category,
-      top_notes, heart_notes, base_notes, stock, featured, active, created_at, updated_at)
+      top_notes, heart_notes, base_notes, featured, active, created_at, updated_at)
     VALUES (@id, @name, @name_ar, @brand, @description, @category,
-      @top_notes, @heart_notes, @base_notes, @stock, @featured, @active,
+      @top_notes, @heart_notes, @base_notes, @featured, @active,
       @created_at, @updated_at)
     ON CONFLICT(id) DO NOTHING
   `);
@@ -102,7 +102,6 @@ export async function seed() {
           top_notes: p.topNotes ?? '',
           heart_notes: p.heartNotes ?? '',
           base_notes: p.baseNotes ?? '',
-          stock: p.stock ?? 0,
           featured: p.featured ? 1 : 0,
           active: p.active !== false ? 1 : 0,
           created_at: p.createdAt ?? new Date().toISOString(),

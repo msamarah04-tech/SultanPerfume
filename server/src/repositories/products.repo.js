@@ -43,7 +43,7 @@ export const productsRepo = {
     }
 
     const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
-    const orderCol = ['name', 'brand', 'created_at', 'stock'].includes(sort) ? sort : 'name';
+    const orderCol = ['name', 'brand', 'created_at'].includes(sort) ? sort : 'name';
     const offset = (page - 1) * limit;
 
     const total = db.prepare(`SELECT COUNT(*) as cnt FROM products ${where}`).get(...params).cnt;
@@ -77,9 +77,9 @@ export const productsRepo = {
 
     db.prepare(`
       INSERT INTO products (id, name, name_ar, brand, description, category,
-        top_notes, heart_notes, base_notes, sections_json, stock, featured, active, created_at, updated_at)
+        top_notes, heart_notes, base_notes, sections_json, featured, active, created_at, updated_at)
       VALUES (@id, @name, @name_ar, @brand, @description, @category,
-        @top_notes, @heart_notes, @base_notes, @sections_json, @stock, @featured, @active,
+        @top_notes, @heart_notes, @base_notes, @sections_json, @featured, @active,
         @created_at, @updated_at)
     `).run(row);
 
@@ -99,7 +99,7 @@ export const productsRepo = {
       UPDATE products SET
         name = @name, name_ar = @name_ar, brand = @brand, description = @description,
         category = @category, top_notes = @top_notes, heart_notes = @heart_notes,
-        base_notes = @base_notes, sections_json = @sections_json, stock = @stock,
+        base_notes = @base_notes, sections_json = @sections_json,
         featured = @featured, active = @active, updated_at = @updated_at
       WHERE id = @id
     `).run(row);
@@ -112,7 +112,7 @@ export const productsRepo = {
 
   patch(id, fields) {
     const db = getDb();
-    const allowed = ['name', 'name_ar', 'brand', 'description', 'category', 'stock', 'featured', 'active',
+    const allowed = ['name', 'name_ar', 'brand', 'description', 'category', 'featured', 'active',
       'top_notes', 'heart_notes', 'base_notes', 'sections_json'];
     const sets = [];
     const params = [];

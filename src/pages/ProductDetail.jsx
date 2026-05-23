@@ -9,6 +9,7 @@ import PageTransition from '../components/layout/PageTransition';
 import ProductCard from '../components/product/ProductCard';
 import productsData from '../data/products.json';
 import { getProducts } from '../lib/storage';
+import { productsApi } from '../lib/api';
 import { Minus, Plus, ShoppingBag, Zap } from 'lucide-react';
 
 const CATEGORY_AR = {
@@ -35,33 +36,44 @@ const ProductDetail = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    let cancelled = false;
 
+    const hydrate = (p, allProducts) => {
+      if (cancelled || !p) return;
+      setProduct(p);
+      setSelectedSize(p.sizes[0]);
+      setQuantity(1);
+      setActiveImage(0);
+      const related = (allProducts || [])
+        .filter(x => x.active && x.category === p.category && x.id !== p.id)
+        .slice(0, 4);
+      setRelatedProducts(related);
+    };
+
+    // 1) Synchronous paint from cache/seed if the product is already known.
     const allProducts = getProducts(productsData, (fresh) => {
       const found = fresh.find(p => p.id === id && p.active);
-      if (found) { setProduct(found); setSelectedSize(found.sizes[0]); }
+      if (found) hydrate(found, fresh);
     });
+    const fromSeed = allProducts.find(p => p.id === id && p.active);
+    if (fromSeed) hydrate(fromSeed, allProducts);
 
-    const currentProduct = allProducts.find(p => p.id === id && p.active);
+    // 2) Authoritative lookup against the API. Only 404 after the API confirms
+    //    the product really doesn't exist — otherwise newly-created products
+    //    would redirect to /404 on first navigation (before the cache catches up).
+    productsApi.getById(id)
+      .then(p => {
+        if (cancelled) return;
+        if (p && p.active) hydrate(p, allProducts);
+        else navigate('/404');
+      })
+      .catch(err => {
+        if (cancelled) return;
+        if (err?.status === 404) navigate('/404');
+        // Other errors: keep whatever we painted from seed/cache; no redirect.
+      });
 
-    if (!currentProduct) {
-      navigate('/404');
-      return;
-    }
-
-    // eslint-disable-next-line
-    setProduct(currentProduct);
-     
-    setSelectedSize(currentProduct.sizes[0]);
-     
-    setQuantity(1);
-     
-    setActiveImage(0);
-
-    const related = allProducts
-      .filter(p => p.active && p.category === currentProduct.category && p.id !== currentProduct.id)
-      .slice(0, 4);
-    setRelatedProducts(related);
-
+    return () => { cancelled = true; };
   }, [id, navigate]);
 
   if (!product) return null;
@@ -194,16 +206,10 @@ const ProductDetail = () => {
                   <button
                     onClick={() => setQuantity(q => q + 1)}
                     className="p-3 text-gray-400 hover:text-jet transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
-                    disabled={product.stock !== -1 && quantity >= product.stock}
                   >
                     <Plus className="w-4 h-4" />
                   </button>
                 </div>
-                {product.stock <= 5 && product.stock > 0 && (
-                  <span className="font-sans text-xs text-red-500 font-semibold">
-                    متبقي {product.stock} فقط
-                  </span>
-                )}
               </div>
 
               {tierLadder.length > 0 && (
@@ -242,27 +248,19 @@ const ProductDetail = () => {
               <div className="flex flex-col gap-3">
                 <button
                   onClick={handleBuyNow}
-                  disabled={product.stock === 0}
-                  className="w-full bg-gold hover:bg-gold/90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-sans text-sm font-extrabold uppercase tracking-[0.15em] py-4 flex items-center justify-center gap-2.5 transition-all duration-300"
+                  className="w-full bg-gold hover:bg-gold/90 text-white font-sans text-sm font-extrabold uppercase tracking-[0.15em] py-4 flex items-center justify-center gap-2.5 transition-all duration-300"
                 >
                   <Zap className="w-4 h-4" />
-                  {product.stock === 0 ? 'نفذت الكمية' : 'اشتر الآن'}
+                  اشتر الآن
                 </button>
                 <button
                   onClick={handleAddToCart}
-                  disabled={product.stock === 0}
-                  className="w-full bg-jet hover:bg-jet/80 disabled:opacity-50 disabled:cursor-not-allowed text-white font-sans text-sm font-extrabold uppercase tracking-[0.15em] py-4 flex items-center justify-center gap-2.5 transition-all duration-300"
+                  className="w-full bg-jet hover:bg-jet/80 text-white font-sans text-sm font-extrabold uppercase tracking-[0.15em] py-4 flex items-center justify-center gap-2.5 transition-all duration-300"
                 >
                   <ShoppingBag className="w-4 h-4" />
-                  {product.stock === 0 ? 'نفذت الكمية' : 'أضف إلى السلة'}
+                  أضف إلى السلة
                 </button>
               </div>
-
-              {product.stock === 0 && (
-                <p className="mt-4 font-sans text-xs font-semibold text-red-500">
-                  نفذت الكمية من المخزن
-                </p>
-              )}
 
             </div>
           </div>

@@ -39,6 +39,14 @@ const AdminLayout = () => {
       window.dispatchEvent(new CustomEvent('admin:new-order', { detail: order }));
     });
 
+    // EventSource auto-reconnects on any error (e.g. 401, server down) every
+    // ~3s by default, which would hammer the API and trip the rate limiter.
+    // Close it so the admin can refresh manually instead.
+    es.onerror = () => {
+      es.close();
+      esRef.current = null;
+    };
+
     return () => { es.close(); esRef.current = null; };
   }, []);
 

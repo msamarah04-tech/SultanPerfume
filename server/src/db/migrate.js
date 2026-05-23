@@ -54,6 +54,49 @@ export function migrate() {
   } else {
     console.log('✓ Schema already at version 3');
   }
+
+  // Version 4: admin-editable offer features (bullet list)
+  const v4 = db.prepare('SELECT version FROM schema_version WHERE version = 4').get();
+  if (!v4) {
+    try {
+      db.exec("ALTER TABLE offers ADD COLUMN features TEXT NOT NULL DEFAULT '[]'");
+      console.log('✓ Schema version 4 applied (offers.features column added)');
+    } catch {
+      console.log('✓ Schema version 4: offers.features column already present');
+    }
+    db.prepare('INSERT INTO schema_version (version) VALUES (4)').run();
+  } else {
+    console.log('✓ Schema already at version 4');
+  }
+
+  // Version 5: remove unused products.stock column
+  const v5 = db.prepare('SELECT version FROM schema_version WHERE version = 5').get();
+  if (!v5) {
+    try {
+      db.exec('ALTER TABLE products DROP COLUMN stock');
+      console.log('✓ Schema version 5 applied (products.stock column dropped)');
+    } catch {
+      // Column already gone (fresh DB from updated schema.sql) — nothing to do
+      console.log('✓ Schema version 5: products.stock column already absent');
+    }
+    db.prepare('INSERT INTO schema_version (version) VALUES (5)').run();
+  } else {
+    console.log('✓ Schema already at version 5');
+  }
+
+  // Version 6: photo-first feedback — store screenshots/photos
+  const v6 = db.prepare('SELECT version FROM schema_version WHERE version = 6').get();
+  if (!v6) {
+    try {
+      db.exec("ALTER TABLE feedback ADD COLUMN image_url TEXT NOT NULL DEFAULT ''");
+      console.log('✓ Schema version 6 applied (feedback.image_url column added)');
+    } catch {
+      console.log('✓ Schema version 6: feedback.image_url column already present');
+    }
+    db.prepare('INSERT INTO schema_version (version) VALUES (6)').run();
+  } else {
+    console.log('✓ Schema already at version 6');
+  }
 }
 
 // Allow running directly: node src/db/migrate.js

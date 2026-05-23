@@ -29,7 +29,6 @@ CREATE TABLE IF NOT EXISTS products (
   heart_notes TEXT NOT NULL DEFAULT '',
   base_notes    TEXT NOT NULL DEFAULT '',
   sections_json TEXT NOT NULL DEFAULT '[]',
-  stock         INTEGER NOT NULL DEFAULT 0,
   featured    INTEGER NOT NULL DEFAULT 0 CHECK (featured IN (0, 1)),
   active      INTEGER NOT NULL DEFAULT 1 CHECK (active IN (0, 1)),
   created_at  TEXT NOT NULL DEFAULT (datetime('now')),
@@ -122,6 +121,7 @@ CREATE TABLE IF NOT EXISTS offers (
   perfume_count    INTEGER,           -- bundle: number of bottles
   price            INTEGER,           -- bundle: fixed price in piasters
   image_url        TEXT NOT NULL DEFAULT '',
+  features         TEXT NOT NULL DEFAULT '[]',  -- JSON array of bullet point strings
   active           INTEGER NOT NULL DEFAULT 1 CHECK (active IN (0, 1)),
   starts_at        TEXT,
   ends_at          TEXT,
@@ -134,9 +134,10 @@ CREATE INDEX IF NOT EXISTS idx_offers_active ON offers(active);
 -- Customer feedback / testimonials
 CREATE TABLE IF NOT EXISTS feedback (
   id            INTEGER PRIMARY KEY AUTOINCREMENT,
-  customer_name TEXT NOT NULL,
+  customer_name TEXT NOT NULL DEFAULT '',
   rating        INTEGER CHECK (rating BETWEEN 1 AND 5),
-  message       TEXT NOT NULL,
+  message       TEXT NOT NULL DEFAULT '',
+  image_url     TEXT NOT NULL DEFAULT '',
   approved      INTEGER NOT NULL DEFAULT 0 CHECK (approved IN (0, 1)),
   created_at    TEXT NOT NULL DEFAULT (datetime('now'))
 );

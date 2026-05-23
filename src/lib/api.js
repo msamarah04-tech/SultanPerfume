@@ -17,6 +17,19 @@ async function request(method, path, { body, admin = false } = {}) {
     body: body !== undefined ? JSON.stringify(body) : undefined,
   });
 
+  if (admin && res.status === 401) {
+    sessionStorage.removeItem('adminToken');
+    // Only bounce to /admin/login if the user is actually inside the admin
+    // panel. A stray admin call from a public page must NOT redirect customers.
+    if (
+      typeof window !== 'undefined' &&
+      window.location.pathname.startsWith('/admin') &&
+      !window.location.pathname.startsWith('/admin/login')
+    ) {
+      window.location.href = '/admin/login';
+    }
+  }
+
   const json = await res.json();
   if (!json.ok) {
     const err = new Error(json.error?.message || 'API error');
