@@ -29,25 +29,28 @@ export function createApp() {
   if (config.isDev) app.use(morgan('dev'));
 
   // Global rate limiter. Skipped in dev — localhost is single-user and
-  // React StrictMode double-fires effects, so a 100/15min cap 429s the
-  // browser within a few navigations. In prod we keep a sensible per-IP
-  // cap, but it's an order of magnitude higher than the previous 100
-  // since normal browsing easily makes 4–6 GETs per page change.
+  // React StrictMode double-fires effects. In prod we keep a per-IP cap
+  // but exempt /api/admin: those endpoints require a JWT, so they aren't
+  // a DDoS vector for an anonymous attacker, and a logged-in admin
+  // loading the dashboard burns through 5–10 requests per page view.
   if (!config.isDev) {
     const globalLimiter = rateLimit({
       windowMs: config.rateLimitWindowMs,
       max: config.rateLimitMax,
       standardHeaders: true,
       legacyHeaders: false,
+      skip: (req) => req.path.startsWith('/api/admin'),
     });
     app.use(globalLimiter);
   }
 
-  // Stricter limiters for sensitive endpoints — these stay on in dev too
-  // because we want to catch login/order-spam loops even locally.
+  // Stricter limiter for write endpoints that could be abused. Skips
+  // /api/orders/preview — it's a read-only pricing calculator the
+  // checkout page calls on every cart change.
   const strictLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: config.isDev ? 200 : 20,
+    max: config.isDev ? 200 : 60,
+    skip: (req) => req.path === '/preview',
   });
 
   // ── Health ────────────────────────────────────────────────────────────────

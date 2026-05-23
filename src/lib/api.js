@@ -30,7 +30,27 @@ async function request(method, path, { body, admin = false } = {}) {
     }
   }
 
-  const json = await res.json();
+  // The server returns JSON for both success and structured errors, but
+  // upstream layers (express-rate-limit, Render's proxy, a crashed worker)
+  // can send plain text. Parse defensively so users see a real error
+  // message instead of "Unexpected token 'T'".
+  const text = await res.text();
+  let json;
+  try {
+    json = text ? JSON.parse(text) : { ok: false, error: { code: 'EMPTY_RESPONSE', message: 'Empty response from server' } };
+  } catch {
+    // Non-JSON body — map common cases to user-readable codes.
+    const code = res.status === 429 ? 'RATE_LIMITED'
+      : res.status >= 500 ? 'SERVER_ERROR'
+      : 'BAD_RESPONSE';
+    const message = res.status === 429
+      ? 'تم تجاوز الحد المسموح من الطلبات. حاول بعد قليل.'
+      : (text.slice(0, 200) || `HTTP ${res.status}`);
+    const err = new Error(message);
+    err.code = code;
+    err.status = res.status;
+    throw err;
+  }
   if (!json.ok) {
     const err = new Error(json.error?.message || 'API error');
     err.code = json.error?.code;

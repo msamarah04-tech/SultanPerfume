@@ -27,7 +27,7 @@ services:
       - key: RATE_LIMIT_WINDOW_MS
         value: 900000
       - key: RATE_LIMIT_MAX
-        value: 100
+        value: 600
 
   # ── Frontend (React / Vite static site) ───────────────────────────────────
   - type: web
