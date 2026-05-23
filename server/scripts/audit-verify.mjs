@@ -65,6 +65,25 @@ const auth = { token };
 // Snapshot settings so we can restore them at the end.
 const snap = (await http('GET', '/admin/settings', auth)).json.data;
 
+// We need a tier-free product as the test fixture: previously p050 served
+// that role, but ensureBaselinePricing in server/src/index.js now gives
+// every active product the baseline "2 for 13, 3 for 20" tiers on boot.
+// Create a temporary tier-free product just for the audit and tear it
+// down at the end.
+const FIXTURE_ID = 'p999';
+await http('DELETE', `/admin/products/${FIXTURE_ID}`, auth);  // ignore 404
+const fixture = (await http('POST', '/admin/products', {
+  body: {
+    id: FIXTURE_ID,
+    name: 'Audit fixture',
+    sizes: [{ size: '100ml', price: 12 }],
+    quantityTiers: [],
+    active: true,
+  },
+  ...auth,
+})).json.data;
+if (!fixture?.id) throw new Error('Failed to create audit fixture product');
+
 async function setSettings(patch) {
   return http('PUT', '/admin/settings', { body: patch, ...auth });
 }
@@ -91,7 +110,7 @@ await setSettings({
 
 // ── 1. single item, no promo ───────────────────────────────────────────────
 {
-  const r = await preview([{ productId: "p050", size: '100ml', quantity: 1 }]);
+  const r = await preview([{ productId: FIXTURE_ID, size: '100ml', quantity: 1 }]);
   const d = r.json.data;
   check('1. single item, no promo', approxEqual(d.subtotal, 12) && approxEqual(d.total, 12) && d.appliedOffer === null,
     `subtotal=${d.subtotal} total=${d.total}`);
@@ -101,7 +120,7 @@ await setSettings({
 // We use a bulk-tier API: 3-for-30 cart-wide replacement. We test per-product later.
 {
   await setSettings({ cartQuantityTiers: { enabled: true, tiers: [{ minQty: 3, totalPrice: 30 }], excessUnitPrice: 5 } });
-  const r = await preview([{ productId: "p050", size: '100ml', quantity: 3 }]);
+  const r = await preview([{ productId: FIXTURE_ID, size: '100ml', quantity: 3 }]);
   const d = r.json.data;
   // 3 × 12 = 36, but cart tier replaces with 30
   check('2. cart-wide tier overrides subtotal', approxEqual(d.subtotal, 30) && approxEqual(d.total, 30),
@@ -112,7 +131,7 @@ await setSettings({
 {
   // Tier: 3 for 30 JOD. Cap = 3. excessUnitPrice = 5.
   // qty=5 → 30 + 2 × 5 = 40
-  const r = await preview([{ productId: "p050", size: '100ml', quantity: 5 }]);
+  const r = await preview([{ productId: FIXTURE_ID, size: '100ml', quantity: 5 }]);
   const d = r.json.data;
   check('2b. cart-tier caps; excess at 5 JOD/bottle', approxEqual(d.subtotal, 40) && approxEqual(d.total, 40),
     `qty=5 subtotal=${d.subtotal} (expected 40 = 30 + 2*5)`);
@@ -121,7 +140,7 @@ await setSettings({
 // ── 2c. far beyond cap — total scales linearly at 5 JOD ────────────────────
 {
   // qty=10 → 30 + 7 × 5 = 65
-  const r = await preview([{ productId: "p050", size: '100ml', quantity: 10 }]);
+  const r = await preview([{ productId: FIXTURE_ID, size: '100ml', quantity: 10 }]);
   const d = r.json.data;
   check('2c. cart-tier cap holds at large qty', approxEqual(d.subtotal, 65) && approxEqual(d.total, 65),
     `qty=10 subtotal=${d.subtotal} (expected 65 = 30 + 7*5)`);
@@ -131,7 +150,7 @@ await setSettings({
 {
   await setSettings({ cartQuantityTiers: { enabled: true, tiers: [{ minQty: 3, totalPrice: 30 }], excessUnitPrice: 8 } });
   // qty=5 → 30 + 2 × 8 = 46
-  const r = await preview([{ productId: "p050", size: '100ml', quantity: 5 }]);
+  const r = await preview([{ productId: FIXTURE_ID, size: '100ml', quantity: 5 }]);
   const d = r.json.data;
   check('2d. admin-configurable excess rate', approxEqual(d.subtotal, 46),
     `qty=5 subtotal=${d.subtotal} (expected 46 = 30 + 2*8)`);
@@ -144,7 +163,7 @@ await setSettings({
     cartQuantityTiers: { enabled: false, tiers: [] },
     quantityPricing: { enabled: true, tiers: [{ minQty: 2, discountPercent: 25 }] },
   });
-  const r = await preview([{ productId: "p050", size: '100ml', quantity: 2 }]);
+  const r = await preview([{ productId: FIXTURE_ID, size: '100ml', quantity: 2 }]);
   const d = r.json.data;
   // 2 × 12 × 0.75 = 18
   check('3. global % tier applies', approxEqual(d.subtotal, 18) && approxEqual(d.total, 18),
@@ -163,7 +182,7 @@ const save10 = (await http('POST', '/admin/offers', {
   ...auth,
 })).json.data;
 {
-  const r = await preview([{ productId: "p050", size: '100ml', quantity: 2 }], 'SAVE10');
+  const r = await preview([{ productId: FIXTURE_ID, size: '100ml', quantity: 2 }], 'SAVE10');
   const d = r.json.data;
   // subtotal 24, 10% off = 2.4, total 21.6
   check('4. percentage promo applies', approxEqual(d.subtotal, 24) && approxEqual(d.discount, 2.4) && approxEqual(d.total, 21.6),
@@ -176,7 +195,7 @@ const flat5 = (await http('POST', '/admin/offers', {
   ...auth,
 })).json.data;
 {
-  const r = await preview([{ productId: "p050", size: '100ml', quantity: 2 }], 'FLAT5');
+  const r = await preview([{ productId: FIXTURE_ID, size: '100ml', quantity: 2 }], 'FLAT5');
   const d = r.json.data;
   // subtotal 24, fixed -5 = 19
   check('5. fixed promo applies', approxEqual(d.discount, 5) && approxEqual(d.total, 19),
@@ -189,7 +208,7 @@ const huge = (await http('POST', '/admin/offers', {
   ...auth,
 })).json.data;
 {
-  const r = await preview([{ productId: "p050", size: '100ml', quantity: 1 }], 'HUGE');
+  const r = await preview([{ productId: FIXTURE_ID, size: '100ml', quantity: 1 }], 'HUGE');
   const d = r.json.data;
   check('6. discount caps at subtotal', approxEqual(d.discount, 12) && approxEqual(d.total, 0),
     `discount=${d.discount} total=${d.total}`);
@@ -197,7 +216,7 @@ const huge = (await http('POST', '/admin/offers', {
 
 // ── 7. invalid promo rejected ──────────────────────────────────────────────
 {
-  const r = await preview([{ productId: "p050", size: '100ml', quantity: 1 }], 'NOPE');
+  const r = await preview([{ productId: FIXTURE_ID, size: '100ml', quantity: 1 }], 'NOPE');
   check('7. invalid promo → PROMO_INVALID', r.status === 422 && r.json.error.code === 'PROMO_INVALID',
     `status=${r.status} code=${r.json?.error?.code}`);
 }
@@ -208,7 +227,7 @@ const expired = (await http('POST', '/admin/offers', {
   ...auth,
 })).json.data;
 {
-  const r = await preview([{ productId: "p050", size: '100ml', quantity: 1 }], 'EXPIRED');
+  const r = await preview([{ productId: FIXTURE_ID, size: '100ml', quantity: 1 }], 'EXPIRED');
   check('8. expired promo → PROMO_EXPIRED', r.status === 422 && r.json.error.code === 'PROMO_EXPIRED',
     `code=${r.json?.error?.code}`);
 }
@@ -219,7 +238,7 @@ const future = (await http('POST', '/admin/offers', {
   ...auth,
 })).json.data;
 {
-  const r = await preview([{ productId: "p050", size: '100ml', quantity: 1 }], 'FUTURE');
+  const r = await preview([{ productId: FIXTURE_ID, size: '100ml', quantity: 1 }], 'FUTURE');
   check('9. future promo → PROMO_NOT_STARTED', r.status === 422 && r.json.error.code === 'PROMO_NOT_STARTED',
     `code=${r.json?.error?.code}`);
 }
@@ -230,7 +249,7 @@ const inactive = (await http('POST', '/admin/offers', {
   ...auth,
 })).json.data;
 {
-  const r = await preview([{ productId: "p050", size: '100ml', quantity: 1 }], 'INACTIVE');
+  const r = await preview([{ productId: FIXTURE_ID, size: '100ml', quantity: 1 }], 'INACTIVE');
   // findByPromoCode filters on active=1 → returns null → reports PROMO_INVALID
   check('10. inactive promo rejected', r.status === 422 && /PROMO_/.test(r.json.error.code),
     `code=${r.json?.error?.code}`);
@@ -243,7 +262,7 @@ const bundleWithCode = (await http('POST', '/admin/offers', {
   ...auth,
 })).json.data;
 {
-  const r = await preview([{ productId: "p050", size: '100ml', quantity: 1 }], 'BUNDLECODE');
+  const r = await preview([{ productId: FIXTURE_ID, size: '100ml', quantity: 1 }], 'BUNDLECODE');
   check('11. bundle-type code → PROMO_WRONG_TYPE', r.status === 422 && r.json.error.code === 'PROMO_WRONG_TYPE',
     `code=${r.json?.error?.code}`);
 }
@@ -251,7 +270,7 @@ const bundleWithCode = (await http('POST', '/admin/offers', {
 // ── 12. delivery fee added ─────────────────────────────────────────────────
 await setSettings({ deliveryFee: 3, freeDeliveryThreshold: 0 });
 {
-  const r = await preview([{ productId: "p050", size: '100ml', quantity: 1 }]);
+  const r = await preview([{ productId: FIXTURE_ID, size: '100ml', quantity: 1 }]);
   const d = r.json.data;
   check('12. delivery fee added', approxEqual(d.deliveryFee, 3) && approxEqual(d.total, 15),
     `deliveryFee=${d.deliveryFee} total=${d.total}`);
@@ -260,7 +279,7 @@ await setSettings({ deliveryFee: 3, freeDeliveryThreshold: 0 });
 // ── 13. free-delivery threshold waives fee ─────────────────────────────────
 await setSettings({ deliveryFee: 3, freeDeliveryThreshold: 20 });
 {
-  const r = await preview([{ productId: "p050", size: '100ml', quantity: 2 }]);
+  const r = await preview([{ productId: FIXTURE_ID, size: '100ml', quantity: 2 }]);
   const d = r.json.data;
   // subtotal 24 ≥ 20 → free delivery, total = 24
   check('13. free-delivery threshold waives fee', approxEqual(d.deliveryFee, 0) && approxEqual(d.total, 24),
@@ -269,7 +288,7 @@ await setSettings({ deliveryFee: 3, freeDeliveryThreshold: 20 });
 
 // ── 14. free-delivery threshold uses PRE-discount subtotal ─────────────────
 {
-  const r = await preview([{ productId: "p050", size: '100ml', quantity: 2 }], 'SAVE10');
+  const r = await preview([{ productId: FIXTURE_ID, size: '100ml', quantity: 2 }], 'SAVE10');
   const d = r.json.data;
   // subtotal pre-discount = 24 ≥ 20, so deliveryFee = 0
   // discount = 2.4, total = (24 - 2.4) + 0 = 21.6
@@ -293,7 +312,7 @@ await setSettings({ cartQuantityTiers: { enabled: true, tiers: [{ minQty: 1, tot
   // Bundle stays at 25. Subtotal = 25 + 5 = 30.
   const r = await preview([
     { productId: 'bundle:summer-5-for-25', size: '5 bottles', quantity: 1 },
-    { productId: "p050", size: '100ml', quantity: 1 },
+    { productId: FIXTURE_ID, size: '100ml', quantity: 1 },
   ]);
   const d = r.json.data;
   check('16. bundle excluded from cart-tier allocation',
@@ -311,7 +330,7 @@ await setSettings({
 
 // ── 17. /orders/preview matches /orders exactly ────────────────────────────
 {
-  const items = [{ productId: "p050", size: '100ml', quantity: 2 }];
+  const items = [{ productId: FIXTURE_ID, size: '100ml', quantity: 2 }];
   const code = 'SAVE10';
   const p = (await preview(items, code)).json.data;
   const o = (await createOrder(items, code)).json.data;
@@ -322,7 +341,7 @@ await setSettings({
 
 // ── 18. persisted order has discount + applied_promo_code ──────────────────
 {
-  const o = (await createOrder([{ productId: "p050", size: '100ml', quantity: 1 }], 'SAVE10')).json.data;
+  const o = (await createOrder([{ productId: FIXTURE_ID, size: '100ml', quantity: 1 }], 'SAVE10')).json.data;
   const fetched = (await http('GET', `/admin/orders/${o.id}`, auth)).json.data;
   check('18. discount + applied_promo_code persisted',
     approxEqual(fetched.discount, 1.2) && fetched.appliedPromoCode === 'SAVE10',
@@ -354,6 +373,7 @@ await setSettings({
   deliveryFee: snap.deliveryFee,
   freeDeliveryThreshold: snap.freeDeliveryThreshold,
 });
+await http('DELETE', `/admin/products/${FIXTURE_ID}`, auth);
 
 // ── summary ────────────────────────────────────────────────────────────────
 const passed = results.filter(r => r.ok).length;
